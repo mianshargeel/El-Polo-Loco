@@ -37,47 +37,59 @@ html, body {
     width: 720px;
     height: 480px;
     margin: auto;
+    text-align: center;
 }
+
+/* .game-title { //in case if using heading
+    font-family: 'zabras', Arial, sans-serif;
+    font-size: 86px;
+    color: black;
+    text-shadow: 0 0 15px rgba(0,0,0,0.5);
+    margin: 20px 0;
+    position: relative;
+    z-index: 2;
+  } */
 
 canvas {
-    background-color: lightgray;
-    /* Remove max-width/height constraints */
-    /* width: auto;
-    height: auto;  */
+    background-image: url('img/Pollolocob2x.webp');
+    background-position: center;
+    background-repeat: no-repeat;
 }
-
 
 .control-buttons {
     position: absolute;
-    top: -135px;
-    right: -179px;
+    top: -6%;
+    left: 95%;
+    transform: translateX(-50%);
     display: flex;
     gap: 10px;
     z-index: 100;
 }
 
 .control-buttons button {
-    width: 40px;
-    height: 40px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #fff;
-    border-radius: 50%;
-    color: white;
-    font-size: 18px;
+    width: 80px; /* Wider like a plank */
+    height: 40px; /* More rectangular */
+    background: url('img/bg/wood-texture.jpg') center/cover no-repeat; /* Add a wood texture image */
+    border: 3px solid #8b5a2b; /* Brown border (wood color) */
+    border-radius: 8px; /* Slight rounded corners — looks carved */
+    color: #fffbe6; /* Off-white text to match wood */
+    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif; /* Fun playful font */
+    font-size: 16px;
     cursor: pointer;
-    transition: all 0.3s;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5); /* Depth */
+    transition: all 0.2s ease;
 }
 
 .control-buttons button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 3px 6px 8px rgba(0, 0, 0, 0.6);
 }
 
 .menu-buttons {
     position: absolute;
-    top: 50%;           /* Center vertically */
-    left: 50%;          /* Center horizontally */
-    transform: translate(-50%, -50%); /* Perfect centering */
+    top: 50%;           
+    left: 50%;          
+    transform: translate(-50%, -50%); 
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -86,29 +98,31 @@ canvas {
 }
 
 .menu-buttons button {
-    padding: 12px 30px;
-    background: linear-gradient(to bottom, #ff5f5f, #d93434);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
+    padding: 16px 40px; /* Bigger padding → looks like big wooden plank */
+    background: url('img/bg/wood-texture.jpg') center/cover no-repeat; /* Wood texture background */
+    color: #fffbe6; /* Slightly off-white text */
+    border: 3px solid #8b5a2b; /* Dark brown border */
+    border-radius: 12px; /* Slight rounded edges */
+    font-size: 28px;
     font-weight: bold;
+    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif; /* Playful font */
     cursor: pointer;
-    min-width: 180px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s;
+    min-width: 220px;
+    box-shadow: 3px 6px 12px rgba(0, 0, 0, 0.5); /* Deeper shadow for wooden effect */
+    transition: all 0.3s ease;
 }
 
 .menu-buttons button:hover {
-    background: linear-gradient(to bottom, #ff7878, #e64c4c);
-    transform: translateY(-3px);
+    transform: scale(1.05);
+    box-shadow: 4px 8px 14px rgba(0, 0, 0, 0.6);
 }
+
 
 #start-btn, #info-btn {
-    display: block; /* Override any 'display:none' */
+    display: block; 
+    font-family: 'zabras', Arial, sans-serif;
 }
 
-/* ------------------------------------------ */
 
 /* General Popup Styling */
 .popup {
@@ -135,6 +149,8 @@ canvas.paused {
 
 /* Popup Content */
 .popup-content {
+    font-family: 'zabras', Arial, sans-serif;
+    font-size: 44px;
     padding: 20px;
     border-radius: 10px;
     color: white;

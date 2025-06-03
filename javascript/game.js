@@ -109,7 +109,6 @@ function setupGameControls() {
     }
   });
   
-  // Other control setup can go here
 }
 
 // Initialize when DOM is ready
