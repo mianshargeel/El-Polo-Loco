@@ -12,7 +12,7 @@ class UIManager {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.world = world;
-        this.gameInfoPopup = new GameInfoPopup(this.canvas, this);
+        // this.gameInfoPopup = new GameInfoPopup(this.canvas, this);// created throgh html, that's why no need more
         this.pausePopup = new PausePopup(this.world);
         this.isPaused = false;
     }

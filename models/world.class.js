@@ -21,8 +21,10 @@ class World {
     musicManager = new MusicManager();
     gameStarted = false;
     uiManager;
-    isPaused = false; // Track game pause state
-    pausePopup; // Reference to the pause popup
+    isPaused = false; 
+    pausePopup; 
+    gameLoopInterval = null;
+    animationFrame = null;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -119,21 +121,75 @@ class World {
             }
         }, 200);
     }
-    /** Pause the game */
-    pauseGame() {
-        if (!this.isPaused) {
-            console.log("⏸️ Game Paused!");
-            this.isPaused = true;
-            this.pausePopup.show(); // Show the pause popup
+
+    togglePause() {
+        if (!this.gameStarted) return;
+        
+        if (this.isPaused) {
+            this.resumeGame();
+        } else {
+            this.pauseGame();
         }
     }
-    /** Resume the game */
-    resumeGame() {
-        console.log("▶️ Game Resumed!");
-        this.isPaused = false;
-        this.pausePopup.hide(); // Hide the pause popup
-        this.run(); // Continue the game loop
+
+    pauseGame() {
+        if (this.isPaused) return;
+        
+        console.log("Pausing game...");
+        this.isPaused = true;
+        
+        // 1. Stop game loops
+        clearInterval(this.gameLoopInterval);
+        cancelAnimationFrame(this.animationFrame);
+        
+        // 2. Pause audio
+        this.musicManager.pauseBackgroundMusic();
+        
+        // 3. Show UI
+        if (this.pausePopup) {
+            this.pausePopup.show();
+        }
     }
+
+    resumeGame() {
+        if (!this.isPaused) return;
+        
+        console.log("Resuming game...");
+        this.isPaused = false;
+        
+        // 1. Restart game loops
+        this.runGameLoop();
+        this.animationFrame = requestAnimationFrame(() => this.draw());
+        
+        // 2. Resume audio
+        this.musicManager.playBackGroundMusic();
+        
+        // 3. Hide UI
+        if (this.pausePopup) {
+            this.pausePopup.hide();
+        }
+    }
+
+    runGameLoop() {
+        // Clear any existing interval
+        if (this.gameLoopInterval) {
+            clearInterval(this.gameLoopInterval);
+        }
+        
+        this.gameLoopInterval = setInterval(() => {
+            if (this.gameStarted && !this.isPaused) {
+                this.checkCollisions();
+                this.checkThrowObject();
+                this.checkBottleCollisions();
+                this.updateCameraPosition();
+            }
+        }, 200);
+    }
+
+    updateCameraPosition() {
+        this.camera_x = -this.character.x + 100;
+    }
+
     /** Check for collisions with enemies */
     checkCollisions() {
         this.checkCollisionWithChicken();
@@ -319,13 +375,23 @@ startGameLoop() {
             this.uiManager.showStartScreen();
             return;
         }
+        
+        // Add this check for pause state
+        if (this.isPaused) {
+            // Still request next frame but don't render
+            this.animationFrame = requestAnimationFrame(() => this.draw());
+            return;
+        }
+        
         this.clearCanvas();
         this.updateCamera();
         this.renderBackground();
         this.renderUI();
         this.renderGameObjects();
         this.restoreCamera();
-        requestAnimationFrame(() => this.draw());
+        
+        // Store the animation frame ID for cleanup
+        this.animationFrame = requestAnimationFrame(() => this.draw());
     }
         /**
      * Clears the entire game canvas.

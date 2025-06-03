@@ -98,6 +98,7 @@ class MusicManager {
      * Plays the sound effect when the player jumps, if sound is not muted.
      */
     playCharacterJumpSound() {
+        if (world && world.isPaused) return; // stopping jump sound at paused-game
         if (!this.isMuted) {
             this.jumpSound.play();
         }

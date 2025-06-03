@@ -119,6 +119,14 @@ if (document.readyState === 'loading') {
   init();
 }
 
+function setupEventListeners() {
+    document.getElementById('pause-btn').addEventListener('click', () => {
+      if (world) {
+          world.togglePause();
+      }
+  });
+}
+
 /**
  * Handles the `keydown` event and updates the `keyboard` object accordingly.
  * Prevents the default browser behavior for the space key (e.g., page scrolling).
