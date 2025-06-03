@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokedex</title>
+  <link rel="shortcut icon" href="./assets/img/logo1.png" type="image/x-icon">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./styles/standard.css">
+  <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./styles/modelTabs.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="navbar-container">
+      <nav class="navbar myNav">
+      <div class="nav-flex">
+        <a class="navbar-brand navText" href="./index.html"> 
+          <img class="poko-logo-img" src="./assets/img/logo.png" alt="">Pokedex
+        </a>
+        <!-- Search Bar -->
+        <form class="navbar-form search-form" action="" onsubmit="event.preventDefault(); searchPokemon();">
+          <div class="form-group">
+            <input id="poko-search" type="text" class="form-control" placeholder="Enter at least 3 letters" minlength="3">
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </nav>
+    </header>
+   <main>
+            <div class="my-impressum"><h1>Impressum</h1><p>Angaben gemäß § 5 DDG</p><p>Shardzhil       Mukhammad <br> 
+              Hans-Schulten Str 10<br> 
+              51109 Cologne <br> 
+              </p><p> <strong>Vertreten durch: </strong><br>
+              Shardzhil Mukhammad<br>
+              </p><p><strong>Kontakt:</strong> <br>
+              Telefon: %2B4915126015827-%2B4915126015827<br>
+              E-Mail: <a style="color: black !important" href='mailto:shardzhil@gmail.com'>shardzhil@gmail.com</a></br></p><p><strong>Umsatzsteuer-ID: </strong> <br>
+              Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz: Shardzhil<br><br>
+              <strong>Wirtschafts-ID: </strong><br>
+              Shardzhil<br>
+              </p><br> 
+              Impressum vom <a style="color: black !important" href="https://www.impressum-generator.de">Impressum Generator</a> der <a style="color: black !important; href="https://www.kanzlei-hasselbach.de/standorte/bonn/" rel="nofollow">Kanzlei Hasselbach, Bonn</a> 
+            </div>
+        </main>
+  <footer>
+    <div class="footer-container">
+      <a class="footer-logo" href="./index.html"><img src="./assets/img/logo.png" alt="footer-img">Pokedex</a>
+      <div class="copy-right">
+        <a class="impressum-text" href="./impressum.html">Impressum</a>
+        <p>© 2025 Shardzhil Mukhammad.<br> All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

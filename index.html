@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="img/favicon/fav1.png" type="image/x-icon">
+  <title>El Pollo Loco</title>
+  
+</head>
+<body onload="init()">
+  <!-- <h1>El Pollo Loco</h1> -->
+
+ <div class="main-container">
+    <div class="canvas-wrapper">
+        <canvas id="canvas" width="720" height="480"></canvas>
+        
+        <!-- Only these 3 buttons (no duplicates) -->
+        <div class="canvas-ui-buttons">
+            <button id="mute-btn" title="Mute">🔊</button>
+            <button id="pause-btn" title="Pause">⏸</button>
+            <button id="fullscreen-btn" title="Fullscreen">⛶</button>
+        </div>
+    </div>
+
+    <!-- Mobile Controls Container -->
+    <div id="mobile-controls" class="mobile-controls">
+        <button id="left-btn" class="mobile-btn">←</button>
+        <button id="right-btn" class="mobile-btn">→</button>
+        <button id="jump-btn" class="mobile-btn">Jump</button>
+        <button id="action-btn" class="mobile-btn">Action</button>
+    </div>
+
+    <!-- Popup Container -->
+    <div id="gameOverPopup" class="popup">
+        <div class="popup-content">
+            <h2>Game Over</h2>
+            <p>You have lost! Try again?</p>
+            <button id="restartButton">Restart</button>
+        </div>
+    </div>
+
+    <!-- Win Popup Modal -->
+    <div id="winPopup" class="popup">
+        <div class="popup-content">
+            <h2>Congratulations!</h2>
+            <p>You have won the game!</p>
+            <button id="restartGame">Restart Game</button>
+            <button id="goToMainMenu">Main Menu</button>
+        </div>
+    </div>
+
+    <!-- Pause Popup Modal -->
+    <div id="pausePopup" class="popup">
+        <div class="popup-content">
+            <h2>Game Paused</h2>
+            <p>Do you want to continue or exit?</p>
+            <button id="continueGame">Continue</button>
+            <button id="exitToHome">Exit</button>
+        </div>
+    </div>
+</div>
+
+
+
+        <script src="models/drawable-object.class.js"></script>
+        <script src="models/music.manager.class.js"></script>
+        <script src="models/moveable-object.class.js"></script>
+        <script src="models/game-infoPopup.class.js"></script>  
+        <script src="models/winpopup-class.js"></script>      
+        <script src="models/pause-popup.class.js"></script>  
+        <script src="models/coins-handle.class.js"></script>
+        <script src="models/statusbar.class.js"></script>
+        <script src="models/coin-statusbar.class.js"></script>
+        <script src="models/bottle-statusbar.class.js"></script>
+        <script src="models/background-object.class.js"></script>
+        <script src="models/cloud.class.js"></script>
+        <script src="models/character.class.js"></script>
+        <script src="models/chicken.class.js"></script>
+        <script src="models/keyboard.class.js"></script>
+        <script src="models/level.class.js"></script>
+        <script src="models/endboss.class.js"></script>
+        <script src="models/throwable-object.class.js"></script>
+        <script src="models/game-sound.class.js"></script>
+        <script src="levels/level1.js"></script>
+        <script src="models/ui-manager.class.js"></script>
+        <script src="javascript/responsive.js"></script>
+        <script src="models/world.class.js"></script>
+        <script src="./javascript/game.js"></script>
+        
+    </body>
+</html>
