@@ -19,17 +19,104 @@ let world;
  * @type {Keyboard}
  */
 window.keyboard = new Keyboard();
+let gameInfoPopup; 
 
-/**
- * Initializes the game.
- * - Retrieves the canvas element and its context.
- * - Creates a new `World` instance.
- * - Passes the globally accessible `keyboard` object to `World`.
- */
+
 function init() {
-  canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  world = new World(canvas, window.keyboard);
+  try {
+    // 1. Get canvas element
+    canvas = document.getElementById('canvas');
+    if (!canvas) throw new Error('Canvas element not found!');
+    
+    // 2. Initialize game world
+    world = new World(canvas, window.keyboard);
+    
+    // 3. Setup popup system
+    setupPopupSystem();
+    
+    // 4. Setup game controls
+    setupGameControls();
+    
+  } catch (error) {
+    console.error('Initialization error:', error);
+  }
+}
+
+function setupPopupSystem() {
+  // Get elements
+  const popup = document.getElementById('gameInfoPopup');
+  if (!popup) {
+    console.warn('Popup element not found - game info feature disabled');
+    return;
+  }
+
+  const closeBtn = popup.querySelector('.close-btn');
+  if (!closeBtn) {
+    console.warn('Close button not found in popup');
+    return;
+  }
+
+  // Track popup state
+  let isPopupOpen = false;
+
+  // Open popup
+  document.getElementById('info-btn')?.addEventListener('click', () => {
+    popup.style.display = 'block';
+    isPopupOpen = true;
+    
+    // Pause game if it's running
+    if (world && world.gameStarted) {
+      world.pauseGame();
+    }
+  });
+
+  // Close popup
+  const closePopup = () => {
+    popup.style.display = 'none';
+    isPopupOpen = false;
+    
+    // Resume game if it was running
+    if (world && world.gameStarted && world.isPaused) {
+      world.resumeGame();
+    }
+  };
+
+  // Close button click
+  closeBtn.addEventListener('click', closePopup);
+
+  // Click outside to close (improved version)
+  document.addEventListener('click', (e) => {
+    if (!isPopupOpen) return;
+    
+    const isClickInsidePopup = popup.contains(e.target);
+    const isInfoButton = e.target.id === 'info-btn';
+    
+    if (!isClickInsidePopup && !isInfoButton) {
+      closePopup();
+    }
+  });
+
+}
+
+function setupGameControls() {
+  // Start game button
+  document.getElementById('start-btn')?.addEventListener('click', () => {
+    if (world) {
+      world.startGame();
+      // Hide popup when game starts
+      const popup = document.getElementById('gameInfoPopup');
+      if (popup) popup.style.display = 'none';
+    }
+  });
+  
+  // Other control setup can go here
+}
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }
 
 /**

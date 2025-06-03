@@ -15,11 +15,27 @@
     <div class="canvas-wrapper">
         <canvas id="canvas" width="720" height="480"></canvas>
         
-        <!-- Only these 3 buttons (no duplicates) -->
-        <div class="canvas-ui-buttons">
-            <button id="mute-btn" title="Mute">🔊</button>
+       <!-- Group 1: Game Control Buttons (Pause/Sound/Fullscreen) -->
+        <div class="control-buttons">
             <button id="pause-btn" title="Pause">⏸</button>
+            <button id="mute-btn" title="Mute">🔊</button>
             <button id="fullscreen-btn" title="Fullscreen">⛶</button>
+        </div>
+        
+        <!-- Group 2: Menu Buttons (Start/Info) -->
+        <div class="menu-buttons">
+            <button id="start-btn">Start Game</button>
+            <button id="info-btn">Game Info</button>
+        </div>
+    </div>
+    <!-- game info popup -->
+    <div id="gameInfoPopup" class="popup" style="display: none;">
+        <div class="popup-content">
+        <span class="close-btn">&times;</span>
+        <h2>Game Instructions</h2>
+        <p>- Use arrow keys to move</p>
+        <p>- Press D to throw bottles</p>
+        <p>- Collect coins for points</p>
         </div>
     </div>
 

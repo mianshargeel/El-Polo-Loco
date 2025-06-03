@@ -48,6 +48,18 @@ class World {
         this.pausePopup = new PausePopup(this); // Initialize the pause popup
         // this.uiManager.createPauseButton();
         this.uiManager.showStartScreen(); // Show the start screen
+
+        this.gameStarted = false;
+        // Hide HTML buttons when game starts (add this line)
+        // this.hideMenuButtons();
+    }
+
+    hideMenuButtons() {
+        const startBtn = document.getElementById('start-btn');
+        const infoBtn = document.getElementById('info-btn');
+        console.log(startBtn, infoBtn); 
+        if (startBtn) startBtn.style.display = 'none';
+        if (infoBtn) infoBtn.style.display = 'none';
     }
 
     /** Set the world reference for the character */
@@ -81,10 +93,19 @@ class World {
     startGame() {
         if (this.gameStarted) return;
         this.gameStarted = true;
+        
+        // Hide menu buttons
+        document.getElementById('start-btn').style.display = 'none';
+        document.getElementById('info-btn').style.display = 'none';
+        
+        // Show game controls (pause/sound/fullscreen)
+        document.querySelector('.control-buttons').style.display = 'block'; // or 'flex' if needed
+        
+        // Rest of your game start logic...
         document.getElementById("mobile-controls").style.display = (window.innerWidth <= 1020) ? "flex" : "none";
-        this.musicManager.playBackGroundMusic(); 
-        this.draw();  
-        this.run();  
+        this.musicManager.playBackGroundMusic();
+        this.draw();
+        this.run();
     }
 
 
@@ -261,7 +282,7 @@ startGameLoop() {
     this.animationFrame = requestAnimationFrame(() => this.draw());
 }
 
-    /** ✅ New function to start the game loop properly */
+    /**  New function to start the game loop properly */
     runGameLoop() {
         this.gameLoopInterval = setInterval(() => {
             if (this.gameStarted) {
@@ -269,7 +290,7 @@ startGameLoop() {
                 this.checkThrowObject();
                 this.checkBottleCollisions();
 
-                // ✅ Continuously update camera position
+                //  Continuously update camera position
                 this.camera_x = -this.character.x + 100;
             }
         }, 200);

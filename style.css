@@ -32,45 +32,84 @@ html, body {
     position: relative;
 }
 
+.canvas-wrapper {
+    position: relative;
+    width: 720px;
+    height: 480px;
+    margin: auto;
+}
+
 canvas {
     background-color: lightgray;
     /* Remove max-width/height constraints */
-    width: auto;
-    height: auto; 
-}
-.canvas-wrapper {
-    position: relative;
-    display: inline-block; 
+    /* width: auto;
+    height: auto;  */
 }
 
-/* Canvas UI Buttons (existing) */
-.canvas-ui-buttons {
+
+.control-buttons {
     position: absolute;
-    top: -402px;
-    right: -608px;
-    z-index: 100;
+    top: -135px;
+    right: -179px;
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    z-index: 100;
 }
 
-.canvas-ui-buttons button {
+.control-buttons button {
     width: 40px;
     height: 40px;
-    background: rgba(0,0,0,0.5);
-    border: none;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #fff;
     border-radius: 50%;
     color: white;
     font-size: 18px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
 }
 
-.canvas-ui-buttons button:hover {
-    background: rgba(0,0,0,0.8);
+.control-buttons button:hover {
+    background: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
 }
 
+.menu-buttons {
+    position: absolute;
+    top: 50%;           /* Center vertically */
+    left: 50%;          /* Center horizontally */
+    transform: translate(-50%, -50%); /* Perfect centering */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 90;
+    text-align: center;
+}
+
+.menu-buttons button {
+    padding: 12px 30px;
+    background: linear-gradient(to bottom, #ff5f5f, #d93434);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 180px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.menu-buttons button:hover {
+    background: linear-gradient(to bottom, #ff7878, #e64c4c);
+    transform: translateY(-3px);
+}
+
+#start-btn, #info-btn {
+    display: block; /* Override any 'display:none' */
+}
+
 /* ------------------------------------------ */
+
 /* General Popup Styling */
 .popup {
     display: none; /* Initially hidden */
@@ -122,7 +161,6 @@ canvas {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s ease, background 0.3s ease;
 }
-
 /* Restart Button (Green) */
 #restartWinButton {
     background: #4CAF50; /* Green */
