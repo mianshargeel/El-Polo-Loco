@@ -51,14 +51,15 @@ html, body {
   } */
 
 canvas {
-    background-image: url('img/Pollolocob2x.webp');
+    display: block;
+    background-image: url('img/polo-loco.png');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .control-buttons {
     position: absolute;
-    top: -6%;
+    top: -28%;
     left: 95%;
     transform: translateX(-50%);
     display: flex;

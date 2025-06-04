@@ -52,9 +52,67 @@ class World {
         this.uiManager.showStartScreen(); // Show the start screen
 
         this.gameStarted = false;
-        // Hide HTML buttons when game starts (add this line)
-        // this.hideMenuButtons();
+        this.setupFullscreenControls();
     }
+
+    // In World class:
+    setupFullscreenControls() {
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (!fullscreenBtn) return;
+
+        fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+        fullscreenBtn.addEventListener('pointerdown', (e) => e.preventDefault());
+        
+        // Sync fullscreen state changes
+        document.addEventListener('fullscreenchange', () => {
+            this.isFullscreen = !!document.fullscreenElement;
+            this.adjustForFullscreen();
+        });
+    }
+
+    toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            this.enterFullscreen();
+        } else {
+            this.exitFullscreen();
+        }
+    }
+
+    enterFullscreen() {
+        const element = this.canvas || document.documentElement;
+        
+        if (element.requestFullscreen) {
+            element.requestFullscreen()
+                .then(() => {
+                    this.isFullscreen = true;
+                    this.adjustForFullscreen();
+                })
+                .catch(err => {
+                    console.error("Fullscreen error:", err);
+                });
+        }
+    }
+
+    exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen()
+                .then(() => {
+                    this.isFullscreen = false;
+                    this.adjustForFullscreen();
+                });
+        }
+    }
+
+    adjustForFullscreen() {
+        // Add any necessary adjustments when entering/exiting fullscreen
+        if (this.isFullscreen) {
+            // Fullscreen-specific adjustments
+        } else {
+            // Normal mode adjustments
+        }
+
+    }
+    
 
     hideMenuButtons() {
         const startBtn = document.getElementById('start-btn');

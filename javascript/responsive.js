@@ -67,24 +67,6 @@ function resizeCanvas() {
 // ==================== BUTTON HANDLERS ====================
 
 function setupEventListeners() {
-    // Fullscreen
-    document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
-
-    // Pause Button - Single Source of Truth
-    document.getElementById('pause-btn').addEventListener('click', () => {
-        if (!world) return;
-        
-        world.isPaused = !world.isPaused;
-        
-        if (world.isPaused) {
-            world.pauseGame();
-            document.getElementById('pausePopup').style.display = 'block';
-        } else {
-            world.resumeGame();
-            document.getElementById('pausePopup').style.display = 'none';
-        }
-    });
-
     // Continue Button
     document.getElementById('continueGame').addEventListener('click', () => {
         if (world) {
@@ -99,14 +81,6 @@ function setupEventListeners() {
     document.addEventListener('fullscreenchange', () => {
         gameState.isFullscreen = !!document.fullscreenElement;
     });
-}
-
-function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        gameState.canvas.requestFullscreen().catch(console.error);
-    } else {
-        document.exitFullscreen();
-    }
 }
 
 // ==================== UTILITIES ====================
