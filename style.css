@@ -255,14 +255,15 @@ canvas.paused {
     background: #c82333;
     transform: scale(1.05);
 }
+
 footer{
     margin-bottom: 16px;
 }
+
 footer a{
     font-size: 24px;
     font-family: 'zabras', Arial, sans-serif;
     color: #fff;
-    margin-bottom: 20px;
 }
 
 /* === 🎮 MOBILE CONTROLS === */
