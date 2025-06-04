@@ -17,7 +17,7 @@ html, body {
     background: #000;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     background: url('img/bg/bg2.webp') center/cover no-repeat;
 }
@@ -254,6 +254,15 @@ canvas.paused {
 #exitToHome:hover {
     background: #c82333;
     transform: scale(1.05);
+}
+footer{
+    margin-bottom: 16px;
+}
+footer a{
+    font-size: 24px;
+    font-family: 'zabras', Arial, sans-serif;
+    color: #fff;
+    margin-bottom: 20px;
 }
 
 /* === 🎮 MOBILE CONTROLS === */

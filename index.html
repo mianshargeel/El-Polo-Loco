@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <link rel="shortcut icon" href="img/favicon/fav1.png" type="image/x-icon">
+  <link rel="stylesheet" href="impressum/impressum.css">
   <title>El Pollo Loco</title>
+
+  <style>
+   
+  </style>
   
 </head>
 <body onload="init()">
@@ -80,9 +85,18 @@
         </div>
     </div>
 </div>
+<!-- impressum dialog -->
 
-
-
+<div class="dialog-overlay" id="impressumDialog">
+    <div class="dialog-content">
+        <button class="close-button" id="closeImpressum">&times;</button>
+        <div class="impressum-content" id="impressumContent"></div>
+    </div>
+</div>
+<footer>
+    <a class="impressum-text" href="impressum/impressum.html" id="showImpressum" aria-haspopup="dialog">Impressum | © 2025 [Shardzhil Mukhammad]. All rights reserved. </a>
+</footer>
+  
         <script src="models/drawable-object.class.js"></script>
         <script src="models/music.manager.class.js"></script>
         <script src="models/moveable-object.class.js"></script>
@@ -107,6 +121,8 @@
         <script src="javascript/responsive.js"></script>
         <script src="models/world.class.js"></script>
         <script src="./javascript/game.js"></script>
-        
+        <script src="impressum/impressum.js"></script>
+
+
     </body>
 </html>
