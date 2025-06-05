@@ -9,14 +9,14 @@ class Chicken extends MoveableObject {
      * @type {number}
      * @default 360
      */
-    y = 360;
+    y = 330;
 
     /**
      * The height of the chicken.
      * @type {number}
-     * @default 60
+     * @default 80
      */
-    height = 60;
+    height = 80;
 
     /**
      * The width of the chicken.
@@ -50,7 +50,7 @@ class Chicken extends MoveableObject {
         this.loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'); 
         this.preloadImages(this.IMAGES_WALKING);
 
-        const groundY = 440; // Ground line!
+        const groundY = 430; // Ground line!
         this.y = groundY - this.height;
         
         this.x = 700 + Math.random() * 500; 

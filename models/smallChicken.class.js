@@ -1,5 +1,5 @@
 class SmallChicken extends MoveableObject {  
-  y = 370; // slightly lower
+  y = 330; // slightly lower
   height = 40;
   width = 50;
 
@@ -16,7 +16,7 @@ class SmallChicken extends MoveableObject {
       this.loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png'); 
       this.preloadImages(this.IMAGES_WALKING);
 
-      const groundY = 440; // Ground line!
+      const groundY = 430; // Ground line!
       this.y = groundY - this.height;
       
       this.x = startX;

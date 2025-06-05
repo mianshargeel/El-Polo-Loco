@@ -4,7 +4,7 @@
  */
 class Character extends MoveableObject {
     height = 250; 
-    y = 60; 
+    y = World.GROUND_Y - this.height; 
     speed = 1.5; 
     world;
 

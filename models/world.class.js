@@ -25,6 +25,7 @@ class World {
     pausePopup; 
     gameLoopInterval = null;
     animationFrame = null;
+    static GROUND_Y = 420;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -445,7 +446,7 @@ class World {
      */
     updateCamera() {
         let cameraMarginLeft = 200;
-        let cameraMarginRight = window.innerWidth / 3; 
+        let cameraMarginRight = window.innerWidth / 2; 
     
         let targetCameraX;
     
