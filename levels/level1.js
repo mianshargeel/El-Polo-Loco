@@ -15,10 +15,8 @@
  * - Background objects: Layered backgrounds for a parallax effect
  * 
  * @constant {Level} level1
- * 
  */
-let baseX = 720 + 100; // Start outside right side
-
+let baseX = 720 + 100; //
 const level1 = new Level(
   /**
    * List of enemies in the level.
@@ -28,7 +26,6 @@ const level1 = new Level(
    * - 4 Chickens as small enemies
    * - 1 Endboss as the final boss
    */
-
   [
     new Chicken(baseX),
     new SmallChicken(baseX),
@@ -36,7 +33,7 @@ const level1 = new Level(
     new SmallChicken(baseX + 200),
     new Chicken(baseX + 300), 
     new Chicken(baseX + 600),
-    new Endboss() // Create Endboss without character or world references
+    new Endboss()
   ],
 
   /**

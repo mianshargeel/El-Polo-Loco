@@ -230,24 +230,19 @@ class World {
     }
 
     runGameLoop() {
-        // Clear any existing interval
         if (this.gameLoopInterval) {
             clearInterval(this.gameLoopInterval);
         }
-        
+    
         this.gameLoopInterval = setInterval(() => {
             if (this.gameStarted && !this.isPaused) {
                 this.checkCollisions();
                 this.checkThrowObject();
                 this.checkBottleCollisions();
-                this.updateCameraPosition();
             }
         }, 200);
     }
-
-    updateCameraPosition() {
-        this.camera_x = -this.character.x + 100;
-    }
+    
 
     /** Check for collisions with enemies */
     checkCollisions() {
@@ -321,95 +316,82 @@ class World {
    /**
  * Restarts the game by resetting all necessary components and starting fresh.
  */
-restartGame() {
-    this.resetGameState();
-    this.initializeLevel();
-    this.initializeCharacter();
-    this.initializeStatusBars();
-    this.cleanUpEnemies();
-    this.startGameLoop();
-}
-
-/**
- * Resets the game state, clears intervals, and resets objects.
- */
-resetGameState() {
-    this.gameStarted = false;
-    clearInterval(this.gameLoopInterval);
-    cancelAnimationFrame(this.animationFrame);
-    this.enemies = [];
-    this.throwableObject = [];
-    this.coins = [];
-    this.character = null;
-    this.level = null;
-    this.camera_x = 0;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-}
-
-/**
- * Initializes the game level with new enemies, clouds, and background objects.
- */
-initializeLevel() {
-    this.level = new Level(
-        [new Chicken(), new Chicken(), new Chicken()],
-        [...level1.clouds],
-        [...level1.backgroundObjects]
-    );
-    this.enemies = [...this.level.enemies];
-}
-
-/**
- * Initializes the player character and assigns it to the game world.
- */
-initializeCharacter() {
-    this.character = new Character(this.musicManager);
-    this.character.world = this;
-}
-
-/**
- * Initializes all status bars (health, coins, bottles) and displays coins.
- */
-initializeStatusBars() {
-    this.statusBar = new Statusbar();
-    this.coinStatusbar = new CoinStatusbar();
-    this.bottleStatusbar = new BottleStatusbar();
-    this.showCoins();
-}
-
-/**
- * Removes any existing Endboss instances and creates a fresh one.
- */
-cleanUpEnemies() {
-    this.enemies = this.enemies.filter(enemy => !(enemy instanceof Endboss));
-    this.createNewEndboss();
-}
-
-/**
- * Starts the game loop, background music, and animation rendering.
- */
-startGameLoop() {
-    this.musicManager.playBackGroundMusic();
-    if (this.winPopup) {
-        this.winPopup.hide();
+    restartGame() {
+        this.resetGameState();
+        this.initializeLevel();
+        this.initializeCharacter();
+        this.initializeStatusBars();
+        this.cleanUpEnemies();
+        this.startGameLoop();
     }
-    this.gameStarted = true;
-    this.runGameLoop();
-    this.animationFrame = requestAnimationFrame(() => this.draw());
-}
 
-    /**  New function to start the game loop properly */
-    runGameLoop() {
-        this.gameLoopInterval = setInterval(() => {
-            if (this.gameStarted) {
-                this.checkCollisions();
-                this.checkThrowObject();
-                this.checkBottleCollisions();
-
-                //  Continuously update camera position
-                this.camera_x = -this.character.x + 100;
-            }
-        }, 200);
+    /**
+     * Resets the game state, clears intervals, and resets objects.
+     */
+    resetGameState() {
+        this.gameStarted = false;
+        clearInterval(this.gameLoopInterval);
+        cancelAnimationFrame(this.animationFrame);
+        this.enemies = [];
+        this.throwableObject = [];
+        this.coins = [];
+        this.character = null;
+        this.level = null;
+        this.camera_x = 0;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+
+    /**
+     * Initializes the game level with new enemies, clouds, and background objects.
+     */
+    initializeLevel() {
+        this.level = new Level(
+            [new Chicken(), new Chicken(), new Chicken()],
+            [...level1.clouds],
+            [...level1.backgroundObjects]
+        );
+        this.enemies = [...this.level.enemies];
+    }
+
+    /**
+     * Initializes the player character and assigns it to the game world.
+     */
+    initializeCharacter() {
+        this.character = new Character(this.musicManager);
+        this.character.world = this;
+    }
+
+    /**
+     * Initializes all status bars (health, coins, bottles) and displays coins.
+     */
+    initializeStatusBars() {
+        this.statusBar = new Statusbar();
+        this.coinStatusbar = new CoinStatusbar();
+        this.bottleStatusbar = new BottleStatusbar();
+        this.showCoins();
+    }
+
+    /**
+     * Removes any existing Endboss instances and creates a fresh one.
+     */
+    cleanUpEnemies() {
+        this.enemies = this.enemies.filter(enemy => !(enemy instanceof Endboss));
+        this.createNewEndboss();
+    }
+
+    /**
+     * Starts the game loop, background music, and animation rendering.
+     */
+    startGameLoop() {
+        this.musicManager.playBackGroundMusic();
+        if (this.winPopup) {
+            this.winPopup.hide();
+        }
+        this.gameStarted = true;
+        this.runGameLoop();
+        this.animationFrame = requestAnimationFrame(() => this.draw());
+    }
+
     createNewEndboss() {
         this.enemies = this.enemies.filter(enemy => !(enemy instanceof Endboss));
         let endboss = new Endboss();
@@ -462,9 +444,24 @@ startGameLoop() {
      * Updates the camera position to follow the character.
      */
     updateCamera() {
+        let cameraMarginLeft = 200;
+        let cameraMarginRight = window.innerWidth / 3; 
+    
+        let targetCameraX;
+    
+        if (this.character.x + this.camera_x < cameraMarginLeft) {
+            targetCameraX = -this.character.x + cameraMarginLeft;
+        } else if (this.character.x + this.camera_x > cameraMarginRight) {
+            targetCameraX = -this.character.x + cameraMarginRight;
+        } else {
+            targetCameraX = this.camera_x;
+        }
+    
         this.camera_x = -this.character.x + 100;
+        this.camera_x = Math.floor(this.camera_x);
         this.ctx.translate(this.camera_x, 0);
     }
+    
     /**
      * Renders the background elements in the game world.
      */
@@ -497,12 +494,6 @@ startGameLoop() {
     restoreCamera() {
         this.ctx.translate(-this.camera_x, 0);
     }
-
-    updateCamera() {
-        this.camera_x = Math.min(0, -this.character.x + window.innerWidth / 2);
-        this.ctx.translate(this.camera_x, 0);
-    }
-
 
     /** Add an array of objects to the map */
     addArrayObjectToMap(arrays) {
