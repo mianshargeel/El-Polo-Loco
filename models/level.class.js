@@ -20,6 +20,7 @@ class Level {
      * @type {DrawableObject[]}
      */
     backgroundObjects;
+    bottles;
 
     /**
      * The maximum x-coordinate the player can move to (level boundary).
@@ -34,9 +35,10 @@ class Level {
      * @param {DrawableObject[]} clouds - Array of cloud objects.
      * @param {DrawableObject[]} backgroundObjects - Array of background scenery objects.
      */
-    constructor(enemies, clouds, backgroundObjects) {
+    constructor(enemies, clouds, backgroundObjects, bottles) {
         this.enemies = enemies;
         this.clouds = clouds;
         this.backgroundObjects = backgroundObjects;
+        this.bottles = bottles || [];
     }
 }

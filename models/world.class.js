@@ -418,21 +418,24 @@ class World {
             return;
         }
         
-        // Add this check for pause state
         if (this.isPaused) {
-            // Still request next frame but don't render
             this.animationFrame = requestAnimationFrame(() => this.draw());
             return;
         }
         
         this.clearCanvas();
         this.updateCamera();
-        this.renderBackground();
-        this.renderUI();
-        this.renderGameObjects();
-        this.restoreCamera();
         
-        // Store the animation frame ID for cleanup
+        // Draw backgrounds first
+        this.renderBackground();
+        
+        // Draw all game objects (including bottles)
+        this.renderGameObjects();
+        
+        // Draw UI elements last
+        this.renderUI();
+        
+        this.restoreCamera();
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
         /**
@@ -488,6 +491,7 @@ class World {
         if (this.enemies) this.enemies.forEach(enemy => this.addToMap(enemy));
         if (this.throwableObject) this.addArrayObjectToMap(this.throwableObject);
         if (this.coins) this.addArrayObjectToMap(this.coins);
+        if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles);
     }
         /**
      * Restores the camera position after rendering.

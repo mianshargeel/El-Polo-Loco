@@ -76,7 +76,7 @@ class BottleStatusbar extends DrawableObject {
      */
     useBottle() {
         if (this.percentage > 0) {
-            this.percentage -= 10; // Reduce by 10% per bottle use
+            this.percentage -= 34; // MAX 3-BOTLES BY DEFAULT
             this.setPercentage(this.percentage);
         }
     }
