@@ -15,6 +15,9 @@ class SmallChicken extends MoveableObject {
       super();
       this.loadImage('img/3_enemies_chicken/chicken_small/1_walk/1_w.png'); 
       this.preloadImages(this.IMAGES_WALKING);
+
+      const groundY = 440; // Ground line!
+      this.y = groundY - this.height;
       
       this.x = startX;
       this.speed = 0.2 + Math.random() * 0.5; // Small chickens can be a bit faster!
