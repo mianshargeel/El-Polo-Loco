@@ -53,6 +53,17 @@ class World {
 
         this.gameStarted = false;
         this.setupFullscreenControls();
+
+        this.enemies = []; // start empty
+        this.spawnEnemiesAfterDelay();
+
+    }
+
+    spawnEnemiesAfterDelay() {
+        setTimeout(() => {
+            this.enemies = this.level.enemies; // now spawn enemies
+            console.log('Enemies spawned!');
+        }, 3000); // 3000 ms = 3 seconds
     }
 
     // In World class:
