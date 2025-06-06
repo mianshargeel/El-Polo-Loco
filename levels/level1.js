@@ -93,9 +93,12 @@ const level1 = new Level(
 
   [  // Bottles array
     new BottleOnGround(500, 370),
+    new BottleOnGround(600, 370),
     new BottleOnGround(800, 370),
     new BottleOnGround(1200, 370),
+    new BottleOnGround(1500, 370),
     new BottleOnGround(1700, 370),
+    new BottleOnGround(1800, 370),
     new BottleOnGround(2000, 370)
   ]
 );

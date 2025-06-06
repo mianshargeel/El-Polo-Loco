@@ -25,7 +25,8 @@ class BottleStatusbar extends DrawableObject {
      * @default 0
      */
     percentage = 0;
-
+    bottleCount = 0; 
+    maxBottles = 10;
     /**
      * Creates a new bottle status bar instance.
      * Initializes the images, position, and default percentage (full).
@@ -38,6 +39,21 @@ class BottleStatusbar extends DrawableObject {
         this.height = 45; // Height of the status bar
         this.width = 200; // Width of the status bar
         this.setPercentage(100); // Default to full bottles
+    }
+
+    increase() {
+        this.bottleCount = Math.min(this.bottleCount + 1, this.maxBottles);
+        this.updatePercentage();
+    }
+
+    decrease() {
+        this.bottleCount = Math.max(this.bottleCount - 1, 0);
+        this.updatePercentage();
+    }
+
+    updatePercentage() {
+        this.percentage = (this.bottleCount / this.maxBottles) * 100;
+        this.setPercentage(this.percentage);
     }
 
     /**

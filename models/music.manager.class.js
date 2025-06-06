@@ -67,6 +67,8 @@ class MusicManager {
         // Set background music properties
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.5;
+
+        this.collectBotle = new Audio('audio/collect-botle.wav')
     }
 
     /**
@@ -154,6 +156,12 @@ class MusicManager {
     playBottleThrowSound() {
         if (!this.isMuted) {
             this.bottleThrow.play();
+        }
+    }
+
+    playCollectBotleSound() {
+        if (!this.isMuted) {
+            this.collectBotle.play();
         }
     }
 

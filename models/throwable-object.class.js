@@ -10,13 +10,14 @@ class ThrowableObject extends MoveableObject {
      * @param {number} x - The x-coordinate where the bottle is thrown.
      * @param {number} y - The y-coordinate where the bottle is thrown.
      */
-    constructor(x, y) {
+    constructor(x, y, throwLeft) {
         super().loadImage('img/6_salsa_bottle/salsa_bottle.png');
         this.x = x;
         this.y = y;
         this.height = 60; 
         this.width = 40; 
         this.throw(); 
+        this.throwLeft = throwLeft;
     }
 
     /**
@@ -32,7 +33,8 @@ class ThrowableObject extends MoveableObject {
          * Runs every 25 milliseconds to simulate motion.
          */
         this.throwInterval = setInterval(() => {
-            this.x += 20; 
+            this.x += this.throwLeft ? -10 : 10;
         }, 25);
     }
+    
 }

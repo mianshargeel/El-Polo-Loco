@@ -55,6 +55,43 @@ class World {
         this.gameStarted = false;
         this.setupFullscreenControls();
 
+        // this.showBottles();
+        this.bottleStatusbar = new BottleStatusbar();
+        this.bottleStatusbar.setPercentage(0); 
+
+    }
+
+    // showBottles() {
+    //     if (!this.level) {
+    //         this.level = { bottles: [] }; // Fallback initialization
+    //     }
+    //     this.level.bottles = []; // Clear existing bottles
+    //     const positions = [
+    //         {x: 500, y: World.GROUND_Y - 60},
+    //         {x: 650, y: World.GROUND_Y - 60},
+    //         {x: 800, y: World.GROUND_Y - 60},
+    //         {x: 1000, y: World.GROUND_Y - 60},
+    //         {x: 1200, y: World.GROUND_Y - 60},
+    //         {x: 1700, y: World.GROUND_Y - 60},
+    //         {x: 1850, y: World.GROUND_Y - 60},
+    //         {x: 2000, y: World.GROUND_Y - 60}
+    //     ];
+        
+    //     positions.forEach(pos => {
+    //         this.level.bottles.push(new BottleOnGround(pos.x, pos.y));
+    //     });
+    // }
+    
+    checkPepeBottleCollection() {
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle) && !bottle.collected) {
+                if (bottle.collect()) {
+                    this.level.bottles.splice(index, 1);
+                    this.bottleStatusbar.increase();
+                    this.musicManager.playCollectBotleSound();
+                }
+            }
+        });
     }
 
     // In World class:
@@ -178,6 +215,7 @@ class World {
                 this.checkCollisions();
                 this.checkThrowObject();
                 this.checkBottleCollisions();
+                this.checkPepeBottleCollection();
             }
         }, 200);
     }
@@ -277,11 +315,19 @@ class World {
     }
     /** Check if a throwable object (bottle) should be thrown */
     checkThrowObject() {
-        if (this.keyboard.D && this.bottleStatusbar.percentage > 0) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+        if (this.keyboard.D && this.bottleStatusbar.bottleCount > 0) {
+            const throwDirection = this.character.otherDirection ? -1 : 1;
+            const offsetX = this.character.otherDirection ? -100 : 100;
+            
+            let bottle = new ThrowableObject(
+                this.character.x + offsetX,
+                this.character.y + 100,
+                this.character.otherDirection // Pass direction to bottle
+            );
+            
             this.throwableObject.push(bottle);
-            this.musicManager.playBottleThrowSound();//sound at every throw
-            this.bottleStatusbar.useBottle();
+            this.musicManager.playBottleThrowSound();
+            this.bottleStatusbar.decrease();
         }
     }
     /** Check for collisions with bottles */
@@ -308,7 +354,7 @@ class World {
     }
     
     goToMainMenu() {
-        console.log("🏠 Going to main menu...");
+        console.log(" Going to main menu...");
         setTimeout(() => {
             window.location.href = "index.html"; // Replace with your main menu URL
         }, 100);
@@ -336,6 +382,7 @@ class World {
         this.enemies = [];
         this.throwableObject = [];
         this.coins = [];
+        this.bottles = [];
         this.character = null;
         this.level = null;
         this.camera_x = 0;
@@ -349,9 +396,31 @@ class World {
         this.level = new Level(
             [new Chicken(), new Chicken(), new Chicken()],
             [...level1.clouds],
-            [...level1.backgroundObjects]
+            [...level1.backgroundObjects],
+            this.createBottles() 
         );
         this.enemies = [...this.level.enemies];
+    }
+
+    createBottles() {
+        const bottles = [];
+        // gnerate botles from at every restart
+        const positions = [
+            {x: 500, y: World.GROUND_Y - 60},
+            {x: 650, y: World.GROUND_Y - 60},
+            {x: 800, y: World.GROUND_Y - 60},
+            {x: 1000, y: World.GROUND_Y - 60},
+            {x: 1200, y: World.GROUND_Y - 60},
+            {x: 1700, y: World.GROUND_Y - 60},
+            {x: 1850, y: World.GROUND_Y - 60},
+            {x: 2000, y: World.GROUND_Y - 60}
+        ];
+        
+        positions.forEach(pos => {
+            bottles.push(new BottleOnGround(pos.x, pos.y));
+        });
+        
+        return bottles;
     }
 
     /**
@@ -384,6 +453,7 @@ class World {
      * Starts the game loop, background music, and animation rendering.
      */
     startGameLoop() {
+        this.createBottles();
         this.musicManager.playBackGroundMusic();
         if (this.winPopup) {
             this.winPopup.hide();
@@ -491,7 +561,7 @@ class World {
         if (this.enemies) this.enemies.forEach(enemy => this.addToMap(enemy));
         if (this.throwableObject) this.addArrayObjectToMap(this.throwableObject);
         if (this.coins) this.addArrayObjectToMap(this.coins);
-        if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles);
+        if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles); 
     }
         /**
      * Restores the camera position after rendering.
