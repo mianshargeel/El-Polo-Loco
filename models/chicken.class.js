@@ -69,14 +69,19 @@ class Chicken extends MoveableObject {
      * Animates the chicken's movement and walking animation.
      */
     animate() {
-        setInterval(() => {
-            this.moveLeft();
-        }, 1000 / 60); // 60FPS movement update.
-        
-        setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
-        }, 200); // Change sprite every 200ms.
+        this.walkingInterval = setInterval(() => {
+            if (this.world?.gameStarted && !this.isDead) {
+                this.moveLeft();
+            }
+        }, 1000 / 60); // 60 FPS
+    
+        this.animationInterval = setInterval(() => {
+            if (this.world?.gameStarted && !this.isDead) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+        }, 200); // Change sprite every 200ms
     }
+    
 
     /**
      * Updates the chicken's movement logic.
@@ -85,25 +90,26 @@ class Chicken extends MoveableObject {
         this.moveLeft();
     }
    // In Chicken class
-die() {
-    if (this.isDead) return;
-    this.isDead = true;
-    this.speed = 0;
-    
-    // Force show dead sprite immediately
-    this.img = this.imageCache[this.IMAGES_DEAD[0]];
-    
-    // Clear any animation intervals
-    clearInterval(this.walkingInterval);
-    clearInterval(this.animationInterval);
+    die() {
+        if (this.isDead) return;
+        this.isDead = true;
+        this.speed = 0;
+        
+        // Show dead sprite
+        this.img = this.imageCache[this.IMAGES_DEAD[0]];
 
-    // Remove after delay (300ms)
-    setTimeout(() => {
-        const index = this.level?.enemies?.indexOf(this);
-        if (index > -1) {
-            this.level.enemies.splice(index, 1);
-        }
-    }, 300);
-}
+        // Clear intervals
+        clearInterval(this.walkingInterval);
+        clearInterval(this.animationInterval);
+
+        // Remove after 300ms
+        setTimeout(() => {
+            const index = this.level?.enemies?.indexOf(this);
+            if (index > -1) {
+                this.level.enemies.splice(index, 1);
+            }
+        }, 300);
+    }
+
     
 }

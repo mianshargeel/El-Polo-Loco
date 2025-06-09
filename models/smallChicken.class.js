@@ -32,14 +32,18 @@ class SmallChicken extends MoveableObject {
   } 
 
   animate() {
-      setInterval(() => {
-          this.moveLeft();
-      }, 1000 / 60);
-      
-      setInterval(() => {
-          this.playAnimation(this.IMAGES_WALKING);
-      }, 200);
-  }
+    this.walkingInterval = setInterval(() => {
+        if (this.world?.gameStarted && !this.isDead) {
+            this.moveLeft();
+        }
+    }, 1000 / 60); // 60 FPS
+
+    this.animationInterval = setInterval(() => {
+        if (this.world?.gameStarted && !this.isDead) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }, 200); // Change sprite every 200ms
+}
 
   update() {
       this.moveLeft();
@@ -49,17 +53,20 @@ class SmallChicken extends MoveableObject {
         if (this.isDead) return;
         this.isDead = true;
         this.speed = 0;
-        this.img = this.imageCache[this.IMAGES_DEAD[0]]; // Show dead sprite immediately
-    
-        // Optional: Squash effect for visual feedback
-        this.height = 60;
-        this.y += 20;
-    
+        
+        // Show dead sprite
+        this.img = this.imageCache[this.IMAGES_DEAD[0]];
+
+        // Clear intervals
+        clearInterval(this.walkingInterval);
+        clearInterval(this.animationInterval);
+
+        // Remove after 300ms
         setTimeout(() => {
-            if (this.level?.enemies) {
-                const index = this.level.enemies.indexOf(this);
-                if (index > -1) this.level.enemies.splice(index, 1);
+            const index = this.level?.enemies?.indexOf(this);
+            if (index > -1) {
+                this.level.enemies.splice(index, 1);
             }
-        }, 400);
+        }, 300);
     }
 }
