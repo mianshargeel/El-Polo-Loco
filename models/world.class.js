@@ -55,32 +55,10 @@ class World {
         this.gameStarted = false;
         this.setupFullscreenControls();
 
-        // this.showBottles();
         this.bottleStatusbar = new BottleStatusbar();
         this.bottleStatusbar.setPercentage(0); 
 
     }
-
-    // showBottles() {
-    //     if (!this.level) {
-    //         this.level = { bottles: [] }; // Fallback initialization
-    //     }
-    //     this.level.bottles = []; // Clear existing bottles
-    //     const positions = [
-    //         {x: 500, y: World.GROUND_Y - 60},
-    //         {x: 650, y: World.GROUND_Y - 60},
-    //         {x: 800, y: World.GROUND_Y - 60},
-    //         {x: 1000, y: World.GROUND_Y - 60},
-    //         {x: 1200, y: World.GROUND_Y - 60},
-    //         {x: 1700, y: World.GROUND_Y - 60},
-    //         {x: 1850, y: World.GROUND_Y - 60},
-    //         {x: 2000, y: World.GROUND_Y - 60}
-    //     ];
-        
-    //     positions.forEach(pos => {
-    //         this.level.bottles.push(new BottleOnGround(pos.x, pos.y));
-    //     });
-    // }
     
     checkPepeBottleCollection() {
         this.level.bottles.forEach((bottle, index) => {

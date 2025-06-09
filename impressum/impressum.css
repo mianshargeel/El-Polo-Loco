@@ -20,6 +20,12 @@
   padding: 20px;
   position: relative;
   overflow-y: auto;
+  font-family: 'zabras', Arial, sans-serif;
+  font-size: 18px;
+  background: url('./../img/bg/wood-texture.jpg') center/cover no-repeat;
+  color: #fff;
+  text-align: center;
+  word-spacing: 5px;
 }
 
 .close-button {
@@ -28,9 +34,9 @@
   right: 10px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
-  color: #333;
+  color: #fff;
 }
 
 /* Loading and content styles */
