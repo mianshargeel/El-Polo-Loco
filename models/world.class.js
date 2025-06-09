@@ -268,19 +268,54 @@ class World {
     }
     /** Check for collisions with chickens */
     checkCollisionWithChicken() {
-        this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isCollidingFromTop(enemy)) {
-                this.character.speedY = -12;
-                this.level.enemies.splice(index, 1);
-                this.musicManager.enemyKilledSound();
-                this.character.energy = Math.min(this.character.energy + 20, 100);
-                this.statusBar.setPercentage(this.character.energy);
-            } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-                this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
+        const enemiesCopy = [...this.level.enemies];
+        enemiesCopy.forEach((enemy) => {
+            if (this.isTopCollision(enemy)) {
+                this.handleEnemyCollision(enemy);
+            } else if (this.isRegularCollision(enemy)) {
+                this.handleCharacterHit(enemy);
             }
         });
     }
+    
+    isTopCollision(enemy) {
+        return this.character.isCollidingFromTop(enemy) ||
+            (this.character.speedY > 0 &&
+             this.character.x + this.character.width > enemy.x &&
+             this.character.x < enemy.x + enemy.width);
+    }
+    
+    isRegularCollision(enemy) {
+        return this.character.isColliding(enemy) && !this.character.isHurt();
+    }
+    
+    handleEnemyCollision(enemy) {
+        enemy.level ??= this.level;
+        this.character.speedY = -12;
+        this.processEnemyDeath(enemy);
+        this.musicManager.enemyKilledSound();
+        this.updateCharacterEnergy(20);
+    }
+    
+    processEnemyDeath(enemy) {
+        if (typeof enemy.die === 'function' && !enemy.isDead) {
+            enemy.die();
+        } else {
+            this.level.enemies = this.level.enemies.filter(e => e !== enemy);
+        }
+    }
+    
+    handleCharacterHit(enemy) {
+        this.character.hit();
+        this.updateCharacterEnergy(0);
+    }
+    
+    updateCharacterEnergy(boost) {
+        this.character.energy = Math.min(this.character.energy + boost, 100);
+        this.statusBar.setPercentage(this.character.energy);
+    }
+    
+    
     /** Check for collisions with coins */
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {

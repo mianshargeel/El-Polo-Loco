@@ -95,10 +95,15 @@ class MoveableObject extends DrawableObject { // Parent class
      * @returns {boolean} - `true` if collision is from above, `false` otherwise.
      */
     isCollidingFromTop(mo) {
-        const threshold = 50; // Buffer to make collision smoother
-        return this.isColliding(mo) && 
-               this.y + this.height >= mo.y && 
-               this.y + this.height <= mo.y + threshold;
+        const pepeFootY = this.y + this.height;
+        const chickenTopY = mo.y;
+        const threshold = 30; // Tighter collision zone (adjust as needed)
+        
+        return (
+            this.isColliding(mo) &&
+            pepeFootY >= chickenTopY &&
+            pepeFootY <= chickenTopY + threshold
+        );
     }
 
     /**

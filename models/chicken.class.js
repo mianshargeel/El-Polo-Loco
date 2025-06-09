@@ -35,6 +35,11 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/1_walk/3_w.png'
     ]; // Array holding all walking chicken images.
 
+    IMAGES_DEAD = [
+        'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
+    ];
+    isDead = false;
+
     /**
      * Health points of the chicken.
      * @type {number}
@@ -49,12 +54,13 @@ class Chicken extends MoveableObject {
         super();
         this.loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'); 
         this.preloadImages(this.IMAGES_WALKING);
+        this.preloadImages(this.IMAGES_DEAD);
 
         const groundY = 430; // Ground line!
         this.y = groundY - this.height;
         
-        this.x = 700 + Math.random() * 500; 
-        this.speed = 0.15 + Math.random() * 0.5; 
+        this.x = startX;
+        this.speed = 0.15 + Math.random() * 1.5; 
 
         this.animate();
     } 
@@ -78,4 +84,26 @@ class Chicken extends MoveableObject {
     update() {
         this.moveLeft();
     }
+   // In Chicken class
+die() {
+    if (this.isDead) return;
+    this.isDead = true;
+    this.speed = 0;
+    
+    // Force show dead sprite immediately
+    this.img = this.imageCache[this.IMAGES_DEAD[0]];
+    
+    // Clear any animation intervals
+    clearInterval(this.walkingInterval);
+    clearInterval(this.animationInterval);
+
+    // Remove after delay (300ms)
+    setTimeout(() => {
+        const index = this.level?.enemies?.indexOf(this);
+        if (index > -1) {
+            this.level.enemies.splice(index, 1);
+        }
+    }, 300);
+}
+    
 }
