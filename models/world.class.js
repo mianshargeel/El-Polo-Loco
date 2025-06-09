@@ -72,34 +72,17 @@ class World {
         });
     }
 
-    // In World class:
     setupFullscreenControls() {
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         if (!fullscreenBtn) return;
-
-        fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
-        fullscreenBtn.addEventListener('pointerdown', (e) => e.preventDefault());
-        
-        // Sync fullscreen state changes
-        document.addEventListener('fullscreenchange', () => {
-            this.isFullscreen = !!document.fullscreenElement;
-            this.adjustForFullscreen();
-        });
-    }
-
-    toggleFullscreen() {
-        if (!document.fullscreenElement) {
-            this.enterFullscreen();
-        } else {
-            this.exitFullscreen();
-        }
-    }
-
-    enterFullscreen() {
-        const element = this.canvas || document.documentElement;
-        
-        if (element.requestFullscreen) {
-            element.requestFullscreen()
+    
+        fullscreenBtn.addEventListener('click', () => {
+            // IMPORTANT → DO NOT call e.preventDefault() here!
+            // Some browsers block fullscreen if preventDefault is called!
+    
+            const fullscreenElement = document.documentElement;  // FINAL SAFE VERSION
+    
+            fullscreenElement.requestFullscreen()
                 .then(() => {
                     this.isFullscreen = true;
                     this.adjustForFullscreen();
@@ -107,19 +90,15 @@ class World {
                 .catch(err => {
                     console.error("Fullscreen error:", err);
                 });
-        }
+        });
+    
+        document.addEventListener('fullscreenchange', () => {
+            this.isFullscreen = !!document.fullscreenElement;
+            this.adjustForFullscreen();
+        });
     }
-
-    exitFullscreen() {
-        if (document.exitFullscreen) {
-            document.exitFullscreen()
-                .then(() => {
-                    this.isFullscreen = false;
-                    this.adjustForFullscreen();
-                });
-        }
-    }
-
+    
+    
     adjustForFullscreen() {
         // Add any necessary adjustments when entering/exiting fullscreen
         if (this.isFullscreen) {
@@ -130,6 +109,38 @@ class World {
 
     }
     
+    setupGameControls() { //calling in game.js
+        // Start button
+        document.getElementById('start-btn')?.addEventListener('click', () => {
+            this.startGame();
+            document.getElementById('gameInfoPopup').style.display = 'none';
+        });
+    
+        // Pause button
+        document.getElementById('pause-btn')?.addEventListener('click', () => {
+            this.togglePause();
+        });
+    
+        // Info button
+        document.getElementById('info-btn')?.addEventListener('click', () => {
+            const popup = document.getElementById('gameInfoPopup');
+            popup.style.display = 'block';
+    
+            if (this.gameStarted) {
+                this.pauseGame();
+            }
+        });
+    
+        // Close Info popup
+        document.querySelector('#gameInfoPopup .close-btn')?.addEventListener('click', () => {
+            const popup = document.getElementById('gameInfoPopup');
+            popup.style.display = 'none';
+    
+            if (this.gameStarted && this.isPaused) {
+                this.resumeGame();
+            }
+        });
+    }
 
     hideMenuButtons() {
         const startBtn = document.getElementById('start-btn');

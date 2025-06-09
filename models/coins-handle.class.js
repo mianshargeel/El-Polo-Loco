@@ -23,8 +23,8 @@ class CoinsHandle extends DrawableObject {
         this.preloadImages(this.IMAGES);
         this.x = x;
         this.y = y;
-        this.width = 90; // Coin size
-        this.height = 90; 
+        this.width = 150; // Coin size
+        this.height = 150; 
         this.setImage(this.IMAGES[0]); // Set the initial coin image
     }
 
