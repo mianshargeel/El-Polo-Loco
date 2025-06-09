@@ -123,7 +123,7 @@ class Endboss extends MoveableObject {
     initStatusBar() {
         this.statusBar = new EndbossStatusBar(
             this.maxHealth,
-            canvas.width - 170,  // x position (top-right)
+            canvas.width - 160,  // x position (top-right)
             10,                   // y position
             150,                  // width
             50,                   // height
@@ -258,9 +258,12 @@ class Endboss extends MoveableObject {
      * @param {number} damage - Amount of damage taken.
      */
     takeDamage(damage) {
+        // Ensure health doesn't go below 0
         this.health = Math.max(0, this.health - damage);
         
+        // Update status bar with new health value
         this.updateStatusBar();
+        
         this.state = 'hurt';
         this.lastHurtTime = Date.now();
     
@@ -272,10 +275,17 @@ class Endboss extends MoveableObject {
     
         if (this.health <= 0) {
             this.die();
+            // Update status bar to empty and hide it after delay
             if (this.statusBar) {
-                this.statusBar.update(0); // Set to empty
-                setTimeout(() => this.statusBar.hide(), 1000); // Hide after a delay
+                this.statusBar.update(0);
+                setTimeout(() => this.statusBar.hide(), 1000);
             }
+        }
+    }
+
+    updateStatusBar() {
+        if (this.statusBar) {
+            this.statusBar.update(this.health);
         }
     }
 

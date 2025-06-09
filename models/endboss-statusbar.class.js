@@ -19,46 +19,55 @@ class EndbossStatusBar {
       this.images = [];
       this.isVisible = false;
       
-      // Load all status bar images
-      this.imagePaths.forEach(path => {
-          let img = new Image();
-          img.src = path;
-          this.images.push(img);
-      });
+       // Preload all status bar images
+       this.preloadImages();
       
       this.img = this.images[0]; // Start with full health (blue)
   }
+
+   /**
+   * Preloads all status bar images for better performance
+   */
+   preloadImages() {
+    this.imagePaths.forEach(path => {
+        let img = new Image();
+        img.src = path;
+        this.images.push(img);
+    });
+}
   
   /**
    * Updates the status bar based on current health.
    * @param {number} currentHealth - Current health value
    */
   update(currentHealth) {
-      this.currentHealth = currentHealth;
-      const percentage = this.currentHealth / this.maxHealth;
-      
-      // Determine which image to use based on health percentage
-      if (percentage > 0.66) {
-          this.img = this.images[0]; // Blue (high health)
-      } else if (percentage > 0.33) {
-          this.img = this.images[1]; // Green (medium health)
-      } else if (percentage > 0) {
-          this.img = this.images[2]; // Orange (low health)
-      } else {
-          this.img = null; // Empty when health is 0
-      }
-  }
+    // Ensure health doesn't go below 0
+    this.currentHealth = Math.max(0, currentHealth);
+    const percentage = this.currentHealth / this.maxHealth;
+    
+    // Smooth transition between health states
+    if (percentage > 0.66) {
+        this.img = this.images[0]; // Blue (high health)
+    } else if (percentage > 0.33) {
+        this.img = this.images[1]; // Green (medium health)
+    } else if (percentage > 0) {
+        this.img = this.images[2]; // Orange (low health)
+    } else {
+        this.img = null; // Empty when health is 0
+    }
+}
+
 
   /**
    * Draws the status bar on the canvas if visible.
    * @param {CanvasRenderingContext2D} ctx - Canvas context
    */
   draw(ctx) {
-      if (this.isVisible && this.img) {
-          ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-      }
+    if (this.isVisible && this.img) {
+      // Draw health bar with smooth decrease effect
+      ctx.drawImage(this.img, this.x, this.y, this.width * (this.currentHealth / this.maxHealth), this.height);
+    }
   }
-
   /**
    * Shows the status bar.
    */
