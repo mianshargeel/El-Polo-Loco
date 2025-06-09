@@ -1,4 +1,4 @@
-class EndbossStatusBar {
+class EndbossStatusBar extends DrawableObject{
   /**
    * Creates a status bar for displaying health with three states.
    * @param {number} maxHealth - Maximum health value
@@ -9,9 +9,10 @@ class EndbossStatusBar {
    * @param {string[]} imagePaths - Array of three image paths [high, medium, low]
    */
   constructor(maxHealth, x, y, width, height, imagePaths) {
+      super();
       this.maxHealth = maxHealth;
       this.currentHealth = maxHealth;
-      this.x = x;
+      this.x = 570;
       this.y = y;
       this.width = width;
       this.height = height;

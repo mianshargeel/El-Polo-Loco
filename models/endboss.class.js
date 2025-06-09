@@ -117,6 +117,7 @@ class Endboss extends MoveableObject {
 
         this.maxHealth = 12; // Add this line
         this.health = this.maxHealth;
+        // this.statusBar = new EndbossStatusBar();
         this.initStatusBar();
     }
 
@@ -146,7 +147,8 @@ class Endboss extends MoveableObject {
         this.character = character;
         // Show status bar when character is set (when Endboss is activated)
         if (this.statusBar) {
-            this.statusBar.show();
+            this.statusBar.update(this.health); // force update value!
+            this.statusBar.show();              // force visible!
         }
     }
 
@@ -294,16 +296,23 @@ class Endboss extends MoveableObject {
      */
     die() {
         this.state = 'dead';
+    
+        // Play dead sound immediately
+        this.musicManager.playEndBossDeadSound();
+    
+        // Let dead animation play for 2s
         setTimeout(() => {
             if (!this.world) return;
-
+    
+            // Remove Endboss from world
             this.shouldRemove = true;
-            this.musicManager.playEndBossDeadSound();
             this.world.enemies = this.world.enemies.filter(enemy => enemy !== this);
-
+    
+            // Now, after Endboss is gone → show win popup!
             if (!this.world.winPopup.isVisible) {
                 this.world.playerWins();
             }
         }, 2000);
     }
+    
 }

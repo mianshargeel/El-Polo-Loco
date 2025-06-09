@@ -186,17 +186,23 @@ class World {
     }
 
 
-    /** Run the game loop */
-    run() {
-        setInterval(() => {
+    /**Main-Game-Run loop */
+    run() { 
+        if (this.runInterval) {
+            clearInterval(this.runInterval);
+        }
+    
+        this.runInterval = setInterval(() => {
             if (this.gameStarted && !this.isPaused) {
                 this.checkCollisions();
                 this.checkThrowObject();
                 this.checkBottleCollisions();
-                this.checkPepeBottleCollection();
+                this.checkPepeBottleCollection(); // to collect botles
             }
         }, 200);
     }
+    
+    
 
     togglePause() {
         if (!this.gameStarted) return;
@@ -246,7 +252,7 @@ class World {
         }
     }
 
-    runGameLoop() {
+    runGameLoop() { //at restart regenerate whole game objects
         if (this.gameLoopInterval) {
             clearInterval(this.gameLoopInterval);
         }
@@ -256,6 +262,7 @@ class World {
                 this.checkCollisions();
                 this.checkThrowObject();
                 this.checkBottleCollisions();
+                this.checkPepeBottleCollection();
             }
         }, 200);
     }
@@ -310,7 +317,7 @@ class World {
                 this.statusBar.setPercentage(this.character.energy);
             }
         });
-    }// please refactor the function so that its have max-14-lines
+    }
     
     
     
@@ -379,16 +386,16 @@ class World {
         this.initializeLevel();
         this.initializeCharacter();
         this.initializeStatusBars();
-        this.cleanUpEnemies();
         this.startGameLoop();
     }
 
     /**
-     * Resets the game state, clears intervals, and resets objects.
+     * Resets the all game-objects state, clears intervals, and resets objects.
      */
     resetGameState() {
         this.gameStarted = false;
         clearInterval(this.gameLoopInterval);
+        clearInterval(this.runInterval); 
         cancelAnimationFrame(this.animationFrame);
         this.enemies = [];
         this.throwableObject = [];
@@ -405,13 +412,29 @@ class World {
      */
     initializeLevel() {
         this.level = new Level(
-            [new Chicken(), new Chicken(), new Chicken()],
+            [
+                new Chicken(), new Chicken(), new Chicken(),
+                new SmallChicken(), new SmallChicken(),
+                new Endboss(), new Chicken()
+            ],
             [...level1.clouds],
             [...level1.backgroundObjects],
-            this.createBottles() 
+            this.createBottles()
         );
-        this.enemies = [...this.level.enemies];
+    
+        this.enemies = this.level.enemies;
+        this.enemies.forEach(enemy => {
+            enemy.world = this;
+            if (enemy instanceof Endboss) {
+                enemy.setCharacter(this.character); // this already shows status bar!
+                // ADD THIS to force status bar shown after restart:
+                enemy.statusBar.show();
+            }
+        });
     }
+    
+    
+    
 
     createBottles() {
         const bottles = [];
@@ -453,14 +476,6 @@ class World {
     }
 
     /**
-     * Removes any existing Endboss instances and creates a fresh one.
-     */
-    cleanUpEnemies() {
-        this.enemies = this.enemies.filter(enemy => !(enemy instanceof Endboss));
-        this.createNewEndboss();
-    }
-
-    /**
      * Starts the game loop, background music, and animation rendering.
      */
     startGameLoop() {
@@ -474,11 +489,10 @@ class World {
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
 
-    createNewEndboss() {
-        this.enemies = this.enemies.filter(enemy => !(enemy instanceof Endboss));
+    createEndboss() {
         let endboss = new Endboss();
         endboss.world = this;
-        endboss.health = 20;
+        endboss.health = 12;
         endboss.state = "walking";
         endboss.isDead = false;
         endboss.preloadImages(endboss.IMAGES_WALKING);
@@ -487,8 +501,11 @@ class World {
         endboss.preloadImages(endboss.IMAGES_HURT);
         endboss.preloadImages(endboss.IMAGES_DEAD);
         endboss.x = 2500;
-        this.enemies.push(endboss);
+        endboss.statusBar = new StatusbarEndboss();
+        endboss.setCharacter(this.character);
+        return endboss;
     }
+    
     /**
      * Draws all game objects onto the canvas and updates the scene.
      * Ensures proper rendering order and handles camera translation.
@@ -580,7 +597,7 @@ class World {
 
     renderGameObjects() {
         if (this.character) this.addToMap(this.character);
-        if (this.enemies) this.enemies.forEach(enemy => this.addToMap(enemy));
+        if (this.level?.enemies) this.level.enemies.forEach(enemy => this.addToMap(enemy));
         if (this.throwableObject) this.addArrayObjectToMap(this.throwableObject);
         if (this.coins) this.addArrayObjectToMap(this.coins);
         if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles); 
