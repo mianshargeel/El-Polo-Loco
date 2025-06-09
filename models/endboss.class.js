@@ -30,7 +30,7 @@ class Endboss extends MoveableObject {
      * @type {number}
      * @default 15
      */
-    health = 15;
+    health = 12;
 
     /**
      * Current state of the Endboss.
@@ -88,6 +88,12 @@ class Endboss extends MoveableObject {
         'img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
 
+    STATUSBAR_IMAGES = [
+        'img/7_statusbars/2_statusbar_endboss/blue.png',
+        'img/7_statusbars/2_statusbar_endboss/green.png',
+        'img/7_statusbars/2_statusbar_endboss/orange.png'
+    ]
+
     /**
      * Creates the Endboss with initial attributes.
      */
@@ -99,6 +105,7 @@ class Endboss extends MoveableObject {
         this.preloadImages(this.IMAGES_ATTACK);
         this.preloadImages(this.IMAGES_HURT);
         this.preloadImages(this.IMAGES_DEAD);
+        this.preloadImages(this.STATUSBAR_IMAGES);
 
         this.x = 2500;
         this.speed = 2;
@@ -107,6 +114,28 @@ class Endboss extends MoveableObject {
 
         this.animate();
         this.musicManager = new MusicManager();
+
+        this.maxHealth = 12; // Add this line
+        this.health = this.maxHealth;
+        this.initStatusBar();
+    }
+
+    initStatusBar() {
+        this.statusBar = new EndbossStatusBar(
+            this.maxHealth,
+            canvas.width - 170,  // x position (top-right)
+            10,                   // y position
+            150,                  // width
+            50,                   // height
+            this.STATUSBAR_IMAGES
+        );
+        this.statusBar.hide(); // Initially hidden
+    }
+
+    updateStatusBar() {
+        if (this.statusBar) {
+            this.statusBar.update(this.health);
+        }
     }
 
     /**
@@ -115,6 +144,10 @@ class Endboss extends MoveableObject {
      */
     setCharacter(character) {
         this.character = character;
+        // Show status bar when character is set (when Endboss is activated)
+        if (this.statusBar) {
+            this.statusBar.show();
+        }
     }
 
     /**
@@ -125,6 +158,7 @@ class Endboss extends MoveableObject {
             this.updateState();
             this.move();
             this.playAnimation(this.getAnimation());
+            this.updateStatusBar();
         }, 100);
     }
 
@@ -224,15 +258,25 @@ class Endboss extends MoveableObject {
      * @param {number} damage - Amount of damage taken.
      */
     takeDamage(damage) {
-        this.health -= damage;
+        this.health = Math.max(0, this.health - damage);
+        
+        this.updateStatusBar();
         this.state = 'hurt';
         this.lastHurtTime = Date.now();
-
+    
         setTimeout(() => {
-            if (this.health > 0) this.state = 'alert';
+            if (this.health > 0) {
+                this.state = 'alert';
+            }
         }, 500);
-
-        if (this.health <= 0) this.die();
+    
+        if (this.health <= 0) {
+            this.die();
+            if (this.statusBar) {
+                this.statusBar.update(0); // Set to empty
+                setTimeout(() => this.statusBar.hide(), 1000); // Hide after a delay
+            }
+        }
     }
 
     /**
@@ -250,6 +294,6 @@ class Endboss extends MoveableObject {
             if (!this.world.winPopup.isVisible) {
                 this.world.playerWins();
             }
-        }, 1000);
+        }, 2000);
     }
 }

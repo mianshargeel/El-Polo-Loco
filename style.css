@@ -60,7 +60,7 @@ canvas {
 .control-buttons {
     position: absolute;
     top: -28%;
-    left: 95%;
+    left: 92%;
     transform: translateX(-50%);
     display: flex;
     gap: 10px;

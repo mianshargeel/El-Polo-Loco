@@ -268,52 +268,50 @@ class World {
     }
     /** Check for collisions with chickens */
     checkCollisionWithChicken() {
+        // Make a copy of the array to avoid modification during iteration
         const enemiesCopy = [...this.level.enemies];
+        
         enemiesCopy.forEach((enemy) => {
-            if (this.isTopCollision(enemy)) {
-                this.handleEnemyCollision(enemy);
-            } else if (this.isRegularCollision(enemy)) {
-                this.handleCharacterHit(enemy);
+            const isCollidingTop = this.character.isCollidingFromTop(enemy);
+            const isRegularColliding = this.character.isColliding(enemy);
+            const isJumpKill = 
+                this.character.speedY > 0 && // Pepe is moving upward
+                this.character.x + this.character.width > enemy.x && 
+                this.character.x < enemy.x + enemy.width;
+    
+            if (isCollidingTop || isJumpKill) {
+                // Set the enemy's level reference if it doesn't have one
+                if (enemy.level === undefined) {
+                    enemy.level = this.level;
+                }
+                
+                this.character.speedY = -12; // Bounce effect
+                
+                if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
+                    if (!enemy.isDead) {  // Only process if not already dead
+                        enemy.die();
+                        this.musicManager.enemyKilledSound();
+                        this.character.energy = Math.min(this.character.energy + 20, 100);
+                        this.statusBar.setPercentage(this.character.energy);
+                    }
+                } else {
+                    // Fallback for non-Chicken enemies
+                    const index = this.level.enemies.indexOf(enemy);
+                    if (index > -1) {
+                        this.level.enemies.splice(index, 1);
+                        this.musicManager.enemyKilledSound();
+                        this.character.energy = Math.min(this.character.energy + 20, 100);
+                        this.statusBar.setPercentage(this.character.energy);
+                    }
+                }
+            } else if (isRegularColliding && !this.character.isHurt()) {
+                // Hurt the character
+                this.character.hit();
+                this.statusBar.setPercentage(this.character.energy);
             }
         });
-    }
+    }// please refactor the function so that its have max-14-lines
     
-    isTopCollision(enemy) {
-        return this.character.isCollidingFromTop(enemy) ||
-            (this.character.speedY > 0 &&
-             this.character.x + this.character.width > enemy.x &&
-             this.character.x < enemy.x + enemy.width);
-    }
-    
-    isRegularCollision(enemy) {
-        return this.character.isColliding(enemy) && !this.character.isHurt();
-    }
-    
-    handleEnemyCollision(enemy) {
-        enemy.level ??= this.level;
-        this.character.speedY = -12;
-        this.processEnemyDeath(enemy);
-        this.musicManager.enemyKilledSound();
-        this.updateCharacterEnergy(20);
-    }
-    
-    processEnemyDeath(enemy) {
-        if (typeof enemy.die === 'function' && !enemy.isDead) {
-            enemy.die();
-        } else {
-            this.level.enemies = this.level.enemies.filter(e => e !== enemy);
-        }
-    }
-    
-    handleCharacterHit(enemy) {
-        this.character.hit();
-        this.updateCharacterEnergy(0);
-    }
-    
-    updateCharacterEnergy(boost) {
-        this.character.energy = Math.min(this.character.energy + boost, 100);
-        this.statusBar.setPercentage(this.character.energy);
-    }
     
     
     /** Check for collisions with coins */
@@ -514,6 +512,17 @@ class World {
         
         // Draw all game objects (including bottles)
         this.renderGameObjects();
+
+        // Draw Endboss status bar (fixed position)
+        this.ctx.save(); // Save current canvas state
+        this.ctx.resetTransform(); // Remove all transformations
+        if (this.level?.enemies) {
+            const endboss = this.level.enemies.find(e => e instanceof Endboss);
+            if (endboss?.statusBar && endboss.health > 0) {
+                endboss.statusBar.draw(this.ctx);
+            }
+        }
+        this.ctx.restore(); // Restore previous canvas state
         
         // Draw UI elements last
         this.renderUI();
