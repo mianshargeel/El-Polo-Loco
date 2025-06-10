@@ -29,7 +29,32 @@ function initializeGameSystem() {
     detectDeviceType();
     setupCanvas();
     setupEventListeners();
+    createLandscapeWarning();
     startGame();
+}
+
+function createLandscapeWarning() {
+    const warningDiv = document.createElement('div');
+    warningDiv.className = 'landscape-warning';
+    warningDiv.textContent = 'Please turn your device to landscape mode for the best experience!';
+    document.body.appendChild(warningDiv);
+    
+    // Check orientation on load and resize
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+}
+
+function checkOrientation() {
+    const warning = document.querySelector('.landscape-warning');
+    if (!warning) return;
+    
+    if (window.innerWidth <= 1025 && window.matchMedia("(orientation: portrait)").matches) {
+        document.body.classList.add('landscape-warning-active');
+        warning.style.display = 'flex';
+    } else {
+        document.body.classList.remove('landscape-warning-active');
+        warning.style.display = 'none';
+    }
 }
 
 function detectDeviceType() {

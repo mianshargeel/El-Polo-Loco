@@ -40,16 +40,6 @@ html, body {
     text-align: center;
 }
 
-/* .game-title { //in case if using heading
-    font-family: 'zabras', Arial, sans-serif;
-    font-size: 86px;
-    color: black;
-    text-shadow: 0 0 15px rgba(0,0,0,0.5);
-    margin: 20px 0;
-    position: relative;
-    z-index: 2;
-  } */
-
 canvas {
     display: block;
     background-image: url('img/polo-loco.png');
@@ -59,8 +49,8 @@ canvas {
 
 .control-buttons {
     position: absolute;
-    top: -28%;
-    left: 92%;
+    top: -13%;
+    left: 119%;
     transform: translateX(-50%);
     display: flex;
     gap: 10px;
@@ -301,9 +291,37 @@ footer a{
 }
 
 /* Responsive Media Queries */
-@media (max-width: 1020px) {
+@media (max-width: 1025px) and (orientation: portrait) {
+    .landscape-warning {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        font-family: 'zabras', Arial, sans-serif;
+        text-align: center;
+        z-index: 2000;
+        padding: 20px;
+    }
+    
+    /* Hide game elements when warning is shown */
+    .landscape-warning-active .main-container,
+    .landscape-warning-active #mobile-controls {
+        display: none !important;
+    }
     #mobile-controls {
-        display: flex; /* Show on screens ≤ 1020px */
+        display: flex; 
+    }
+    .control-buttons{
+        position: absolute;
+        top: -3% !important;
+        left: 104% !important;
     }
 }
 
