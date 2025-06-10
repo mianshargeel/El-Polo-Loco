@@ -89,7 +89,7 @@ function resizeCanvas() {
   
     const w = window.innerWidth;
     const h = window.innerHeight;
-    // console.log(`resizeCanvas() called — window size: ${w}x${h}`);
+    console.log(`resizeCanvas() called — window size: ${w}x${h}`);
   
     const { LOGICAL_WIDTH, LOGICAL_HEIGHT, MAX_SCALE } = GAME_CONFIG;
     const scale = Math.max(Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT, MAX_SCALE), 0.8);
@@ -98,37 +98,35 @@ function resizeCanvas() {
     let ch = LOGICAL_HEIGHT * scale;
     let topPercent = '50%';
   
-    //Breakpoints for small phones (portrait & landscape)
     const isSmallPortrait = w <= 400 && h <= 750;
     const isSmallLandscape = w <= 900 && h <= 400;
   
     if (isSmallPortrait || isSmallLandscape) {
-    //   console.log('Small screen layout applied');
       cw = 537;
       ch = 350;
-      topPercent = '42%';
+      topPercent = '38%';
     }
     else if (w <= 450 && h <= 850) {
       cw = Math.min(cw, 600);
-      ch = Math.min(ch, 380);
+        ch = Math.min(ch, 380);
+        topPercent = '42%';
     }
     else if (w <= 1025) {
       cw = Math.min(cw, 720);
-      ch = Math.min(ch, 420);
+        ch = Math.min(ch, 420);
+        topPercent = '42%';
     }
     canvas.style.width = `${cw}px`;
     canvas.style.height = `${ch}px`;
     canvas.style.position = 'absolute';
     canvas.style.left = '50%';
     canvas.style.top = topPercent;
-    canvas.style.transform = 'translate(-50%, -58%)';
+    canvas.style.transform = 'translate(-50%, -50%)';
   
-    // ✅ Notify game world
     if (typeof world?.updateViewport === 'function') {
       world.updateViewport(cw, ch);
     }
   
-    // ✅ Handle custom controls if needed
     updateMobileControlsVisibility();
   }
   
