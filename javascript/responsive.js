@@ -38,8 +38,7 @@ function createLandscapeWarning() {
     warningDiv.className = 'landscape-warning';
     warningDiv.textContent = 'Please turn your device to landscape mode for the best experience!';
     document.body.appendChild(warningDiv);
-    
-    // Check orientation on load and resize
+
     checkOrientation();
     window.addEventListener('resize', checkOrientation);
 }
@@ -47,30 +46,28 @@ function createLandscapeWarning() {
 function checkOrientation() {
     const warning = document.querySelector('.landscape-warning');
     if (!warning) return;
-    
-    if (window.innerWidth <= 1025 && window.matchMedia("(orientation: portrait)").matches) {
-        document.body.classList.add('landscape-warning-active');
-        warning.style.display = 'flex';
-    } else {
-        document.body.classList.remove('landscape-warning-active');
-        warning.style.display = 'none';
+
+    const showWarning = window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT && window.matchMedia("(orientation: portrait)").matches;
+    document.body.classList.toggle('landscape-warning-active', showWarning);
+    warning.style.display = showWarning ? 'flex' : 'none';
+
+    const mobileControls = document.getElementById('mobile-controls');
+    if (mobileControls) {
+        mobileControls.style.display = (!showWarning && gameState.isMobile && !gameState.isPaused) ? 'flex' : 'none';
     }
 }
 
 function detectDeviceType() {
     gameState.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
                        window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
-    
-    // Update mobile controls visibility immediately
     updateMobileControlsVisibility();
 }
 
 function updateMobileControlsVisibility() {
-    const mobileControls = document.querySelector('.mobile-controls');
+    const mobileControls = document.getElementById('mobile-controls');
     if (!mobileControls) return;
-    
-    // Show controls if mobile and game is not paused
-    if (gameState.isMobile && !gameState.isPaused) {
+
+    if (gameState.isMobile && !gameState.isPaused && !document.body.classList.contains('landscape-warning-active')) {
         mobileControls.style.display = 'flex';
     } else {
         mobileControls.style.display = 'none';
@@ -87,129 +84,121 @@ function setupCanvas() {
 }
 
 function resizeCanvas() {
-    if (!gameState.canvas) return;
-
-    const { LOGICAL_WIDTH, LOGICAL_HEIGHT, ASPECT_RATIO, MAX_SCALE } = GAME_CONFIG;
-    const windowRatio = window.innerWidth / window.innerHeight;
-
-    // Unified scaling approach for all devices
-    let scale = Math.min(
-        window.innerWidth / LOGICAL_WIDTH,
-        window.innerHeight / LOGICAL_HEIGHT,
-        MAX_SCALE
-    );
-
-    // Apply minimum scale to prevent UI from becoming too small
-    scale = Math.max(scale, 0.8);
-
-    const canvasWidth = LOGICAL_WIDTH * scale;
-    const canvasHeight = LOGICAL_HEIGHT * scale;
-
-    // Apply styles - ALWAYS center both horizontally and vertically
-    gameState.canvas.style.width = `${canvasWidth}px`;
-    gameState.canvas.style.height = `${canvasHeight}px`;
-    gameState.canvas.style.position = 'absolute';
-    gameState.canvas.style.left = '50%';
-    gameState.canvas.style.top = '50%';
-    gameState.canvas.style.transform = 'translate(-50%, -50%)';
-
-    // Critical: Update the game world's viewport dimensions
-    if (typeof world !== 'undefined' && world.updateViewport) {
-        world.updateViewport(canvasWidth, canvasHeight);
+    const canvas = gameState.canvas;
+    if (!canvas) return;
+  
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    // console.log(`resizeCanvas() called — window size: ${w}x${h}`);
+  
+    const { LOGICAL_WIDTH, LOGICAL_HEIGHT, MAX_SCALE } = GAME_CONFIG;
+    const scale = Math.max(Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT, MAX_SCALE), 0.8);
+  
+    let cw = LOGICAL_WIDTH * scale;
+    let ch = LOGICAL_HEIGHT * scale;
+    let topPercent = '50%';
+  
+    //Breakpoints for small phones (portrait & landscape)
+    const isSmallPortrait = w <= 400 && h <= 750;
+    const isSmallLandscape = w <= 900 && h <= 400;
+  
+    if (isSmallPortrait || isSmallLandscape) {
+    //   console.log('Small screen layout applied');
+      cw = 537;
+      ch = 350;
+      topPercent = '42%';
     }
-}
+    else if (w <= 450 && h <= 850) {
+      cw = Math.min(cw, 600);
+      ch = Math.min(ch, 380);
+    }
+    else if (w <= 1025) {
+      cw = Math.min(cw, 720);
+      ch = Math.min(ch, 420);
+    }
+    canvas.style.width = `${cw}px`;
+    canvas.style.height = `${ch}px`;
+    canvas.style.position = 'absolute';
+    canvas.style.left = '50%';
+    canvas.style.top = topPercent;
+    canvas.style.transform = 'translate(-50%, -58%)';
+  
+    // ✅ Notify game world
+    if (typeof world?.updateViewport === 'function') {
+      world.updateViewport(cw, ch);
+    }
+  
+    // ✅ Handle custom controls if needed
+    updateMobileControlsVisibility();
+  }
+  
+  
+
 // ==================== BUTTON HANDLERS ====================
 
 function setupEventListeners() {
-    // Continue Button
-    document.getElementById('continueGame').addEventListener('click', () => {
-        if (world) {
-            world.isPaused = false;
-            world.resumeGame();
-            document.getElementById('pausePopup').style.display = 'none';
-        }
-    });
+    const continueBtn = document.getElementById('continueGame');
+    if (continueBtn) {
+        continueBtn.addEventListener('click', () => {
+            if (world) {
+                world.isPaused = false;
+                world.resumeGame();
+                document.getElementById('pausePopup').style.display = 'none';
+            }
+        });
+    }
 
-    // mobile control event listeners
     if (gameState.isMobile) {
         setupMobileControls();
     }
 
+    window.addEventListener('resize', debounce(() => {
+        resizeCanvas();
+        checkOrientation();
+    }, 100));
 
-    // Window events
-    window.addEventListener('resize', debounce(resizeCanvas, 100));
     document.addEventListener('fullscreenchange', () => {
         gameState.isFullscreen = !!document.fullscreenElement;
     });
 }
 
 function setupMobileControls() {
-    const leftBtn = document.getElementById('left-btn');
-    const rightBtn = document.getElementById('right-btn');
-    const jumpBtn = document.getElementById('jump-btn');
-    const throwBtn = document.getElementById('throw-btn');
+    const controls = [
+        { id: 'left-btn', key: 'LEFT' },
+        { id: 'right-btn', key: 'RIGHT' },
+        { id: 'jump-btn', key: 'UP' },
+        { id: 'throw-btn', key: 'D' }
+    ];
 
-    // More reliable event handling
-    const handleButtonPress = (key) => {
-        console.log(`${key} pressed (mobile)`);
-        window.keyboard[key] = true;
-        
-        // Special case: Also trigger SPACE when UP is pressed
-        if (key === 'UP') window.keyboard.SPACE = true;
-    };
+    controls.forEach(({ id, key }) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
 
-    const handleButtonRelease = (key) => {
-        console.log(`${key} released (mobile)`);
-        window.keyboard[key] = false;
-        
-        // Special case: Also release SPACE when UP is released
-        if (key === 'UP') window.keyboard.SPACE = false;
-    };
+        const press = () => {
+            window.keyboard[key] = true;
+            if (key === 'UP') window.keyboard.SPACE = true;
+        };
 
-    // Touch event handlers
-    const setupTouchControls = (element, key) => {
-        element.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            handleButtonPress(key);
-        });
+        const release = () => {
+            window.keyboard[key] = false;
+            if (key === 'UP') window.keyboard.SPACE = false;
+        };
 
-        element.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleButtonRelease(key);
-        });
+        btn.addEventListener('touchstart', e => { e.preventDefault(); press(); });
+        btn.addEventListener('touchend', e => { e.preventDefault(); release(); });
+        btn.addEventListener('touchcancel', e => { e.preventDefault(); release(); });
 
-        element.addEventListener('touchcancel', (e) => {
-            e.preventDefault();
-            handleButtonRelease(key);
-        });
-    };
-
-    // Mouse event handlers (for testing)
-    const setupMouseControls = (element, key) => {
-        element.addEventListener('mousedown', () => handleButtonPress(key));
-        element.addEventListener('mouseup', () => handleButtonRelease(key));
-        element.addEventListener('mouseleave', () => handleButtonRelease(key));
-    };
-
-    // Set up all controls
-    setupTouchControls(leftBtn, 'LEFT');
-    setupMouseControls(leftBtn, 'LEFT');
-    
-    setupTouchControls(rightBtn, 'RIGHT');
-    setupMouseControls(rightBtn, 'RIGHT');
-    
-    setupTouchControls(jumpBtn, 'UP');
-    setupMouseControls(jumpBtn, 'UP');
-    
-    setupTouchControls(throwBtn, 'D');
-    setupMouseControls(throwBtn, 'D');
+        btn.addEventListener('mousedown', press);
+        btn.addEventListener('mouseup', release);
+        btn.addEventListener('mouseleave', release);
+    });
 }
 
 // ==================== UTILITIES ====================
 
 function debounce(func, delay) {
     let timeout;
-    return function() {
+    return function () {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, arguments), delay);
     };
@@ -223,5 +212,4 @@ function startGame() {
     }
 }
 
-// Initialize when ready
 document.addEventListener('DOMContentLoaded', initializeGameSystem);

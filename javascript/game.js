@@ -23,19 +23,25 @@ let gameInfoPopup;
 
 function init() {
   try {
-      // 1. Get canvas element
-      canvas = document.getElementById('canvas');
-      if (!canvas) throw new Error('Canvas element not found!');
+    // 1. Get canvas element
+    const canvas = document.getElementById('canvas');
+    if (!canvas) throw new Error('Canvas element not found!');
+    gameState.canvas = canvas; // store in shared state
 
-      // 2. Initialize game world
-      world = new World(canvas, window.keyboard);
+    // 2. Initialize game world
+    world = new World(canvas, window.keyboard);
 
-      // 3. Setup game controls
-      world.setupGameControls();
-      world.setupFullscreenControls();
+    // 3. Setup game controls
+    world.setupGameControls();
+    world.setupFullscreenControls();
+
+    // 4. Resize canvas and attach responsive listeners
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
 
   } catch (error) {
-      console.error('Initialization error:', error);
+    console.error('Initialization error:', error);
   }
 }
 
