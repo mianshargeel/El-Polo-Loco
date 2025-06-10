@@ -12,7 +12,7 @@ const GAME_CONFIG = {
     LOGICAL_WIDTH: 720,
     LOGICAL_HEIGHT: 480,
     ASPECT_RATIO: 720 / 480,
-    MOBILE_BREAKPOINT: 768,
+    MOBILE_BREAKPOINT: 1025,
     MAX_SCALE: 2.0
 };
 
@@ -60,6 +60,21 @@ function checkOrientation() {
 function detectDeviceType() {
     gameState.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
                        window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
+    
+    // Update mobile controls visibility immediately
+    updateMobileControlsVisibility();
+}
+
+function updateMobileControlsVisibility() {
+    const mobileControls = document.querySelector('.mobile-controls');
+    if (!mobileControls) return;
+    
+    // Show controls if mobile and game is not paused
+    if (gameState.isMobile && !gameState.isPaused) {
+        mobileControls.style.display = 'flex';
+    } else {
+        mobileControls.style.display = 'none';
+    }
 }
 
 function setupCanvas() {
@@ -77,18 +92,32 @@ function resizeCanvas() {
     const { LOGICAL_WIDTH, LOGICAL_HEIGHT, ASPECT_RATIO, MAX_SCALE } = GAME_CONFIG;
     const windowRatio = window.innerWidth / window.innerHeight;
 
-    let scale = (windowRatio > ASPECT_RATIO)
-        ? Math.min(window.innerHeight / LOGICAL_HEIGHT, MAX_SCALE)
-        : Math.min(window.innerWidth / LOGICAL_WIDTH, MAX_SCALE);
+    // Unified scaling approach for all devices
+    let scale = Math.min(
+        window.innerWidth / LOGICAL_WIDTH,
+        window.innerHeight / LOGICAL_HEIGHT,
+        MAX_SCALE
+    );
 
-    gameState.canvas.style.width = `${LOGICAL_WIDTH * scale}px`;
-    gameState.canvas.style.height = `${LOGICAL_HEIGHT * scale}px`;
+    // Apply minimum scale to prevent UI from becoming too small
+    scale = Math.max(scale, 0.8);
+
+    const canvasWidth = LOGICAL_WIDTH * scale;
+    const canvasHeight = LOGICAL_HEIGHT * scale;
+
+    // Apply styles - ALWAYS center both horizontally and vertically
+    gameState.canvas.style.width = `${canvasWidth}px`;
+    gameState.canvas.style.height = `${canvasHeight}px`;
     gameState.canvas.style.position = 'absolute';
     gameState.canvas.style.left = '50%';
     gameState.canvas.style.top = '50%';
     gameState.canvas.style.transform = 'translate(-50%, -50%)';
-}
 
+    // Critical: Update the game world's viewport dimensions
+    if (typeof world !== 'undefined' && world.updateViewport) {
+        world.updateViewport(canvasWidth, canvasHeight);
+    }
+}
 // ==================== BUTTON HANDLERS ====================
 
 function setupEventListeners() {
@@ -101,11 +130,79 @@ function setupEventListeners() {
         }
     });
 
+    // mobile control event listeners
+    if (gameState.isMobile) {
+        setupMobileControls();
+    }
+
+
     // Window events
     window.addEventListener('resize', debounce(resizeCanvas, 100));
     document.addEventListener('fullscreenchange', () => {
         gameState.isFullscreen = !!document.fullscreenElement;
     });
+}
+
+function setupMobileControls() {
+    const leftBtn = document.getElementById('left-btn');
+    const rightBtn = document.getElementById('right-btn');
+    const jumpBtn = document.getElementById('jump-btn');
+    const throwBtn = document.getElementById('throw-btn');
+
+    // More reliable event handling
+    const handleButtonPress = (key) => {
+        console.log(`${key} pressed (mobile)`);
+        window.keyboard[key] = true;
+        
+        // Special case: Also trigger SPACE when UP is pressed
+        if (key === 'UP') window.keyboard.SPACE = true;
+    };
+
+    const handleButtonRelease = (key) => {
+        console.log(`${key} released (mobile)`);
+        window.keyboard[key] = false;
+        
+        // Special case: Also release SPACE when UP is released
+        if (key === 'UP') window.keyboard.SPACE = false;
+    };
+
+    // Touch event handlers
+    const setupTouchControls = (element, key) => {
+        element.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleButtonPress(key);
+        });
+
+        element.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleButtonRelease(key);
+        });
+
+        element.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            handleButtonRelease(key);
+        });
+    };
+
+    // Mouse event handlers (for testing)
+    const setupMouseControls = (element, key) => {
+        element.addEventListener('mousedown', () => handleButtonPress(key));
+        element.addEventListener('mouseup', () => handleButtonRelease(key));
+        element.addEventListener('mouseleave', () => handleButtonRelease(key));
+    };
+
+    // Set up all controls
+    setupTouchControls(leftBtn, 'LEFT');
+    setupMouseControls(leftBtn, 'LEFT');
+    
+    setupTouchControls(rightBtn, 'RIGHT');
+    setupMouseControls(rightBtn, 'RIGHT');
+    
+    setupTouchControls(jumpBtn, 'UP');
+    setupMouseControls(jumpBtn, 'UP');
+    
+    setupTouchControls(throwBtn, 'D');
+    setupMouseControls(throwBtn, 'D');
 }
 
 // ==================== UTILITIES ====================
