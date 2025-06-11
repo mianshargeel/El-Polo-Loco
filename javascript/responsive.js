@@ -89,7 +89,7 @@ function resizeCanvas() {
   
     const w = window.innerWidth;
     const h = window.innerHeight;
-    console.log(`resizeCanvas() called — window size: ${w}x${h}`);
+    // console.log(`resizeCanvas() called — window size: ${w}x${h}`);
   
     const { LOGICAL_WIDTH, LOGICAL_HEIGHT, MAX_SCALE } = GAME_CONFIG;
     const scale = Math.max(Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT, MAX_SCALE), 0.8);

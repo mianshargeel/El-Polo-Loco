@@ -124,7 +124,7 @@ class Endboss extends MoveableObject {
     initStatusBar() {
         this.statusBar = new EndbossStatusBar(
             this.maxHealth,
-            canvas.width - 160,  // x position (top-right)
+            2500 - 160,  // x position (top-right)
             10,                   // y position
             150,                  // width
             50,                   // height

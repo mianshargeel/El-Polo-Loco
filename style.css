@@ -372,7 +372,22 @@ body.landscape-warning-active #mobile-controls {
         font-size: 24px;
     }
 }
+@media (max-width: 900px) and (orientation: landscape) {
+    .control-buttons {
+        position: absolute;
+        top: 51px !important;
+        right: 172px !important;
+    }
+    .control-buttons button {
+        width: 48px;
+        height: 30px;
+    }
+    .menu-buttons button{
+        min-width: 140px;
+        font-size: 24px;
+    }
 
+}
 @media (max-width: 720px) and (orientation: landscape) {
     .popup {
         width: 90%;
