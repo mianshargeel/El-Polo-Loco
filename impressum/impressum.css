@@ -22,7 +22,7 @@
   overflow-y: auto;
   font-family: 'zabras', Arial, sans-serif;
   font-size: 20px;
-  background: url('./../img/bg/wood-texture.jpg') center/cover no-repeat;
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   text-align: center;
   word-spacing: 5px;
@@ -54,4 +54,17 @@
 
 .impressum-content a:hover {
   text-decoration: underline;
+}
+.links-color{
+  color: yellow !important;
+}
+
+@media (max-width: 1025px) {
+  .dialog-content{
+    width: 700px;
+    height: auto;
+  }
+  footer a {
+    font-size: 16px;
+  }
 }
