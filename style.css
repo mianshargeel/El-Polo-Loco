@@ -200,7 +200,7 @@ canvas.paused {
     transform: scale(1.05);
 }
 
-/* === 🟢 PAUSE POPUP STYLES === */
+/* === PAUSE POPUP STYLES === */
 #pausePopup {
     display: none; 
     position: fixed;
@@ -286,13 +286,13 @@ footer a{
 
 #left-controls {
     left: 2vw;
-    bottom: 3vh;
+    bottom: -44vh;
     position: absolute;
 }
 
 #right-controls {
     right: 2vw;
-    bottom: 3vh;
+    bottom: -44vh;
     position: absolute;
 }
 
@@ -300,7 +300,7 @@ footer a{
     min-width: 60px;
     min-height: 60px;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(255, 255, 255, 0.4);
     color: white;
     display: flex;
@@ -317,6 +317,9 @@ footer a{
 .control-btn:active {
     transform: scale(0.95);
     opacity: 1;
+}
+.mobile-botle-throw{
+    width: 60px;
 }
 
 /* === LANDSCAPE WARNING === */
@@ -351,14 +354,22 @@ body.landscape-warning-active #mobile-controls {
     }
 
     .control-btn {
-        min-width: 50px;
-        min-height: 50px;
+        min-width: 80px;
+        min-height: 80px;
     }
 
     .control-buttons {
         position: absolute;
-        top: 10px !important;
-        right: 100px !important;
+        top: 46px !important;
+        right: 136px !important;
+    }
+    .control-buttons button {
+        width: 54px;
+        height: 30px;
+    }
+    .menu-buttons button{
+        min-width: 140px;
+        font-size: 24px;
     }
 }
 
@@ -383,7 +394,27 @@ body.landscape-warning-active #mobile-controls {
 
     #left-controls,
     #right-controls {
-        bottom: 2vh;
+        bottom: -44vh;
+    }
+    .control-btn {
+        min-width: 50px !important;
+        min-height: 50px !important;
+    }
+    .mobile-botle-throw{
+        width: 40px !important;
+    }
+    .control-buttons {
+        position: absolute;
+        top: 52px !important;
+        right: 140px !important;
+    }
+    .control-buttons button {
+        width: 44px;
+        height: 28px;
+    }
+    .menu-buttons button{
+        min-width: 120px;
+        font-size: 14px;
     }
 }
 
@@ -394,7 +425,6 @@ body.landscape-warning-active #mobile-controls {
         width: 100vw;
         overflow: hidden;
     }
-
     .popup {
         width: 100%;
     }
