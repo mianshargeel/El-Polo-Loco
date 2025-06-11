@@ -9,7 +9,6 @@ class World {
      * @param {Keyboard} keyboard - The keyboard input handler for the game.
      */
     character = new Character();
-    level = level1;
     ctx;
     canvas;
     keyboard;
@@ -35,7 +34,6 @@ class World {
         this.character = new Character(this.musicManager);
         this.character.world = this;
         this.uiManager = new UIManager(canvas, this);
-        this.creatingInstanceOfEndbossInWorld();
         this.statusBar = new Statusbar();
         this.coinStatusbar = new CoinStatusbar();
         this.bottleStatusbar = new BottleStatusbar();
@@ -58,6 +56,15 @@ class World {
         this.bottleStatusbar = new BottleStatusbar();
         this.bottleStatusbar.setPercentage(0); 
 
+        this.level = new Level(
+            [...level1.enemies],        
+            [...level1.clouds],
+            [...level1.backgroundObjects],
+            this.createBottles()        
+        );
+        this.initializeCharacter();
+        this.initializeLevel();
+        this.initializeStatusBars();
     }
     
     checkPepeBottleCollection() {
@@ -444,9 +451,6 @@ class World {
         });
     }
     
-    
-    
-
     createBottles() {
         const bottles = [];
         // gnerate botles from at every restart
