@@ -144,12 +144,30 @@ class Endboss extends MoveableObject {
      * @param {Character} character - The player character (Pepe).
      */
     setCharacter(character) {
+        if (!character) {
+            console.error("No character provided to Endboss");
+            return;
+        }
+        
         this.character = character;
-        this.musicManager = character.world?.musicManager ?? new MusicManager();
-        // Show status bar when character is set (when Endboss is activated)
-        if (this.statusBar) {
-            this.statusBar.update(this.health); // force update value!
-            this.statusBar.show();              // force visible!
+        
+        // Wait until world is available
+        if (character.world) {
+            this.musicManager = character.world.musicManager;
+        } else {
+            // Defer setting musicManager until world is available
+            const checkWorld = setInterval(() => {
+                if (character.world) {
+                    this.musicManager = character.world.musicManager;
+                    clearInterval(checkWorld);
+                    
+                    // Update status bar once everything is ready
+                    if (this.statusBar) {
+                        this.statusBar.update(this.health);
+                        this.statusBar.show();
+                    }
+                }
+            }, 100);
         }
     }
 

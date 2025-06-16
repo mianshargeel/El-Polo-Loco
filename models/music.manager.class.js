@@ -175,11 +175,11 @@ class MusicManager {
         if (this.isMuted) {
             this.pauseBackgroundMusic();
             if (muteBtn) muteBtn.textContent = '🔇';
-            console.log('sound muted');
+            // console.log('sound muted');
         } else {
             this.playBackGroundMusic();
             if (muteBtn) muteBtn.textContent = '🔊';
-            console.log('sound unmuted');
+            // console.log('sound unmuted');
         }
     }
     

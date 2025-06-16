@@ -440,6 +440,10 @@ class World {
             [...level1.backgroundObjects],
             this.createBottles()
         );
+        // 2. Ensure character exists FIRST
+        if (!this.character) {
+            this.initializeCharacter();
+        }
     
         this.enemies = this.level.enemies;
         this.enemies.forEach(enemy => {
@@ -596,8 +600,12 @@ class World {
      */
 
     renderBackground() {
+        // console.log('Clouds:', this.level.clouds); // Debug check
         if (this.level?.backgroundObjects) {
             this.addArrayObjectToMap(this.level.backgroundObjects);
+        }
+        if (this.level?.clouds) {
+            this.addArrayObjectToMap(this.level.clouds);
         }
     }
     /**

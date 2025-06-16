@@ -50,7 +50,7 @@ class Chicken extends MoveableObject {
     /**
      * Creates a new chicken instance with randomized position and speed.
      */
-    constructor(startX = 720 + Math.random() * 200) {
+    constructor(startX = 1500 + Math.random() * 1000) {
         super();
         this.loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'); 
         this.preloadImages(this.IMAGES_WALKING);
