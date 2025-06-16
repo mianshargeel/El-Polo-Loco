@@ -7,13 +7,11 @@ class MusicManager {
      * Initializes the music manager and loads all sound files.
      */
     constructor() {
-        /**
-         * Flag to track whether the sound is muted.
-         * @type {boolean}
-         * @default false
-         */
-        this.isMuted = false;
 
+        // Restore mute setting from localStorage
+        const savedMute = localStorage.getItem('musicMuted');
+        this.isMuted = savedMute === 'false';
+       
         /**
          * Background music for the game.
          * Loops continuously unless paused.
@@ -63,12 +61,12 @@ class MusicManager {
          * @type {HTMLAudioElement}
          */
         this.bottleThrow = new Audio('audio/bottle-throw.wav');
+        this.collectBotle = new Audio('audio/collect-botle.wav');
 
         // Set background music properties
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.5;
 
-        this.collectBotle = new Audio('audio/collect-botle.wav')
     }
 
     /**
@@ -171,10 +169,18 @@ class MusicManager {
      */
     toggleMute() {
         this.isMuted = !this.isMuted;
+        localStorage.setItem('musicMuted', JSON.stringify(this.isMuted)); 
+    
+        const muteBtn = document.getElementById('mute-btn');
         if (this.isMuted) {
             this.pauseBackgroundMusic();
+            if (muteBtn) muteBtn.textContent = '🔇';
+            console.log('sound muted');
         } else {
             this.playBackGroundMusic();
+            if (muteBtn) muteBtn.textContent = '🔊';
+            console.log('sound unmuted');
         }
     }
+    
 }

@@ -113,7 +113,7 @@ class Endboss extends MoveableObject {
         this.isDead = false;
 
         this.animate();
-        this.musicManager = new MusicManager();
+        // this.musicManager = new MusicManager();
 
         this.maxHealth = 12; // Add this line
         this.health = this.maxHealth;
@@ -145,6 +145,7 @@ class Endboss extends MoveableObject {
      */
     setCharacter(character) {
         this.character = character;
+        this.musicManager = character.world?.musicManager ?? new MusicManager();
         // Show status bar when character is set (when Endboss is activated)
         if (this.statusBar) {
             this.statusBar.update(this.health); // force update value!
@@ -204,7 +205,6 @@ class Endboss extends MoveableObject {
             this.state = 'dead';
         } else if (this.isHurt()) {
             this.state = 'hurt';
-            this.musicManager.playEndBossHurtSound();
         } else if (this.isAttacking()) {
             this.state = 'attack';
         } else if (this.isAlert()) {
@@ -298,7 +298,10 @@ class Endboss extends MoveableObject {
         this.state = 'dead';
     
         // Play dead sound immediately
-        this.musicManager.playEndBossDeadSound();
+        if (this.musicManager && !this.musicManager.isMuted) {
+            this.musicManager.playEndBossDeadSound();
+        }
+        
     
         // Let dead animation play for 2s
         setTimeout(() => {

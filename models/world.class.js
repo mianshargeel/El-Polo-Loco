@@ -375,6 +375,7 @@ class World {
                 if (bottle.isColliding(enemy)) {
                     if (enemy instanceof Endboss) {
                         enemy.takeDamage(1);
+                        this.musicManager.playEndBossHurtSound();
                         console.log('Endboss hit! Health:', enemy.health);
                     }
                     bottle.broken = true;

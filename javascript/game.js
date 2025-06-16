@@ -40,10 +40,33 @@ function init() {
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
 
+    setupMuteButton();
+
   } catch (error) {
     console.error('Initialization error:', error);
   }
 }
+
+function setupMuteButton() {
+  const muteBtn = document.getElementById('mute-btn');
+  if (!muteBtn) return;
+
+  const savedMute = localStorage.getItem('musicMuted') === 'true';
+  muteBtn.textContent = savedMute ? '🔊' : '🔇';
+
+  muteBtn.addEventListener('click', () => {
+      if (window.world && world.musicManager) {
+          world.musicManager.toggleMute(); 
+      } else {
+          // Before world/musicManager is available
+          const newMute = !(localStorage.getItem('musicMuted') === 'true');
+          localStorage.setItem('musicMuted', JSON.stringify(newMute));
+          muteBtn.textContent = newMute ? '🔊' : '🔇';
+      }
+  });
+}
+
+
 
 
 // Initialize when DOM is ready
