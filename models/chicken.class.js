@@ -89,7 +89,21 @@ class Chicken extends MoveableObject {
     update() {
         this.moveLeft();
     }
-   // In Chicken class
+
+    getHitbox() {
+        const offsetX = 10; // adjust to fit visible body
+        const offsetY = 20;
+        const width = this.width - 2 * offsetX;
+        const height = this.height - offsetY;
+    
+        return {
+            left: this.x + offsetX,
+            right: this.x + offsetX + width,
+            top: this.y + offsetY,
+            bottom: this.y + offsetY + height
+        };
+    }
+    
     die() {
         if (this.isDead) return;
         this.isDead = true;

@@ -43,12 +43,16 @@ class BottleOnGround extends DrawableObject {
       return false;
   }
 
-  // playCollectionEffect() {
-  //     // Add visual/audio effects here
-  //     this.img = new Image();
-  //     this.img.src = 'img/effects/collected.png'; // Sparkle effect
-  //     setTimeout(() => this.remove(), 300);
-  // }
+  getHitbox() {
+    const padding = 30;
+    return {
+        left: this.x + padding,
+        right: this.x + this.width - padding,
+        top: this.y + padding,
+        bottom: this.y + this.height - padding
+    };
+}
+
 
   remove() {
       this.width = 0;

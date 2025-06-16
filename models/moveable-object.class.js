@@ -75,18 +75,44 @@ class MoveableObject extends DrawableObject { // Parent class
         this.speedY = 30; // Jump height (30px)
     }
 
+    getHitbox() {
+        const offsetX = 20;
+        const offsetY = 30;
+        const hitboxWidth = this.width - 2 * offsetX;
+        const hitboxHeight = this.height - offsetY;
+    
+        return {
+            left: this.x + offsetX,
+            right: this.x + offsetX + hitboxWidth,
+            top: this.y + offsetY,
+            bottom: this.y + offsetY + hitboxHeight
+        };
+    }
+    
+
     /**
      * Checks if this object is colliding with another moveable object.
      * Ensures that the two objects are overlapping.
      * @param {MoveableObject} mo - The other moveable object (e.g., enemy).
      * @returns {boolean} - `true` if collision occurs, `false` otherwise.
      */
-    isColliding(mo) {
-        return this.x + this.width > mo.x &&
-               this.y + this.height > mo.y &&
-               this.x < mo.x + mo.width &&
-               this.y < mo.y + mo.height;
+    isColliding(other) {
+        if (!other) return false;
+    
+        const a = this.getHitbox();
+        const b = other.getHitbox ? other.getHitbox() : {
+            left: other.x,
+            right: other.x + other.width,
+            top: other.y,
+            bottom: other.y + other.height
+        };
+    
+        return a.right > b.left &&
+               a.left < b.right &&
+               a.bottom > b.top &&
+               a.top < b.bottom;
     }
+    
 
     /**
      * Checks if this object is colliding from the top with another object.
@@ -97,14 +123,16 @@ class MoveableObject extends DrawableObject { // Parent class
     isCollidingFromTop(mo) {
         const pepeFootY = this.y + this.height;
         const chickenTopY = mo.y;
-        const threshold = 30; // Tighter collision zone (adjust as needed)
-        
+    
+        const threshold = 15; // ↓ tighten to 10–20px max
+    
         return (
             this.isColliding(mo) &&
             pepeFootY >= chickenTopY &&
             pepeFootY <= chickenTopY + threshold
         );
     }
+    
 
     /**
      * Reduces the object's energy when hit and prevents multiple hits in a short time.

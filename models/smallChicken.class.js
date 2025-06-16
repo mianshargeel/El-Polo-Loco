@@ -43,10 +43,24 @@ class SmallChicken extends MoveableObject {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }, 200); // Change sprite every 200ms
-}
-
-  update() {
-      this.moveLeft();
+    }
+    
+    getHitbox() {
+        const offsetX = 20; // trim sides
+        const offsetY = 20; // trim head area
+        const width = this.width - 2 * offsetX;
+        const height = this.height - offsetY;
+    
+        return {
+            left: this.x + offsetX,
+            right: this.x + offsetX + width,
+            top: this.y + offsetY,
+            bottom: this.y + offsetY + height
+        };
+    }
+    
+    update() {
+        this.moveLeft();
     }
     
     die() {

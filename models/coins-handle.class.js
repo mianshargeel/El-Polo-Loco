@@ -36,4 +36,14 @@ class CoinsHandle extends DrawableObject {
         this.img = new Image();
         this.img.src = path;
     }
+    getHitbox() {
+        const padding = 30;
+        return {
+            left: this.x + padding,
+            right: this.x + this.width - padding,
+            top: this.y + padding,
+            bottom: this.y + this.height - padding
+        };
+    }
+    
 }
