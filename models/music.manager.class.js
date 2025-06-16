@@ -18,24 +18,30 @@ class MusicManager {
          * @type {HTMLAudioElement}
          */
         this.backgroundMusic = new Audio('audio/bg-sound.mp3');
+        this.backgroundMusic.loop = true;
+        this.backgroundMusic.volume = 0.08;
 
         /**
          * Sound effect played when an enemy (e.g., chicken) is killed.
          * @type {HTMLAudioElement}
          */
         this.killedSound = new Audio('audio/chicken-killed.wav');
+        this.killedSound.volume = 0.1;
 
         /**
          * Sound effect played when the player collects a coin.
          * @type {HTMLAudioElement}
          */
         this.coinSound = new Audio('audio/coin-collect.wav');
+        this.coinSound.volume = 0.01;
 
         /**
          * Sound effect played when the player jumps.
          * @type {HTMLAudioElement}
          */
         this.jumpSound = new Audio('audio/jump-pepe.wav');
+        this.jumpSound.volume = 0.01;
+        
 
         /**
          * Sound effect played when the player dies.
@@ -43,30 +49,34 @@ class MusicManager {
          * @type {HTMLAudioElement}
          */
         this.deadSound = new Audio('audio/pepe-dead.wav?v=' + new Date().getTime());
+        this.deadSound.volume = 0.1;
+
 
         /**
          * Sound effect played when the end boss is defeated.
          * @type {HTMLAudioElement}
          */
         this.endBossDeadSound = new Audio('audio/endBoss-dead.wav');
+        this.endBossDeadSound.volume = 0.01;
+
 
         /**
          * Sound effect played when the end boss takes damage.
          * @type {HTMLAudioElement}
          */
         this.endBossHurtSound = new Audio('audio/endBoss-hurt.wav');
+        this.endBossHurtSound.volume = 0.01;
+
 
         /**
          * Sound effect played when the player throws a bottle.
          * @type {HTMLAudioElement}
          */
         this.bottleThrow = new Audio('audio/bottle-throw.wav');
+        this.bottleThrow.volume = 0.01;
+
         this.collectBotle = new Audio('audio/collect-botle.wav');
-
-        // Set background music properties
-        this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.5;
-
+        this.collectBotle.volume = 0.01;
     }
 
     /**
