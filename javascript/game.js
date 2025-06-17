@@ -66,17 +66,6 @@ function setupMuteButton() {
   });
 }
 
-
-
-
-// Initialize when DOM is ready
-// if (document.readyState === 'loading') {
-//   document.addEventListener('DOMContentLoaded', init);
-// } else {
-//   init();
-// }
-
-
 /**
  * Handles the `keydown` event and updates the `keyboard` object accordingly.
  * Prevents the default browser behavior for the space key (e.g., page scrolling).

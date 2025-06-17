@@ -114,6 +114,16 @@ class World {
         document.getElementById('pause-btn')?.addEventListener('click', () => {
             this.togglePause();
         });
+
+         // Resume (Continue)
+        document.getElementById('continueGame')?.addEventListener('click', () => {
+            this.resumeGame(); 
+        });
+
+        // Exit to home
+        document.getElementById('exitToHome')?.addEventListener('click', () => {
+            this.goToMainMenu();
+        });
     
         // Info button
         document.getElementById('info-btn')?.addEventListener('click', () => {
@@ -265,21 +275,28 @@ class World {
 
     resumeGame() {
         if (!this.isPaused) return;
-        
+    
+        // console.warn('[World] resumeGame() CALLED');
         this.isPaused = false;
-        
-        // 1. Restart game loops
+    
+        // Restart draw + logic loop
         this.runGameLoop();
         this.animationFrame = requestAnimationFrame(() => this.draw());
-        
-        // 2. Resume audio
+    
+        // Resume background music
         this.musicManager.playBackGroundMusic();
-        
-        // 3. Hide UI
-        if (this.pausePopup) {
-            this.pausePopup.hide();
+    
+        // Hide pause popup
+        const popup = document.getElementById('pausePopup');
+        if (popup) popup.style.display = 'none';
+    
+        // Update mobile controls if needed
+        if (window.updateMobileControlsVisibility) {
+            window.updateMobileControlsVisibility();
         }
+    
     }
+    
 
     runGameLoop() { //at restart regenerate whole game objects
         if (this.gameLoopInterval) {

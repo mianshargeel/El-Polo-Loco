@@ -135,16 +135,18 @@ function resizeCanvas() {
 // ==================== BUTTON HANDLERS ====================
 
 function setupEventListeners() {
-    const continueBtn = document.getElementById('continueGame');
-    if (continueBtn) {
-        continueBtn.addEventListener('click', () => {
-            if (world) {
-                world.isPaused = false;
-                world.resumeGame();
-                document.getElementById('pausePopup').style.display = 'none';
-            }
-        });
-    }
+    // const continueBtn = document.getElementById('continueGame');
+    // if (continueBtn) {
+    //     continueBtn.addEventListener('click', () => {
+    //         if (world) {
+    //             world.isPaused = false;
+    //             world.resumeGame();
+    //             document.getElementById('pausePopup').style.display = 'none';
+    //             console.log('Continue clicked from Responsive file');
+                
+    //         }
+    //     });
+    // }
 
     if (gameState.isMobile) {
         setupMobileControls();
