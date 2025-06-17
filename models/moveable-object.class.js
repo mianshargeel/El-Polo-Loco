@@ -165,20 +165,8 @@ class MoveableObject extends DrawableObject { // Parent class
             setTimeout(() => {
                 this.musicManager.stopCharacterDeadSound();
             }, 2000);
-            this.showGameOverPopup();
-        }
-    }
 
-    /**
-     * Displays the game-over popup and stops background music.
-     */
-    showGameOverPopup() {
-        let popup = document.getElementById("gameOverPopup");
-        popup.style.display = "block";
-        this.musicManager.pauseBackgroundMusic();
-        document.getElementById("restartButton").addEventListener("click", () => {
-            location.reload(); // Reloads the page to restart the game
-        });
+        }
     }
 
     /**

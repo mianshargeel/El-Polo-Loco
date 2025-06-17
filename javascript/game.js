@@ -70,11 +70,11 @@ function setupMuteButton() {
 
 
 // Initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+// if (document.readyState === 'loading') {
+//   document.addEventListener('DOMContentLoaded', init);
+// } else {
+//   init();
+// }
 
 
 /**

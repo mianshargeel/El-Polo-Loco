@@ -73,34 +73,93 @@ class Character extends MoveableObject {
         this.preloadImages(this.IMAGES_JUMPING);
         this.preloadImages(this.IMAGES_DEAD);
         this.preloadImages(this.IMAGES_HURT);
-        this.applyGravity(); // Apply gravity for physics simulation
-        this.animate();
+        this.applyGravity();
+    
+        this._moveInterval = null;
+        this._animationInterval = null;
+        this._deathTimeout = null;
+        this._deadHandled = false;
+        this.isDeadAnimationPlayed = false;
+    
+        // console.log('[Character] Constructor called');
+    this.animate(); 
     }
-
-    /**
-     * Starts character animation, including movement and sprite updates.
-     */
-    animate() {
-        this.handleMovement();
-        this.handleAnimation();
-    }
-
-    /**
-     * Handles movement logic (right, left, and jumping).
-     */
+    
     handleMovement() {
-        setInterval(() => {
+        this._moveInterval = setInterval(() => {
             if (!this.world) return;
             this.processMovement();
             this.processJump();
             this.updateCamera();
         }, 1000 / 60);
     }
+    
+    
+    handleAnimation() {
+        // console.log('[Animation] Animation loop started');
+        this._animationInterval = setInterval(() => {
+            if (!this.world) return;
+    
+            this.handleDeath(); // check and set death state
+    
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            } else if (this.isHurt()) {
+                this.playAnimation(this.IMAGES_HURT);
+            } else if (this.isAboveGround()) {
+                this.playAnimation(this.IMAGES_JUMPING);
+            } else {
+                this.processWalkingAnimation();
+            }
+        }, 100);
+    }
+    
+
+    cleanup() {
+        console.warn('[Cleanup] Character cleanup called'); // ← Add this log
+    
+        this._deadHandled = false;
+        this.isDeadAnimationPlayed = false;
+    
+        if (this._deathTimeout) {
+            clearTimeout(this._deathTimeout);
+            this._deathTimeout = null;
+        }
+    
+        if (this._moveInterval) {
+            clearInterval(this._moveInterval);
+            this._moveInterval = null;
+        }
+    
+        if (this._animationInterval) {
+            clearInterval(this._animationInterval);
+            this._animationInterval = null;
+        }
+    }
+    
+    
+    
+    
+    
+
+    /**
+     * Starts character animation, including movement and sprite updates.
+     */
+    animate() {
+        if (this._moveInterval || this._animationInterval) return; 
+        // console.log('[Animation] Animation loop started');
+        this.handleMovement();
+        this.handleAnimation();
+    }
+    
+
 
     /**
      * Moves the character left or right based on keyboard input.
      */
     processMovement() {
+        if (this.isDead()) return;
+
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
@@ -116,6 +175,8 @@ class Character extends MoveableObject {
      * Handles jump action when the SPACE key is pressed.
      */
     processJump() {
+        if (this.isDead()) return;
+
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.playJumpSound();
@@ -138,25 +199,7 @@ class Character extends MoveableObject {
         this.world.camera_x = -this.x + 100;
     }
 
-    /**
-     * Handles character animation, switching between different states.
-     */
-    handleAnimation() {
-        setInterval(() => {
-            if (!this.world) return;
-
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else {
-                this.processWalkingAnimation();
-            }
-        }, 100);
-    }
-
+   
     /**
      * Handles walking animation when character moves.
      */
@@ -167,4 +210,31 @@ class Character extends MoveableObject {
             this.loadImage('img/2_character_pepe/2_walk/W-21.png');
         }
     }
+
+    handleDeath() {
+        if (this._deathHandled || this.energy > 0) {
+            // console.warn('[Death] Blocked — deathHandled:', this._deathHandled, '| energy:', this.energy);
+            return;
+        }
+    
+        this._deathHandled = true;
+        this.musicManager.playCharacterDeadSound();
+    
+        if (this._deathTimeout) clearTimeout(this._deathTimeout);
+    
+        this._deathTimeout = setTimeout(() => {
+            if (this.world && !this.world._gameOverPopupActive && this.energy <= 0) {
+                this.world.showGameOverPopup();
+            }
+        }, 1000);
+       
+        
+    }
+    
+    isDead() {
+        return this.energy <= 0;
+    }
+    
+    
+    
 }

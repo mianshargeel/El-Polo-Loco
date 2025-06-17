@@ -8,7 +8,6 @@ class World {
      * @param {HTMLCanvasElement} canvas - The canvas element for rendering the game.
      * @param {Keyboard} keyboard - The keyboard input handler for the game.
      */
-    character = new Character();
     ctx;
     canvas;
     keyboard;
@@ -31,8 +30,6 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.musicManager = new MusicManager();
-        this.character = new Character(this.musicManager);
-        this.character.world = this;
         this.uiManager = new UIManager(canvas, this);
         this.statusBar = new Statusbar();
         this.coinStatusbar = new CoinStatusbar();
@@ -43,13 +40,9 @@ class World {
         this.showCoins();
         this.gameSounds = new GameSounds(this.musicManager);
         this.winPopup = new WinPopup(this);
-        this.setWorld();
-
         this.isPaused = false;
-        this.pausePopup = new PausePopup(this); // Initialize the pause popup
-        // this.uiManager.createPauseButton();
-        this.uiManager.showStartScreen(); // Show the start screen
-
+        this.pausePopup = new PausePopup(this); 
+        this.uiManager.showStartScreen(); 
         this.gameStarted = false;
         this.setupFullscreenControls();
 
@@ -62,9 +55,8 @@ class World {
             [...level1.backgroundObjects],
             this.createBottles()        
         );
-        this.initializeCharacter();
-        this.initializeLevel();
-        this.initializeStatusBars();
+        this._gameOverPopupActive = false;
+        
     }
     
     checkPepeBottleCollection() {
@@ -84,8 +76,6 @@ class World {
         if (!fullscreenBtn) return;
     
         fullscreenBtn.addEventListener('click', () => {
-            // IMPORTANT → DO NOT call e.preventDefault() here!
-            // Some browsers block fullscreen if preventDefault is called!
     
             const fullscreenElement = document.documentElement;  // FINAL SAFE VERSION
     
@@ -107,11 +97,8 @@ class World {
     
     
     adjustForFullscreen() {
-        // Add any necessary adjustments when entering/exiting fullscreen
         if (this.isFullscreen) {
-            // Fullscreen-specific adjustments
         } else {
-            // Normal mode adjustments
         }
 
     }
@@ -157,11 +144,6 @@ class World {
         if (infoBtn) infoBtn.style.display = 'none';
     }
 
-    /** Set the world reference for the character */
-    setWorld() {
-        this.character.world = this;
-    }
-
     /** Create instances of coins */
     showCoins() {
         this.coins = [];
@@ -182,27 +164,60 @@ class World {
             }
         });
     }
+
+    showGameOverPopup() {
+        if (this._gameOverPopupActive) return;
+        this._gameOverPopupActive = true;
+        this._gameOverShown = true;
+    
+        console.warn('[DEBUG] Game Over popup shown from:', new Error().stack);
+    
+        const popup = document.getElementById("gameOverPopup");
+        popup.style.display = "block";
+        this.musicManager.pauseBackgroundMusic();
+    
+        const restartBtn = document.getElementById("restartButton");
+        restartBtn.replaceWith(restartBtn.cloneNode(true));
+        const newRestartBtn = document.getElementById("restartButton");
+    
+        newRestartBtn.onclick = () => {
+            popup.style.display = "none";
+            this._gameOverPopupActive = false;
+    
+            this.resetGameState();
+            this.initializeCharacter();     
+            this.initializeLevel();         
+            this.initializeStatusBars();
+            this.startGameLoop();          
+        };
+    }
+    
+    
     /** Start the game
      * document.getElementById("mobile-controls").style.display = (window.innerWidth <= 1020) ? "flex" : "none";
      */
     startGame() {
-        if (this.gameStarted) return;
+        if (this.gameStarted) {
+            console.warn('[World] startGame() blocked — already started');
+            return;
+        }
+    
+        // console.warn('[World] startGame() CALLED');
         this.gameStarted = true;
-        
-        // Hide menu buttons
+    
+        this.initializeCharacter();
+        this.initializeLevel();
+        this.initializeStatusBars();
+    
         document.getElementById('start-btn').style.display = 'none';
         document.getElementById('info-btn').style.display = 'none';
-        
-        // Show game controls (pause/sound/fullscreen)
-        document.querySelector('.control-buttons').style.display = 'block'; // or 'flex' if needed
-        
-        // Rest of your game start logic...
+        document.querySelector('.control-buttons').style.display = 'block';
         document.getElementById("mobile-controls").style.display = (window.innerWidth <= 1020) ? "flex" : "none";
+    
         this.musicManager.playBackGroundMusic();
         this.draw();
         this.run();
     }
-
 
     /**Main-Game-Run loop */
     run() { 
@@ -220,8 +235,6 @@ class World {
         }, 200);
     }
     
-    
-
     togglePause() {
         if (!this.gameStarted) return;
         
@@ -234,8 +247,7 @@ class World {
 
     pauseGame() {
         if (this.isPaused) return;
-        
-        console.log("Pausing game...");
+        // console.log("Pausing game...");
         this.isPaused = true;
         
         // 1. Stop game loops
@@ -254,7 +266,6 @@ class World {
     resumeGame() {
         if (!this.isPaused) return;
         
-        console.log("Resuming game...");
         this.isPaused = false;
         
         // 1. Restart game loops
@@ -284,8 +295,6 @@ class World {
             }
         }, 200);
     }
-    
-
     /** Check for collisions with enemies */
     checkCollisions() {
         this.checkCollisionWithChicken();
@@ -309,7 +318,6 @@ class World {
                 if (enemy.level === undefined) {
                     enemy.level = this.level;
                 }
-                
                 this.character.speedY = -12; // Bounce effect
                 
                 if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
@@ -336,9 +344,6 @@ class World {
             }
         });
     }
-    
-    
-    
     /** Check for collisions with coins */
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {
@@ -400,36 +405,48 @@ class World {
    /**
  * Restarts the game by resetting all necessary components and starting fresh.
  */
-    restartGame() {
-        this.resetGameState();
-        this.initializeLevel();
-        this.initializeCharacter();
-        this.initializeStatusBars();
-        this.startGameLoop();
-    }
+   restartGame() {
+    this.resetGameState();          
+    this.initializeCharacter();     
+    this.initializeLevel();         
+    this.initializeStatusBars();
+    this._gameOverShown = false;
 
+    this.startGameLoop();
+}
     /**
      * Resets the all game-objects state, clears intervals, and resets objects.
      */
     resetGameState() {
-        this.gameStarted = false;
         clearInterval(this.gameLoopInterval);
-        clearInterval(this.runInterval); 
+        clearInterval(this.runInterval);
         cancelAnimationFrame(this.animationFrame);
+
+        if (this.character) {
+            this.character.cleanup(); // << THIS is crucial
+        }
+    
         this.enemies = [];
         this.throwableObject = [];
         this.coins = [];
         this.bottles = [];
-        this.character = null;
-        this.level = null;
+    
         this.camera_x = 0;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+        this.gameStarted = false;
+        this.isPaused = false;
+        this._gameOverPopupActive = false;
+        this._gameOverShown = false;
     }
-
     /**
      * Initializes the game level with new enemies, clouds, and background objects.
      */
     initializeLevel() {
+        if (!this.character) {
+            console.error('[World] Cannot initialize level: character is undefined');
+            return;
+        }
         this.level = new Level(
             [
                 new Chicken(), new Chicken(), new Chicken(),
@@ -440,18 +457,17 @@ class World {
             [...level1.backgroundObjects],
             this.createBottles()
         );
-        // 2. Ensure character exists FIRST
-        if (!this.character) {
-            this.initializeCharacter();
-        }
-    
         this.enemies = this.level.enemies;
+    
         this.enemies.forEach(enemy => {
             enemy.world = this;
             if (enemy instanceof Endboss) {
-                enemy.setCharacter(this.character); // this already shows status bar!
-                // ADD THIS to force status bar shown after restart:
-                enemy.statusBar.show();
+                if (this.character) {
+                    enemy.setCharacter(this.character); 
+                    enemy.statusBar.show();
+                } else {
+                    console.warn('Skipping setCharacter for Endboss: character not available');
+                }
             }
         });
     }
@@ -481,10 +497,25 @@ class World {
      * Initializes the player character and assigns it to the game world.
      */
     initializeCharacter() {
-        this.character = new Character(this.musicManager);
-        this.character.world = this;
+        // console.log('[World] initializeCharacter()');
+    
+        if (this.character) {
+            console.log('[World] Cleaning up old character');
+            this.character.cleanup();
+        }
+    
+        const newCharacter = new Character(this.musicManager);
+        newCharacter.world = this;
+    
+        // Reset critical properties to prevent false death
+        newCharacter.energy = 100;
+        newCharacter._deathHandled = false;
+        newCharacter.isDeadAnimationPlayed = false;
+    
+        this.character = newCharacter;
+    
+        // console.log('[World] New character initialized:', this.character);
     }
-
     /**
      * Initializes all status bars (health, coins, bottles) and displays coins.
      */
@@ -494,7 +525,6 @@ class World {
         this.bottleStatusbar = new BottleStatusbar();
         this.showCoins();
     }
-
     /**
      * Starts the game loop, background music, and animation rendering.
      */
@@ -525,7 +555,6 @@ class World {
         endboss.setCharacter(this.character);
         return endboss;
     }
-    
     /**
      * Draws all game objects onto the canvas and updates the scene.
      * Ensures proper rendering order and handles camera translation.
@@ -535,21 +564,16 @@ class World {
             this.uiManager.showStartScreen();
             return;
         }
-        
         if (this.isPaused) {
             this.animationFrame = requestAnimationFrame(() => this.draw());
             return;
         }
-        
         this.clearCanvas();
         this.updateCamera();
-        
         // Draw backgrounds first
         this.renderBackground();
-        
         // Draw all game objects (including bottles)
         this.renderGameObjects();
-
         // Draw Endboss status bar (fixed position)
         this.ctx.save(); // Save current canvas state
         this.ctx.resetTransform(); // Remove all transformations
@@ -560,10 +584,8 @@ class World {
             }
         }
         this.ctx.restore(); // Restore previous canvas state
-        
         // Draw UI elements last
         this.renderUI();
-        
         this.restoreCamera();
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
@@ -589,16 +611,13 @@ class World {
         } else {
             targetCameraX = this.camera_x;
         }
-    
         this.camera_x = -this.character.x + 100;
         this.camera_x = Math.floor(this.camera_x);
         this.ctx.translate(this.camera_x, 0);
     }
-    
     /**
      * Renders the background elements in the game world.
      */
-
     renderBackground() {
         // console.log('Clouds:', this.level.clouds); // Debug check
         if (this.level?.backgroundObjects) {
@@ -618,7 +637,7 @@ class World {
         this.addToMap(this.bottleStatusbar);
         this.ctx.translate(this.camera_x, 0); // Restore camera
     }
-
+    
     renderGameObjects() {
         if (this.character) this.addToMap(this.character);
         if (this.level?.enemies) this.level.enemies.forEach(enemy => this.addToMap(enemy));
