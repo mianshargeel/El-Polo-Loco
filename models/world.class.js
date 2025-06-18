@@ -336,7 +336,7 @@ class World {
                     if (enemy instanceof Endboss) {
                         enemy.takeDamage(1);
                         this.musicManager.playEndBossHurtSound();
-                        console.log('Endboss hit! Health:', enemy.health);
+                        // console.log('Endboss hit! Health:', enemy.health);
                     }
                     bottle.broken = true;
                 }
@@ -429,6 +429,8 @@ class World {
             {x: 800, y: World.GROUND_Y - 60},
             {x: 1000, y: World.GROUND_Y - 60},
             {x: 1200, y: World.GROUND_Y - 60},
+            {x: 1350, y: World.GROUND_Y - 60},
+            {x: 1500, y: World.GROUND_Y - 60},
             {x: 1700, y: World.GROUND_Y - 60},
             {x: 1850, y: World.GROUND_Y - 60},
             {x: 2000, y: World.GROUND_Y - 60}
@@ -480,7 +482,7 @@ class World {
     createEndboss() {
         let endboss = new Endboss();
         endboss.world = this;
-        endboss.health = 12;
+        endboss.health = 15;
         endboss.state = "walking";
         endboss.isDead = false;
         endboss.preloadImages(endboss.IMAGES_WALKING);

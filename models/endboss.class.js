@@ -30,7 +30,7 @@ class Endboss extends MoveableObject {
      * @type {number}
      * @default 15
      */
-    health = 12;
+    health = 15;
 
     /**
      * Current state of the Endboss.
@@ -115,7 +115,7 @@ class Endboss extends MoveableObject {
         this.animate();
         // this.musicManager = new MusicManager();
 
-        this.maxHealth = 12; // Add this line
+        this.maxHealth = 15; // Add this line
         this.health = this.maxHealth;
         // this.statusBar = new EndbossStatusBar();
         this.initStatusBar();
