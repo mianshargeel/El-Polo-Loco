@@ -12,7 +12,7 @@ class EndbossStatusBar extends DrawableObject{
       super();
       this.maxHealth = maxHealth;
       this.currentHealth = maxHealth;
-      this.x = 570;
+      this.x = x;
       this.y = y;
       this.width = width;
       this.height = height;
@@ -42,21 +42,29 @@ class EndbossStatusBar extends DrawableObject{
    * @param {number} currentHealth - Current health value
    */
   update(currentHealth) {
-    // Ensure health doesn't go below 0
-    this.currentHealth = Math.max(0, currentHealth);
-    const percentage = this.currentHealth / this.maxHealth;
+    const target = Math.max(0, currentHealth);
     
-    // Smooth transition between health states
-    if (percentage > 0.66) {
-        this.img = this.images[0]; // Blue (high health)
-    } else if (percentage > 0.33) {
-        this.img = this.images[1]; // Green (medium health)
-    } else if (percentage > 0) {
-        this.img = this.images[2]; // Orange (low health)
+    // Smooth visual decrease
+    if (target < this.currentHealth) {
+        this.currentHealth -= 0.5; // Adjust speed of depletion
+        if (this.currentHealth < target) {
+            this.currentHealth = target;
+        }
     } else {
-        this.img = null; // Empty when health is 0
+        this.currentHealth = target; // snap to higher (if healed)
+    }
+
+    const percentage = this.currentHealth / this.maxHealth;
+
+    if (percentage > 0.66) {
+        this.img = this.images[0]; // Blue
+    } else if (percentage > 0.33) {
+        this.img = this.images[1]; // Green
+    } else {
+        this.img = this.images[2]; // Orange
     }
 }
+
 
 
   /**
@@ -65,10 +73,20 @@ class EndbossStatusBar extends DrawableObject{
    */
   draw(ctx) {
     if (this.isVisible && this.img) {
-      // Draw health bar with smooth decrease effect
-      ctx.drawImage(this.img, this.x, this.y, this.width * (this.currentHealth / this.maxHealth), this.height);
+        const percentage = this.currentHealth / this.maxHealth;
+        const fillWidth = this.width * percentage;
+
+        // Always draw background (faded) for empty feeling
+        ctx.globalAlpha = 0.25;
+        ctx.drawImage(this.images[0], this.x, this.y, this.width, this.height);
+        ctx.globalAlpha = 1.0;
+
+        // Then draw the actual current-health bar
+        if (fillWidth > 0) {
+            ctx.drawImage(this.img, this.x, this.y, fillWidth, this.height);
+        }
     }
-  }
+}
   /**
    * Shows the status bar.
    */

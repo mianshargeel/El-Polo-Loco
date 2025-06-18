@@ -119,25 +119,35 @@ class Endboss extends MoveableObject {
         this.health = this.maxHealth;
         // this.statusBar = new EndbossStatusBar();
         this.initStatusBar();
+        // this.statusBar.hide();
     }
 
     initStatusBar() {
         this.statusBar = new EndbossStatusBar(
             this.maxHealth,
-            2500 - 160,  // x position (top-right)
-            10,                   // y position
-            150,                  // width
-            50,                   // height
+            500,    
+            15,  
+            200,   
+            45,    
             this.STATUSBAR_IMAGES
         );
-        this.statusBar.hide(); // Initially hidden
     }
 
     updateStatusBar() {
-        if (this.statusBar) {
-            this.statusBar.update(this.health);
+        if (!this.statusBar || !this.character) return;
+    
+        const distance = Math.abs(this.x - this.character.x);
+    
+        // Show only when Endboss is near
+        if (distance < 600 && !this.isDead) {
+            this.statusBar.show();
+        } else {
+            this.statusBar.hide();
         }
+    
+        this.statusBar.update(this.health);
     }
+    
 
     /**
      * Sets the character reference for tracking Pepe's position.
@@ -303,11 +313,11 @@ class Endboss extends MoveableObject {
         }
     }
 
-    updateStatusBar() {
-        if (this.statusBar) {
-            this.statusBar.update(this.health);
-        }
-    }
+    // updateStatusBar() {
+    //     if (this.statusBar) {
+    //         this.statusBar.update(this.health);
+    //     }
+    // }
 
     /**
      * Handles the Endboss's death, removing it from the world and triggering win conditions.

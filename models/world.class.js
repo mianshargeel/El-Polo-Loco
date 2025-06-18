@@ -270,34 +270,32 @@ class World {
         enemiesCopy.forEach((enemy) => {
             const isCollidingTop = this.character.isCollidingFromTop(enemy);
             const isRegularColliding = this.character.isColliding(enemy);
-            const isJumpKill = 
-                this.character.speedY > 0 && // Pepe is moving upward
-                this.character.x + this.character.width > enemy.x && 
+            const isJumpKill =
+                this.character.speedY > 0 &&
+                this.character.x + this.character.width > enemy.x &&
                 this.character.x < enemy.x + enemy.width;
+    
             if (isCollidingTop || isJumpKill) {
                 if (enemy.level === undefined) {
                     enemy.level = this.level;
                 }
                 this.character.speedY = -12; // Bounce effect
                 if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
-                    if (!enemy.isDead) {  // Only process if not already dead
+                    if (!enemy.isDead) {
                         enemy.die();
                         this.musicManager.enemyKilledSound();
                     }
-                } else {
-                    const index = this.level.enemies.indexOf(enemy);
-                    if (index > -1) {
-                        this.level.enemies.splice(index, 1);
-                        this.musicManager.enemyKilledSound();
-                    }
+                } else if (enemy instanceof Endboss) {
+                    enemy.takeDamage(1); 
+                    this.musicManager.playEndBossHurtSound();
                 }
             } else if (isRegularColliding && !this.character.isHurt()) {
-                // Hurt the character
                 this.character.hit();
                 this.statusBar.setPercentage(this.character.energy);
             }
         });
     }
+    
     /** Check for collisions with coins */
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {
@@ -332,7 +330,7 @@ class World {
                     if (enemy instanceof Endboss) {
                         enemy.takeDamage(1);
                         this.musicManager.playEndBossHurtSound();
-                        // console.log('Endboss hit! Health:', enemy.health);
+                        console.log('Endboss hit! Health:', enemy.health);
                     }
                     bottle.broken = true;
                 }
