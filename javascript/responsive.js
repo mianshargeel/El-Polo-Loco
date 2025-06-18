@@ -16,6 +16,8 @@ const GAME_CONFIG = {
     MAX_SCALE: 2.0
 };
 
+let mobileControlsInitialized = false;
+
 const gameState = {
     canvas: null,
     isMobile: false,
@@ -58,10 +60,25 @@ function checkOrientation() {
 }
 
 function detectDeviceType() {
-    gameState.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                       window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
+    const wasMobile = gameState.isMobile;
+
+    gameState.isMobile =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
+
+    // Detect iPad Pro in desktop mode
+    if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+        gameState.isMobile = true;
+    }
+
+    // Re-initialize mobile controls if state changed from non-mobile to mobile
+    if (!wasMobile && gameState.isMobile) {
+        setupMobileControls();  // make sure this runs again
+    }
+
     updateMobileControlsVisibility();
 }
+
 
 function updateMobileControlsVisibility() {
     const mobileControls = document.getElementById('mobile-controls');
@@ -156,6 +173,9 @@ function setupEventListeners() {
 }
 
 function setupMobileControls() {
+    if (mobileControlsInitialized) return; // avoid duplicate setup
+    mobileControlsInitialized = true;
+
     const controls = [
         { id: 'left-btn', key: 'LEFT' },
         { id: 'right-btn', key: 'RIGHT' },

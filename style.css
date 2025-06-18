@@ -265,7 +265,7 @@ footer a{
 
 /* === MOBILE CONTROLS === */
 #mobile-controls {
-    display: none;
+    display: none !important;
     position: fixed;
     width: 100%;
     height: auto;
@@ -351,6 +351,10 @@ body.landscape-warning-active #mobile-controls {
 @media (max-width: 1371px) and (orientation: landscape){
     #mobile-controls {
         display: flex !important;
+    }
+    .control-btn {
+        min-width: 100px;
+        min-height: 100px;
     }
 }
 @media (max-width: 1025px) and (orientation: landscape) {
