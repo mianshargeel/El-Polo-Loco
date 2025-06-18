@@ -348,6 +348,11 @@ body.landscape-warning-active #mobile-controls {
 }
 
 /* === MEDIA QUERIES === */
+@media (max-width: 1371px) and (orientation: landscape){
+    #mobile-controls {
+        display: flex !important;
+    }
+}
 @media (max-width: 1025px) and (orientation: landscape) {
     #mobile-controls {
         display: flex !important;

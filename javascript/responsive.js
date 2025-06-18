@@ -12,7 +12,7 @@ const GAME_CONFIG = {
     LOGICAL_WIDTH: 720,
     LOGICAL_HEIGHT: 480,
     ASPECT_RATIO: 720 / 480,
-    MOBILE_BREAKPOINT: 1025,
+    MOBILE_BREAKPOINT: 1370,
     MAX_SCALE: 2.0
 };
 
@@ -116,6 +116,11 @@ function resizeCanvas() {
         ch = Math.min(ch, 420);
         topPercent = '42%';
     }
+    else if (w <= 1370) {
+        cw = Math.min(cw, 1000);
+          ch = Math.min(ch, 512);
+          topPercent = '36%';
+      }
     canvas.style.width = `${cw}px`;
     canvas.style.height = `${ch}px`;
     canvas.style.position = 'absolute';
@@ -135,18 +140,6 @@ function resizeCanvas() {
 // ==================== BUTTON HANDLERS ====================
 
 function setupEventListeners() {
-    // const continueBtn = document.getElementById('continueGame');
-    // if (continueBtn) {
-    //     continueBtn.addEventListener('click', () => {
-    //         if (world) {
-    //             world.isPaused = false;
-    //             world.resumeGame();
-    //             document.getElementById('pausePopup').style.display = 'none';
-    //             console.log('Continue clicked from Responsive file');
-                
-    //         }
-    //     });
-    // }
 
     if (gameState.isMobile) {
         setupMobileControls();
