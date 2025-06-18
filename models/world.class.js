@@ -121,9 +121,12 @@ class World {
         });
 
         // Exit to home
-        document.getElementById('exitToHome')?.addEventListener('click', () => {
-            this.goToMainMenu();
+        document.querySelectorAll('.go-to-main-menu').forEach(button => {
+            button.addEventListener('click', () => {
+                this.goToMainMenu(); 
+            });
         });
+        
     
         // Info button
         document.getElementById('info-btn')?.addEventListener('click', () => {
@@ -180,7 +183,7 @@ class World {
         this._gameOverPopupActive = true;
         this._gameOverShown = true;
     
-        console.warn('[DEBUG] Game Over popup shown from:', new Error().stack);
+        // console.warn('[DEBUG] Game Over popup shown from:', new Error().stack);
     
         const popup = document.getElementById("gameOverPopup");
         popup.style.display = "block";
@@ -413,9 +416,8 @@ class World {
     }
     
     goToMainMenu() {
-        console.log(" Going to main menu...");
         setTimeout(() => {
-            window.location.href = "index.html"; // Replace with your main menu URL
+            window.location.href = "index.html";
         }, 100);
     }
     /** Restart the game */
@@ -517,7 +519,7 @@ class World {
         // console.log('[World] initializeCharacter()');
     
         if (this.character) {
-            console.log('[World] Cleaning up old character');
+            // console.log('[World] Cleaning up old character');
             this.character.cleanup();
         }
     

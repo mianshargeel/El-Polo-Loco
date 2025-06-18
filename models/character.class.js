@@ -116,7 +116,7 @@ class Character extends MoveableObject {
     
 
     cleanup() {
-        console.warn('[Cleanup] Character cleanup called'); // ← Add this log
+        // console.warn('[Cleanup] Character cleanup called');
     
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
