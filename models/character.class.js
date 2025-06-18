@@ -61,6 +61,35 @@ class Character extends MoveableObject {
         'img/2_character_pepe/4_hurt/H-43.png'
     ];
 
+    IMAGES_IDLE = [
+        'img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
+
+    IMAGES_SLEEP = [
+        'img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/2_character_pepe/1_idle/long_idle/I-20.png'
+    ];
+
+    lastMoveTime = Date.now();
+    isSleeping = false;
+
     /**
      * Creates the character and initializes animations, images, and physics.
      * @param {object} musicManager - Instance to manage sound effects.
@@ -73,6 +102,8 @@ class Character extends MoveableObject {
         this.preloadImages(this.IMAGES_JUMPING);
         this.preloadImages(this.IMAGES_DEAD);
         this.preloadImages(this.IMAGES_HURT);
+        this.preloadImages(this.IMAGES_IDLE);
+        this.preloadImages(this.IMAGES_SLEEP);
         this.applyGravity();
     
         this._moveInterval = null;
@@ -81,8 +112,7 @@ class Character extends MoveableObject {
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
     
-        // console.log('[Character] Constructor called');
-    this.animate(); 
+        this.animate(); 
     }
     
     handleMovement() {
@@ -96,41 +126,49 @@ class Character extends MoveableObject {
     
     
     handleAnimation() {
-        // console.log('[Animation] Animation loop started');
         this._animationInterval = setInterval(() => {
             if (!this.world) return;
-    
-            this.handleDeath(); // check and set death state
-    
+
+            this.handleDeath();
+
+            const now = Date.now();
+            const idleDuration = now - this.lastMoveTime;
+
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
+            } else if (idleDuration > 3000) {
+                this.playAnimation(this.IMAGES_SLEEP);
+                this.isSleeping = true;
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
+                this.isSleeping = false;
+                this.lastMoveTime = now;
             } else {
-                this.processWalkingAnimation();
+                this.playAnimation(this.IMAGES_IDLE);
+                this.isSleeping = false;
             }
         }, 100);
     }
     
 
     cleanup() {
-        // console.warn('[Cleanup] Character cleanup called');
-    
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
-    
+
         if (this._deathTimeout) {
             clearTimeout(this._deathTimeout);
             this._deathTimeout = null;
         }
-    
+
         if (this._moveInterval) {
             clearInterval(this._moveInterval);
             this._moveInterval = null;
         }
-    
+
         if (this._animationInterval) {
             clearInterval(this._animationInterval);
             this._animationInterval = null;
@@ -141,18 +179,23 @@ class Character extends MoveableObject {
      */
     animate() {
         if (this._moveInterval || this._animationInterval) return; 
-        // console.log('[Animation] Animation loop started');
         this.handleMovement();
         this.handleAnimation();
     }
+
+    playAnimation(images) {
+        const index = this.currentImage % images.length;
+        this.img = this.imageCache[images[index]];
+        this.currentImage++;
+    }
     
-
-
     /**
      * Moves the character left or right based on keyboard input.
      */
     processMovement() {
         if (this.isDead()) return;
+
+        const moved = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
 
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
@@ -162,6 +205,11 @@ class Character extends MoveableObject {
         if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this.otherDirection = true;
+        }
+
+        if (moved) {
+            this.lastMoveTime = Date.now();
+            this.isSleeping = false;
         }
     }
 
@@ -174,6 +222,7 @@ class Character extends MoveableObject {
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.playJumpSound();
+            this.lastMoveTime = Date.now(); // reset idle timer on jump
         }
     }
 
@@ -191,19 +240,7 @@ class Character extends MoveableObject {
      */
     updateCamera() {
         this.world.camera_x = -this.x + 100;
-    }
-
-   
-    /**
-     * Handles walking animation when character moves.
-     */
-    processWalkingAnimation() {
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
-        } else {
-            this.loadImage('img/2_character_pepe/2_walk/W-21.png');
-        }
-    }
+    }    
 
     handleDeath() {
         if (this._deathHandled || this.energy > 0) {
