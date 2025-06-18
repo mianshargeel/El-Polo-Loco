@@ -283,16 +283,12 @@ class World {
                     if (!enemy.isDead) {  // Only process if not already dead
                         enemy.die();
                         this.musicManager.enemyKilledSound();
-                        this.character.energy = Math.min(this.character.energy + 20, 100);
-                        this.statusBar.setPercentage(this.character.energy);
                     }
                 } else {
                     const index = this.level.enemies.indexOf(enemy);
                     if (index > -1) {
                         this.level.enemies.splice(index, 1);
                         this.musicManager.enemyKilledSound();
-                        this.character.energy = Math.min(this.character.energy + 20, 100);
-                        this.statusBar.setPercentage(this.character.energy);
                     }
                 }
             } else if (isRegularColliding && !this.character.isHurt()) {

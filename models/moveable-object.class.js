@@ -88,8 +88,6 @@ class MoveableObject extends DrawableObject { // Parent class
             bottom: this.y + offsetY + hitboxHeight
         };
     }
-    
-
     /**
      * Checks if this object is colliding with another moveable object.
      * Ensures that the two objects are overlapping.
@@ -124,7 +122,7 @@ class MoveableObject extends DrawableObject { // Parent class
         const pepeFootY = this.y + this.height;
         const chickenTopY = mo.y;
     
-        const threshold = 15; // ↓ tighten to 10–20px max
+        const threshold = 15; 
     
         return (
             this.isColliding(mo) &&
@@ -132,8 +130,6 @@ class MoveableObject extends DrawableObject { // Parent class
             pepeFootY <= chickenTopY + threshold
         );
     }
-    
-
     /**
      * Reduces the object's energy when hit and prevents multiple hits in a short time.
      */

@@ -136,12 +136,6 @@ class Character extends MoveableObject {
             this._animationInterval = null;
         }
     }
-    
-    
-    
-    
-    
-
     /**
      * Starts character animation, including movement and sprite updates.
      */
