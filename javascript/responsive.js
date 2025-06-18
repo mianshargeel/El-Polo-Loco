@@ -65,17 +65,12 @@ function detectDeviceType() {
     gameState.isMobile =
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
         window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
-
-    // Detect iPad Pro in desktop mode
     if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
         gameState.isMobile = true;
     }
-
-    // Re-initialize mobile controls if state changed from non-mobile to mobile
     if (!wasMobile && gameState.isMobile) {
         setupMobileControls();  // make sure this runs again
     }
-
     updateMobileControlsVisibility();
 }
 
@@ -103,65 +98,50 @@ function setupCanvas() {
 function resizeCanvas() {
     const canvas = gameState.canvas;
     if (!canvas) return;
+    const { w, h, scale, cw, ch, topPercent } = calculateCanvasSize();
+    applyCanvasStyles(canvas, cw, ch, topPercent);
   
+    if (typeof world?.updateViewport === 'function') {
+      world.updateViewport(cw, ch);
+    }
+    updateMobileControlsVisibility();
+  }
+  
+  function calculateCanvasSize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    // console.log(`resizeCanvas() called — window size: ${w}x${h}`);
-  
     const { LOGICAL_WIDTH, LOGICAL_HEIGHT, MAX_SCALE } = GAME_CONFIG;
     const scale = Math.max(Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT, MAX_SCALE), 0.8);
-  
     let cw = LOGICAL_WIDTH * scale;
     let ch = LOGICAL_HEIGHT * scale;
     let topPercent = '50%';
-  
     const isSmallPortrait = w <= 400 && h <= 750;
     const isSmallLandscape = w <= 900 && h <= 400;
   
     if (isSmallPortrait || isSmallLandscape) {
-      cw = 537;
-      ch = 350;
-      topPercent = '38%';
+      return { w, h, scale, cw: 537, ch: 350, topPercent: '38%' };
+    } else if (w <= 450 && h <= 850) {
+      return { w, h, scale, cw: Math.min(cw, 600), ch: Math.min(ch, 380), topPercent: '42%' };
+    } else if (w <= 1025) {
+      return { w, h, scale, cw: Math.min(cw, 720), ch: Math.min(ch, 420), topPercent: '42%' };
+    } else if (w <= 1370) {
+      return { w, h, scale, cw: Math.min(cw, 1000), ch: Math.min(ch, 512), topPercent: '36%' };
     }
-    else if (w <= 450 && h <= 850) {
-      cw = Math.min(cw, 600);
-        ch = Math.min(ch, 380);
-        topPercent = '42%';
-    }
-    else if (w <= 1025) {
-      cw = Math.min(cw, 720);
-        ch = Math.min(ch, 420);
-        topPercent = '42%';
-    }
-    else if (w <= 1370) {
-        cw = Math.min(cw, 1000);
-          ch = Math.min(ch, 512);
-          topPercent = '36%';
-      }
+    return { w, h, scale, cw, ch, topPercent };
+  }
+  
+  function applyCanvasStyles(canvas, cw, ch, topPercent) {
     canvas.style.width = `${cw}px`;
     canvas.style.height = `${ch}px`;
     canvas.style.position = 'absolute';
     canvas.style.left = '50%';
     canvas.style.top = topPercent;
     canvas.style.transform = 'translate(-50%, -50%)';
-  
-    if (typeof world?.updateViewport === 'function') {
-      world.updateViewport(cw, ch);
-    }
-  
-    updateMobileControlsVisibility();
   }
-  
-  
-
-// ==================== BUTTON HANDLERS ====================
-
-function setupEventListeners() {
-
+  function setupEventListeners() {
     if (gameState.isMobile) {
         setupMobileControls();
     }
-
     window.addEventListener('resize', debounce(() => {
         resizeCanvas();
         checkOrientation();
@@ -173,41 +153,47 @@ function setupEventListeners() {
 }
 
 function setupMobileControls() {
-    if (mobileControlsInitialized) return; // avoid duplicate setup
+    if (mobileControlsInitialized) return;
     mobileControlsInitialized = true;
-
+  
     const controls = [
-        { id: 'left-btn', key: 'LEFT' },
-        { id: 'right-btn', key: 'RIGHT' },
-        { id: 'jump-btn', key: 'UP' },
-        { id: 'throw-btn', key: 'D' }
+      { id: 'left-btn', key: 'LEFT' },
+      { id: 'right-btn', key: 'RIGHT' },
+      { id: 'jump-btn', key: 'UP' },
+      { id: 'throw-btn', key: 'D' }
     ];
-
-    controls.forEach(({ id, key }) => {
-        const btn = document.getElementById(id);
-        if (!btn) return;
-
-        const press = () => {
-            window.keyboard[key] = true;
-            if (key === 'UP') window.keyboard.SPACE = true;
-        };
-
-        const release = () => {
-            window.keyboard[key] = false;
-            if (key === 'UP') window.keyboard.SPACE = false;
-        };
-
-        btn.addEventListener('touchstart', e => { e.preventDefault(); press(); });
-        btn.addEventListener('touchend', e => { e.preventDefault(); release(); });
-        btn.addEventListener('touchcancel', e => { e.preventDefault(); release(); });
-
-        btn.addEventListener('mousedown', press);
-        btn.addEventListener('mouseup', release);
-        btn.addEventListener('mouseleave', release);
-    });
-}
-
-// ==================== UTILITIES ====================
+  
+    controls.forEach(registerMobileButton);
+  }
+  
+  function registerMobileButton({ id, key }) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+  
+    const press = () => handleKeyPress(key, true);
+    const release = () => handleKeyPress(key, false);
+  
+    bindTouchEvents(btn, press, release);
+    bindMouseEvents(btn, press, release);
+  }
+  
+  function handleKeyPress(key, isPressed) {
+    window.keyboard[key] = isPressed;
+    if (key === 'UP') window.keyboard.SPACE = isPressed;
+  }
+  
+  function bindTouchEvents(btn, press, release) {
+    btn.addEventListener('touchstart', e => { e.preventDefault(); press(); });
+    btn.addEventListener('touchend', e => { e.preventDefault(); release(); });
+    btn.addEventListener('touchcancel', e => { e.preventDefault(); release(); });
+  }
+  
+  function bindMouseEvents(btn, press, release) {
+    btn.addEventListener('mousedown', press);
+    btn.addEventListener('mouseup', release);
+    btn.addEventListener('mouseleave', release);
+  }
+  
 
 function debounce(func, delay) {
     let timeout;

@@ -23,25 +23,16 @@ let gameInfoPopup;
 
 function init() {
   try {
-    // 1. Get canvas element
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('canvas'); // 1. Get canvas element
     if (!canvas) throw new Error('Canvas element not found!');
     gameState.canvas = canvas; // store in shared state
-
-    // 2. Initialize game world
-    world = new World(canvas, window.keyboard);
-
-    // 3. Setup game controls
-    world.setupGameControls();
+    world = new World(canvas, window.keyboard);// 2. Initialize game world
+    world.setupGameControls(); // 3. Setup game controls
     world.setupFullscreenControls();
-
-    // 4. Resize canvas and attach responsive listeners
-    resizeCanvas();
+    resizeCanvas(); // 4. Resize canvas and attach responsive listeners
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);
-
     setupMuteButton();
-
   } catch (error) {
     console.error('Initialization error:', error);
   }
@@ -53,19 +44,16 @@ function setupMuteButton() {
 
   const savedMute = localStorage.getItem('musicMuted') === 'true';
   muteBtn.textContent = savedMute ? '🔊' : '🔇';
-
   muteBtn.addEventListener('click', () => {
       if (window.world && world.musicManager) {
           world.musicManager.toggleMute(); 
       } else {
-          // Before world/musicManager is available
-          const newMute = !(localStorage.getItem('musicMuted') === 'true');
+          const newMute = !(localStorage.getItem('musicMuted') === 'true');// Before world/musicManager is available
           localStorage.setItem('musicMuted', JSON.stringify(newMute));
           muteBtn.textContent = newMute ? '🔊' : '🔇';
       }
   });
 }
-
 /**
  * Handles the `keydown` event and updates the `keyboard` object accordingly.
  * Prevents the default browser behavior for the space key (e.g., page scrolling).
