@@ -8,7 +8,7 @@ class PausePopup {
         this.world = world;
         this.popup = document.getElementById("pausePopup");
         this.continueBtn = document.getElementById("continueGame");
-        this.exitBtn = document.getElementById("exitToHome");
+        this.exitBtn = document.querySelector(".go-to-main-menu");
 
         if (!this.popup || !this.continueBtn || !this.exitBtn) {
             console.error("Missing pause popup elements!");
@@ -20,7 +20,7 @@ class PausePopup {
         });
 
         this.exitBtn.addEventListener("click", () => {
-            this.world.goToMainMenu();
+            this.world.uiManager.goToMainMenu();
         });
     }
 

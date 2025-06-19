@@ -11,7 +11,7 @@ let canvas;
  * @type {World}
  */
 let world;
-
+// UIManager = new UIManager();
 /**
  * Creates a globally accessible `Keyboard` instance.
  * Used to track player input and control character movement.
@@ -27,8 +27,8 @@ function init() {
     if (!canvas) throw new Error('Canvas element not found!');
     gameState.canvas = canvas; // store in shared state
     world = new World(canvas, window.keyboard);// 2. Initialize game world
-    world.setupGameControls(); // 3. Setup game controls
-    world.setupFullscreenControls();
+    world.uiManager.setupGameControls(); // 3. Setup game controls
+    world.uiManager.setupFullscreenControls();
     resizeCanvas(); // 4. Resize canvas and attach responsive listeners
     window.addEventListener('resize', resizeCanvas);
     window.addEventListener('orientationchange', resizeCanvas);

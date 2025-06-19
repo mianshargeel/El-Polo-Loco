@@ -39,9 +39,8 @@ class WinPopup {
             return;
         }
 
-        // ✅ Add event listeners for buttons
         this.restartButton.addEventListener("click", () => this.restartGame());
-        this.mainMenuButton.addEventListener("click", () => this.goToMainMenu());
+        this.mainMenuButton.addEventListener("click", () => this.world.uiManager.goToMainMenu());
     }
 
     /**

@@ -3,11 +3,6 @@
  * Manages the character, enemies, level, UI elements, and game state.
  */
 class World {
-    /**
-     * Initializes a new game world.
-     * @param {HTMLCanvasElement} canvas - The canvas element for rendering the game.
-     * @param {Keyboard} keyboard - The keyboard input handler for the game.
-     */
     ctx;
     canvas;
     keyboard;
@@ -44,7 +39,7 @@ class World {
         this.pausePopup = new PausePopup(this); 
         this.uiManager.showStartScreen(); 
         this.gameStarted = false;
-        this.setupFullscreenControls();
+        this.uiManager.setupFullscreenControls();
         this.bottleStatusbar = new BottleStatusbar();
         this.bottleStatusbar.setPercentage(0); 
         this.level = new Level(
@@ -55,7 +50,6 @@ class World {
         );
         this._gameOverPopupActive = false;
     }
-    
     checkPepeBottleCollection() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle) && !bottle.collected) {
@@ -67,75 +61,6 @@ class World {
             }
         });
     }
-
-    setupFullscreenControls() {
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        if (!fullscreenBtn) return;
-        fullscreenBtn.addEventListener('click', () => {
-            const fullscreenElement = document.documentElement;  // FINAL SAFE VERSION
-            fullscreenElement.requestFullscreen()
-                .then(() => {
-                    this.isFullscreen = true;
-                    this.adjustForFullscreen();
-                })
-                .catch(err => {
-                    console.error("Fullscreen error:", err);
-                });
-        });
-        document.addEventListener('fullscreenchange', () => {
-            this.isFullscreen = !!document.fullscreenElement;
-            this.adjustForFullscreen();
-        });
-    }
-    
-    adjustForFullscreen() {
-        if (this.isFullscreen) {
-        } else {
-        }
-    }
-    
-    setupGameControls() { //calling in game.js
-        document.getElementById('start-btn')?.addEventListener('click', () => {
-            this.startGame();
-            document.getElementById('gameInfoPopup').style.display = 'none';
-        });
-        document.getElementById('pause-btn')?.addEventListener('click', () => {
-            this.togglePause();
-        });
-        document.getElementById('continueGame')?.addEventListener('click', () => {
-            this.resumeGame(); 
-        });
-        document.querySelectorAll('.go-to-main-menu').forEach(button => {
-            button.addEventListener('click', () => {
-                this.goToMainMenu(); 
-            });
-        });
-        document.getElementById('info-btn')?.addEventListener('click', () => {
-            const popup = document.getElementById('gameInfoPopup');
-            popup.style.display = 'block';
-    
-            if (this.gameStarted) {
-                this.pauseGame();
-            }
-        });
-        document.querySelector('#gameInfoPopup .close-btn')?.addEventListener('click', () => {
-            const popup = document.getElementById('gameInfoPopup');
-            popup.style.display = 'none';
-    
-            if (this.gameStarted && this.isPaused) {
-                this.resumeGame();
-            }
-        });
-    }
-
-    hideMenuButtons() {
-        const startBtn = document.getElementById('start-btn');
-        const infoBtn = document.getElementById('info-btn');
-        console.log(startBtn, infoBtn); 
-        if (startBtn) startBtn.style.display = 'none';
-        if (infoBtn) infoBtn.style.display = 'none';
-    }
-    /** Create instances of coins */
     showCoins() {
         this.coins = [];
         for (let i = 0; i < 5; i++) {
@@ -144,7 +69,6 @@ class World {
             this.coins.push(new CoinsHandle(x, y));
         }
     }
-    /** Create an instance of the end boss */
     creatingInstanceOfEndbossInWorld() {
         this.level = level1;
         this.enemies = this.level.enemies;
@@ -155,35 +79,8 @@ class World {
             }
         });
     }
-
-    showGameOverPopup() {
-        if (this._gameOverPopupActive) return;
-        this._gameOverPopupActive = true;
-        this._gameOverShown = true;
-        const popup = document.getElementById("gameOverPopup");
-        popup.style.display = "block";
-        this.musicManager.pauseBackgroundMusic();
-        const restartBtn = document.getElementById("restartButton");
-        restartBtn.replaceWith(restartBtn.cloneNode(true));
-        const newRestartBtn = document.getElementById("restartButton");
-        newRestartBtn.onclick = () => {
-            popup.style.display = "none";
-            this._gameOverPopupActive = false;
-            this.resetGameState();
-            this.initializeCharacter();     
-            this.initializeLevel();         
-            this.initializeStatusBars();
-            this.startGameLoop();          
-        };
-    }
-    /** Start the game
-     * document.getElementById("mobile-controls").style.display = (window.innerWidth <= 1020) ? "flex" : "none";
-     */
     startGame() {
-        if (this.gameStarted) {
-            console.warn('[World] startGame() blocked — already started');
-            return;
-        }
+        if (this.gameStarted) { return; }
         this.gameStarted = true;
         this.initializeCharacter();
         this.initializeLevel();
@@ -196,11 +93,8 @@ class World {
         this.draw();
         this.run();
     }
-    /**Main-Game-Run loop */
     run() { 
-        if (this.runInterval) {
-            clearInterval(this.runInterval);
-        }
+        if (this.runInterval) { clearInterval(this.runInterval); }
         this.runInterval = setInterval(() => {
             if (this.gameStarted && !this.isPaused) {
                 this.checkCollisions();
@@ -210,28 +104,14 @@ class World {
             }
         }, 200);
     }
-    
-    togglePause() {
-        if (!this.gameStarted) return;
-        if (this.isPaused) {
-            this.resumeGame();
-        } else {
-            this.pauseGame();
-        }
-    }
-
     pauseGame() {
         if (this.isPaused) return;
         this.isPaused = true;
-
         clearInterval(this.gameLoopInterval);
         cancelAnimationFrame(this.animationFrame);
         this.musicManager.pauseBackgroundMusic();
-        if (this.pausePopup) {
-            this.pausePopup.show();
-        }
+        if (this.pausePopup) { this.pausePopup.show(); }
     }
-
     resumeGame() {
         if (!this.isPaused) return;
         this.isPaused = false;
@@ -240,16 +120,10 @@ class World {
         this.musicManager.playBackGroundMusic();
         const popup = document.getElementById('pausePopup');
         if (popup) popup.style.display = 'none';
-    
-        if (window.updateMobileControlsVisibility) {
-            window.updateMobileControlsVisibility();
-        }
+        if (window.updateMobileControlsVisibility) { window.updateMobileControlsVisibility(); }
     }
-
-    runGameLoop() { //at restart regenerate whole game objects
-        if (this.gameLoopInterval) {
-            clearInterval(this.gameLoopInterval);
-        }
+    runGameLoop() { 
+        if (this.gameLoopInterval) { clearInterval(this.gameLoopInterval); }
         this.gameLoopInterval = setInterval(() => {
             if (this.gameStarted && !this.isPaused) {
                 this.checkCollisions();
@@ -259,12 +133,10 @@ class World {
             }
         }, 200);
     }
-    /** Check for collisions with enemies */
     checkCollisions() {
         this.checkCollisionWithChicken();
         this.checkCollisionWithCoin();
     }
-    /** Check for collisions with chickens */
     checkCollisionWithChicken() {
         const enemiesCopy = [...this.level.enemies];
         enemiesCopy.forEach((enemy) => {
@@ -274,7 +146,6 @@ class World {
                 this.character.speedY > 0 &&
                 this.character.x + this.character.width > enemy.x &&
                 this.character.x < enemy.x + enemy.width;
-    
             if (isCollidingTop || isJumpKill) {
                 if (enemy.level === undefined) {
                     enemy.level = this.level;
@@ -295,8 +166,6 @@ class World {
             }
         });
     }
-    
-    /** Check for collisions with coins */
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
@@ -306,7 +175,6 @@ class World {
             }
         });
     }
-    /** Check if a throwable object (bottle) should be thrown */
     checkThrowObject() {
         if (this.keyboard.D && this.bottleStatusbar.bottleCount > 0) {
             const throwDirection = this.character.otherDirection ? -1 : 1;
@@ -314,14 +182,13 @@ class World {
             let bottle = new ThrowableObject(
                 this.character.x + offsetX,
                 this.character.y + 100,
-                this.character.otherDirection // Pass direction to bottle
+                this.character.otherDirection 
             );
             this.throwableObject.push(bottle);
             this.musicManager.playBottleThrowSound();
             this.bottleStatusbar.decrease();
         }
     }
-    /** Check for collisions with bottles */
     checkBottleCollisions() {
         if (!this.throwableObject || !Array.isArray(this.throwableObject)) return;
         this.throwableObject.forEach((bottle) => {
@@ -330,48 +197,26 @@ class World {
                     if (enemy instanceof Endboss) {
                         enemy.takeDamage(1);
                         this.musicManager.playEndBossHurtSound();
-                        console.log('Endboss hit! Health:', enemy.health);
+                        // console.log('Endboss hit! Health:', enemy.health);
                     }
                     bottle.broken = true;
                 }
             });
         });
     }
-    /** Handle player winning the game */
-    playerWins() {
-        if (!this.gameStarted) return; // Prevent multiple calls
-        this.gameStarted = false; // Prevent duplicate popups
-        this.winPopup.show(); // Show the win popup
+    restartGame() {
+        this.resetGameState();          
+        this.initializeCharacter();     
+        this.initializeLevel();         
+        this.initializeStatusBars();
+        this._gameOverShown = false;
+        this.startGameLoop();
     }
-    
-    goToMainMenu() {
-        setTimeout(() => {
-            window.location.href = "index.html";
-        }, 100);
-    }
-    /** Restart the game */
-   /**
- * Restarts the game by resetting all necessary components and starting fresh.
- */
-   restartGame() {
-    this.resetGameState();          
-    this.initializeCharacter();     
-    this.initializeLevel();         
-    this.initializeStatusBars();
-    this._gameOverShown = false;
-    this.startGameLoop();
-}
-    /**
-     * Resets the all game-objects state, clears intervals, and resets objects.
-     */
     resetGameState() {
         clearInterval(this.gameLoopInterval);
         clearInterval(this.runInterval);
         cancelAnimationFrame(this.animationFrame);
-
-        if (this.character) {
-            this.character.cleanup(); // << THIS is crucial
-        }
+        if (this.character) { this.character.cleanup(); }
         this.enemies = [];
         this.throwableObject = [];
         this.coins = [];
@@ -383,9 +228,6 @@ class World {
         this._gameOverPopupActive = false;
         this._gameOverShown = false;
     }
-    /**
-     * Initializes the game level with new enemies, clouds, and background objects.
-     */
     initializeLevel() {
         if (!this.character) {
             console.error('[World] Cannot initialize level: character is undefined');
@@ -414,10 +256,9 @@ class World {
             }
         });
     }
-    
     createBottles() {
         const bottles = [];
-        const positions = [ // gnerate botles from at every restart
+        const positions = [ 
             {x: 500, y: World.GROUND_Y - 60},
             {x: 650, y: World.GROUND_Y - 60},
             {x: 800, y: World.GROUND_Y - 60},
@@ -429,20 +270,11 @@ class World {
             {x: 1850, y: World.GROUND_Y - 60},
             {x: 2000, y: World.GROUND_Y - 60}
         ];
-        positions.forEach(pos => {
-            bottles.push(new BottleOnGround(pos.x, pos.y));
-        });
+        positions.forEach(pos => { bottles.push(new BottleOnGround(pos.x, pos.y)); });
         return bottles;
     }
-
-    /**
-     * Initializes the player character and assigns it to the game world.
-     */
     initializeCharacter() {
-        if (this.character) {
-            // console.log('[World] Cleaning up old character');
-            this.character.cleanup();
-        }
+        if (this.character) { this.character.cleanup(); }
         const newCharacter = new Character(this.musicManager);
         newCharacter.world = this;
         newCharacter.energy = 100;
@@ -450,29 +282,20 @@ class World {
         newCharacter.isDeadAnimationPlayed = false;
         this.character = newCharacter;
     }
-    /**
-     * Initializes all status bars (health, coins, bottles) and displays coins.
-     */
     initializeStatusBars() {
         this.statusBar = new Statusbar();
         this.coinStatusbar = new CoinStatusbar();
         this.bottleStatusbar = new BottleStatusbar();
         this.showCoins();
     }
-    /**
-     * Starts the game loop, background music, and animation rendering.
-     */
     startGameLoop() {
         this.createBottles();
         this.musicManager.playBackGroundMusic();
-        if (this.winPopup) {
-            this.winPopup.hide();
-        }
+        if (this.winPopup) { this.winPopup.hide(); }
         this.gameStarted = true;
         this.runGameLoop();
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
-
     createEndboss() {
         let endboss = new Endboss();
         endboss.world = this;
@@ -489,10 +312,6 @@ class World {
         endboss.setCharacter(this.character);
         return endboss;
     }
-    /**
-     * Draws all game objects onto the canvas and updates the scene.
-     * Ensures proper rendering order and handles camera translation.
-     */
     draw() {
         if (!this.gameStarted) {
             this.uiManager.showStartScreen();
@@ -506,28 +325,19 @@ class World {
         this.updateCamera();
         this.renderBackground();
         this.renderGameObjects();
-        this.ctx.save(); // Save current canvas state
-        this.ctx.resetTransform(); // Remove all transformations
+        this.ctx.save(); 
+        this.ctx.resetTransform(); 
         if (this.level?.enemies) {
             const endboss = this.level.enemies.find(e => e instanceof Endboss);
-            if (endboss?.statusBar && endboss.health > 0) {
-                endboss.statusBar.draw(this.ctx);
-            }
-        }
-        this.ctx.restore(); // Restore previous canvas state
+             if (endboss?.statusBar && endboss.health > 0) { endboss.statusBar.draw(this.ctx); } }
+        this.ctx.restore(); 
         this.renderUI();
         this.restoreCamera();
         this.animationFrame = requestAnimationFrame(() => this.draw());
     }
-        /**
-     * Clears the entire game canvas.
-     */
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    /**
-     * Updates the camera position to follow the character.
-     */
     updateCamera() {
         let cameraMarginLeft = 200;
         let cameraMarginRight = window.innerWidth / 2; 
@@ -543,29 +353,17 @@ class World {
         this.camera_x = Math.floor(this.camera_x);
         this.ctx.translate(this.camera_x, 0);
     }
-    /**
-     * Renders the background elements in the game world.
-     */
     renderBackground() {
-        // console.log('Clouds:', this.level.clouds); // Debug check
-        if (this.level?.backgroundObjects) {
-            this.addArrayObjectToMap(this.level.backgroundObjects);
-        }
-        if (this.level?.clouds) {
-            this.addArrayObjectToMap(this.level.clouds);
-        }
+        if (this.level?.backgroundObjects) { this.addArrayObjectToMap(this.level.backgroundObjects); }
+        if (this.level?.clouds) { this.addArrayObjectToMap(this.level.clouds); }
     }
-    /**
-     * Renders static UI elements like status bars.
-     */
     renderUI() {
-        this.ctx.translate(-this.camera_x, 0); // Keep UI static
+        this.ctx.translate(-this.camera_x, 0); 
         this.addToMap(this.statusBar);
         this.addToMap(this.coinStatusbar);
         this.addToMap(this.bottleStatusbar);
-        this.ctx.translate(this.camera_x, 0); // Restore camera
+        this.ctx.translate(this.camera_x, 0);
     }
-    
     renderGameObjects() {
         if (this.character) this.addToMap(this.character);
         if (this.level?.enemies) this.level.enemies.forEach(enemy => this.addToMap(enemy));
@@ -573,38 +371,23 @@ class World {
         if (this.coins) this.addArrayObjectToMap(this.coins);
         if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles); 
     }
-        /**
-     * Restores the camera position after rendering.
-     */
     restoreCamera() {
         this.ctx.translate(-this.camera_x, 0);
     }
-
-    /** Add an array of objects to the map */
     addArrayObjectToMap(arrays) {
         arrays.forEach(arr => this.addToMap(arr));
     }
-    /** Add a single object to the map */
     addToMap(mObj) {
-        if (mObj.otherDirection) {
-            this.flipImage(mObj);
-        }
-        if (mObj.img) {
-            mObj.drawImg(this.ctx);
-            // mObj.drawFrame(this.ctx);
-        }
-        if (mObj.otherDirection) {
-            this.flipImageBack(mObj);
-        }
+        if (mObj.otherDirection) { this.flipImage(mObj); }
+        if (mObj.img) { mObj.drawImg(this.ctx); }
+        if (mObj.otherDirection) { this.flipImageBack(mObj); }
     }
-    /** Flip an image horizontally */
     flipImage(mObj) {
         this.ctx.save();
         this.ctx.translate(mObj.width, 0);
         this.ctx.scale(-1, 1);
         mObj.x = mObj.x * -1;
     }
-    /** Flip an image back to its original state */
     flipImageBack(mObj) {
         mObj.x = mObj.x * -1;
         this.ctx.restore();

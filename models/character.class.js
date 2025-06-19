@@ -255,7 +255,7 @@ class Character extends MoveableObject {
     
         this._deathTimeout = setTimeout(() => {
             if (this.world && !this.world._gameOverPopupActive && this.energy <= 0) {
-                this.world.showGameOverPopup();
+                this.world.uiManager.showGameOverPopup();
             }
         }, 1000);
        

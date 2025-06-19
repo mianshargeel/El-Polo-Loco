@@ -341,7 +341,7 @@ class Endboss extends MoveableObject {
     
             // Now, after Endboss is gone → show win popup!
             if (!this.world.winPopup.isVisible) {
-                this.world.playerWins();
+                this.world.uiManager.playerWins();
             }
         }, 2000);
     }
