@@ -356,6 +356,10 @@ body.landscape-warning-active #mobile-controls {
         min-width: 100px;
         min-height: 100px;
     }
+    #left-controls,
+    #right-controls {
+        bottom: -48vh;
+    }
 }
 @media (max-width: 1025px) and (orientation: landscape) {
     #mobile-controls {
@@ -397,7 +401,7 @@ body.landscape-warning-active #mobile-controls {
     }
 
 }
-@media (max-width: 720px) and (orientation: landscape) {
+@media (max-width: 721px) and (orientation: landscape) {
     .popup {
         width: 90%;
         max-width: 350px;

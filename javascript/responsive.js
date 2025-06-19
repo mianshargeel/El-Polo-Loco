@@ -124,7 +124,7 @@ function calculateCanvasSize() {
 
   if (isSmallPortrait || isSmallLandscape) {
     return { w, h, scale, cw: 537, ch: 350, topPercent: '38%' };
-  } else if (w <= 450 && h <= 850) {
+  } else if  (w <= 850 && h <= 450) {
     return { w, h, scale, cw: Math.min(cw, 600), ch: Math.min(ch, 380), topPercent: '42%' };
   } else if (w <= 1025) {
     return { w, h, scale, cw: Math.min(cw, 720), ch: Math.min(ch, 420), topPercent: '42%' };
