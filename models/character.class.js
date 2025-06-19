@@ -105,13 +105,11 @@ class Character extends MoveableObject {
         this.preloadImages(this.IMAGES_IDLE);
         this.preloadImages(this.IMAGES_SLEEP);
         this.applyGravity();
-    
         this._moveInterval = null;
         this._animationInterval = null;
         this._deathTimeout = null;
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
-    
         this.animate(); 
     }
     
@@ -124,16 +122,12 @@ class Character extends MoveableObject {
         }, 1000 / 60);
     }
     
-    
     handleAnimation() {
         this._animationInterval = setInterval(() => {
             if (!this.world) return;
-
             this.handleDeath();
-
             const now = Date.now();
             const idleDuration = now - this.lastMoveTime;
-
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             } else if (this.isHurt()) {
@@ -154,7 +148,6 @@ class Character extends MoveableObject {
         }, 100);
     }
     
-
     cleanup() {
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
@@ -188,25 +181,21 @@ class Character extends MoveableObject {
         this.img = this.imageCache[images[index]];
         this.currentImage++;
     }
-    
     /**
      * Moves the character left or right based on keyboard input.
      */
     processMovement() {
         if (this.isDead()) return;
-
         const moved = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
 
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
         }
-
         if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this.otherDirection = true;
         }
-
         if (moved) {
             this.lastMoveTime = Date.now();
             this.isSleeping = false;
@@ -244,7 +233,6 @@ class Character extends MoveableObject {
 
     handleDeath() {
         if (this._deathHandled || this.energy > 0) {
-            // console.warn('[Death] Blocked — deathHandled:', this._deathHandled, '| energy:', this.energy);
             return;
         }
     
@@ -258,14 +246,9 @@ class Character extends MoveableObject {
                 this.world.uiManager.showGameOverPopup();
             }
         }, 1000);
-       
-        
     }
     
     isDead() {
         return this.energy <= 0;
     }
-    
-    
-    
 }

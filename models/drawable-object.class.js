@@ -64,6 +64,6 @@ class DrawableObject {
     ctx.strokeStyle = "red";
     ctx.rect(hb.left, hb.top, hb.right - hb.left, hb.bottom - hb.top);
     ctx.stroke();
-}
+ }
 
 }

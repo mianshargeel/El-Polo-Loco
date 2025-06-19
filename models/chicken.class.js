@@ -39,7 +39,6 @@ class Chicken extends MoveableObject {
         'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
     ];
     isDead = false;
-
     /**
      * Health points of the chicken.
      * @type {number}
@@ -55,16 +54,12 @@ class Chicken extends MoveableObject {
         this.loadImage('img/3_enemies_chicken/chicken_normal/1_walk/1_w.png'); 
         this.preloadImages(this.IMAGES_WALKING);
         this.preloadImages(this.IMAGES_DEAD);
-
-        const groundY = 430; // Ground line!
+        const groundY = 430; 
         this.y = groundY - this.height;
-        
         this.x = startX;
         this.speed = 0.15 + Math.random() * 1.5; 
-
         this.animate();
     } 
-
     /**
      * Animates the chicken's movement and walking animation.
      */
@@ -73,16 +68,13 @@ class Chicken extends MoveableObject {
             if (this.world?.gameStarted && !this.isDead) {
                 this.moveLeft();
             }
-        }, 1000 / 60); // 60 FPS
-    
+        }, 1000 / 60); 
         this.animationInterval = setInterval(() => {
             if (this.world?.gameStarted && !this.isDead) {
                 this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 200); // Change sprite every 200ms
+        }, 200);
     }
-    
-
     /**
      * Updates the chicken's movement logic.
      */
@@ -91,7 +83,7 @@ class Chicken extends MoveableObject {
     }
 
     getHitbox() {
-        const offsetX = 10; // adjust to fit visible body
+        const offsetX = 10; 
         const offsetY = 20;
         const width = this.width - 2 * offsetX;
         const height = this.height - offsetY;
@@ -109,14 +101,9 @@ class Chicken extends MoveableObject {
         this.isDead = true;
         this.speed = 0;
         
-        // Show dead sprite
         this.img = this.imageCache[this.IMAGES_DEAD[0]];
-
-        // Clear intervals
         clearInterval(this.walkingInterval);
         clearInterval(this.animationInterval);
-
-        // Remove after 300ms
         setTimeout(() => {
             const index = this.level?.enemies?.indexOf(this);
             if (index > -1) {
@@ -124,6 +111,4 @@ class Chicken extends MoveableObject {
             }
         }, 300);
     }
-
-    
 }

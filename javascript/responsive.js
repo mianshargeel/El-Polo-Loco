@@ -46,11 +46,9 @@ function createLandscapeWarning() {
 function checkOrientation() {
   const warning = document.querySelector('.landscape-warning');
   if (!warning) return;
-
   const showWarning = window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT && window.matchMedia("(orientation: portrait)").matches;
   document.body.classList.toggle('landscape-warning-active', showWarning);
   warning.style.display = showWarning ? 'flex' : 'none';
-
   const mobileControls = document.getElementById('mobile-controls');
   if (mobileControls) {
       mobileControls.style.display = (!showWarning && gameState.isMobile && !gameState.isPaused) ? 'flex' : 'none';

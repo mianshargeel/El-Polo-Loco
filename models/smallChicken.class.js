@@ -26,8 +26,7 @@ class SmallChicken extends MoveableObject {
       this.y = groundY - this.height;
       
       this.x = startX;
-      this.speed = 0.2 + Math.random() * 0.5; // Small chickens can be a bit faster!
-
+      this.speed = 0.2 + Math.random() * 0.5; 
       this.animate();
   } 
 
@@ -36,18 +35,18 @@ class SmallChicken extends MoveableObject {
         if (this.world?.gameStarted && !this.isDead) {
             this.moveLeft();
         }
-    }, 1000 / 60); // 60 FPS
+    }, 1000 / 60); 
 
     this.animationInterval = setInterval(() => {
         if (this.world?.gameStarted && !this.isDead) {
             this.playAnimation(this.IMAGES_WALKING);
         }
-    }, 200); // Change sprite every 200ms
+    }, 200);
     }
     
     getHitbox() {
-        const offsetX = 20; // trim sides
-        const offsetY = 20; // trim head area
+        const offsetX = 20; 
+        const offsetY = 20; 
         const width = this.width - 2 * offsetX;
         const height = this.height - offsetY;
     
@@ -67,15 +66,10 @@ class SmallChicken extends MoveableObject {
         if (this.isDead) return;
         this.isDead = true;
         this.speed = 0;
-        
-        // Show dead sprite
         this.img = this.imageCache[this.IMAGES_DEAD[0]];
 
-        // Clear intervals
         clearInterval(this.walkingInterval);
         clearInterval(this.animationInterval);
-
-        // Remove after 300ms
         setTimeout(() => {
             const index = this.level?.enemies?.indexOf(this);
             if (index > -1) {

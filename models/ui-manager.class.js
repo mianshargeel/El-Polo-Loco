@@ -125,5 +125,4 @@ class UIManager {
             this.world.startGameLoop();          
         };
     }
-   
 }

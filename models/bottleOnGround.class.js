@@ -9,8 +9,7 @@ class BottleOnGround extends DrawableObject {
 
   constructor(x, y) {
       super();
-    this.preloadImages(this.IMAGES);
-    // console.log('Bottle images loaded:', this.imageCache);
+      this.preloadImages(this.IMAGES);
       this.x = x;
       this.y = y;
       this.animate();
@@ -21,7 +20,7 @@ class BottleOnGround extends DrawableObject {
     this.animationInterval = setInterval(() => {
         this.currentImage = (this.currentImage + 1) % this.IMAGES.length;
         this.img = this.imageCache[this.IMAGES[this.currentImage]];
-    }, 500); // Switch image every 0.5 seconds
+    }, 500); 
   }
 
   setCollisionBox() {
@@ -52,8 +51,6 @@ class BottleOnGround extends DrawableObject {
         bottom: this.y + this.height - padding
     };
 }
-
-
   remove() {
       this.width = 0;
       this.height = 0;

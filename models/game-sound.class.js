@@ -12,18 +12,12 @@ class GameSounds {
        this.soundButton = document.getElementById('mute-btn'); // Uses existing button
         this.soundButton.addEventListener("click", () => this.toggleGameSounds());
     }
-
-
     initSoundButton() {
         if (!this.soundButton) {
             console.error("Mute button not found in HTML!");
             return;
         }
-
-        // Set initial icon
         this.soundButton.innerHTML = this.isSoundOn ? "🔊" : "🔇";
-
-        // Attach event
         this.soundButton.addEventListener("click", () => this.toggleGameSounds());
     }
 

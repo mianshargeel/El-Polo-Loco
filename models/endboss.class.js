@@ -10,28 +10,24 @@ class Endboss extends MoveableObject {
      * @default 400
      */
     height = 400;
-
     /**
      * Width of the Endboss.
      * @type {number}
      * @default 250
      */
     width = 250;
-
     /**
      * Vertical position of the Endboss.
      * @type {number}
      * @default 55
      */
     y = 55;
-
     /**
      * Health points of the Endboss.
      * @type {number}
      * @default 15
      */
     health = 15;
-
     /**
      * Current state of the Endboss.
      * Can be: 'walking', 'alert', 'attack', 'hurt', or 'dead'.
@@ -39,14 +35,12 @@ class Endboss extends MoveableObject {
      * @default 'walking'
      */
     state = 'walking';
-
     /**
      * Indicates whether the Endboss is dead.
      * @type {boolean}
      * @default false
      */
     isDead = false;
-
     /**
      * Image paths for different animations.
      * @type {string[]}
@@ -93,7 +87,6 @@ class Endboss extends MoveableObject {
         'img/7_statusbars/2_statusbar_endboss/green.png',
         'img/7_statusbars/2_statusbar_endboss/orange.png'
     ]
-
     /**
      * Creates the Endboss with initial attributes.
      */
@@ -106,20 +99,14 @@ class Endboss extends MoveableObject {
         this.preloadImages(this.IMAGES_HURT);
         this.preloadImages(this.IMAGES_DEAD);
         this.preloadImages(this.STATUSBAR_IMAGES);
-
         this.x = 2500;
         this.speed = 2;
         this.state = 'walking';
         this.isDead = false;
-
         this.animate();
-        // this.musicManager = new MusicManager();
-
-        this.maxHealth = 15; // Add this line
+        this.maxHealth = 15; 
         this.health = this.maxHealth;
-        // this.statusBar = new EndbossStatusBar();
         this.initStatusBar();
-        // this.statusBar.hide();
     }
 
     initStatusBar() {
@@ -135,20 +122,14 @@ class Endboss extends MoveableObject {
 
     updateStatusBar() {
         if (!this.statusBar || !this.character) return;
-    
         const distance = Math.abs(this.x - this.character.x);
-    
-        // Show only when Endboss is near
         if (distance < 600 && !this.isDead) {
             this.statusBar.show();
         } else {
             this.statusBar.hide();
         }
-    
         this.statusBar.update(this.health);
     }
-    
-
     /**
      * Sets the character reference for tracking Pepe's position.
      * @param {Character} character - The player character (Pepe).
@@ -158,20 +139,14 @@ class Endboss extends MoveableObject {
             console.error("No character provided to Endboss");
             return;
         }
-        
         this.character = character;
-        
-        // Wait until world is available
         if (character.world) {
             this.musicManager = character.world.musicManager;
         } else {
-            // Defer setting musicManager until world is available
             const checkWorld = setInterval(() => {
                 if (character.world) {
                     this.musicManager = character.world.musicManager;
                     clearInterval(checkWorld);
-                    
-                    // Update status bar once everything is ready
                     if (this.statusBar) {
                         this.statusBar.update(this.health);
                         this.statusBar.show();
@@ -180,7 +155,6 @@ class Endboss extends MoveableObject {
             }, 100);
         }
     }
-
     /**
      * Handles animation, movement, and state updates.
      */
@@ -192,7 +166,6 @@ class Endboss extends MoveableObject {
             this.updateStatusBar();
         }, 100);
     }
-
     /**
      * Moves the Endboss based on its current state.
      */
@@ -213,7 +186,6 @@ class Endboss extends MoveableObject {
             this.speed = -this.speed;
         }
     }
-
     /**
      * Moves the Endboss toward Pepe when alert or attacking.
      */
@@ -224,7 +196,6 @@ class Endboss extends MoveableObject {
             this.x += this.speed;
         }
     }
-
     /**
      * Updates the Endboss's state based on health, attacks, and distance from Pepe.
      */
@@ -241,7 +212,6 @@ class Endboss extends MoveableObject {
             this.state = 'walking';
         }
     }
-
     /**
      * Returns the correct animation array based on the Endboss's state.
      * @returns {string[]} - Array of image paths for the current animation.
@@ -256,7 +226,6 @@ class Endboss extends MoveableObject {
             default: return this.IMAGES_WALKING;
         }
     }
-
     /**
      * Checks if the Endboss is currently hurt.
      * @returns {boolean} - `true` if the Endboss is hurt, `false` otherwise.
@@ -264,7 +233,6 @@ class Endboss extends MoveableObject {
     isHurt() {
         return this.state === 'hurt' && this.lastHurtTime + 500 > Date.now();
     }
-
     /**
      * Determines if the Endboss is in attacking range of Pepe.
      * @returns {boolean} - `true` if in attack range, `false` otherwise.
@@ -273,7 +241,6 @@ class Endboss extends MoveableObject {
         if (!this.character) return false;
         return Math.abs(this.x - this.character.x) < 200;
     }
-
     /**
      * Determines if the Endboss should be in an alert state.
      * @returns {boolean} - `true` if Pepe is nearby, `false` otherwise.
@@ -282,68 +249,43 @@ class Endboss extends MoveableObject {
         if (!this.character) return false;
         return Math.abs(this.x - this.character.x) < 400;
     }
-
     /**
      * Reduces the Endboss's health when hit and updates its state.
      * @param {number} damage - Amount of damage taken.
      */
     takeDamage(damage) {
-        // Ensure health doesn't go below 0
         this.health = Math.max(0, this.health - damage);
-        
-        // Update status bar with new health value
         this.updateStatusBar();
-        
         this.state = 'hurt';
         this.lastHurtTime = Date.now();
-    
         setTimeout(() => {
             if (this.health > 0) {
                 this.state = 'alert';
             }
         }, 500);
-    
         if (this.health <= 0) {
             this.die();
-            // Update status bar to empty and hide it after delay
             if (this.statusBar) {
                 this.statusBar.update(0);
                 setTimeout(() => this.statusBar.hide(), 1000);
             }
         }
     }
-
-    // updateStatusBar() {
-    //     if (this.statusBar) {
-    //         this.statusBar.update(this.health);
-    //     }
-    // }
-
     /**
      * Handles the Endboss's death, removing it from the world and triggering win conditions.
      */
     die() {
         this.state = 'dead';
-    
-        // Play dead sound immediately
         if (this.musicManager && !this.musicManager.isMuted) {
             this.musicManager.playEndBossDeadSound();
         }
-        
-    
-        // Let dead animation play for 2s
         setTimeout(() => {
             if (!this.world) return;
-    
-            // Remove Endboss from world
             this.shouldRemove = true;
             this.world.enemies = this.world.enemies.filter(enemy => enemy !== this);
-    
-            // Now, after Endboss is gone → show win popup!
             if (!this.world.winPopup.isVisible) {
                 this.world.uiManager.playerWins();
             }
         }, 2000);
     }
-    
 }

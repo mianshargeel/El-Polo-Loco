@@ -1,7 +1,3 @@
-/**
- * Represents the game world.
- * Manages the character, enemies, level, UI elements, and game state.
- */
 class World {
     ctx;
     canvas;
@@ -138,33 +134,39 @@ class World {
         this.checkCollisionWithCoin();
     }
     checkCollisionWithChicken() {
-        const enemiesCopy = [...this.level.enemies];
-        enemiesCopy.forEach((enemy) => {
-            const isCollidingTop = this.character.isCollidingFromTop(enemy);
-            const isRegularColliding = this.character.isColliding(enemy);
-            const isJumpKill =
-                this.character.speedY > 0 &&
-                this.character.x + this.character.width > enemy.x &&
-                this.character.x < enemy.x + enemy.width;
-            if (isCollidingTop || isJumpKill) {
-                if (enemy.level === undefined) {
-                    enemy.level = this.level;
-                }
-                this.character.speedY = -12; // Bounce effect
-                if (enemy instanceof Chicken || enemy instanceof SmallChicken) {
-                    if (!enemy.isDead) {
-                        enemy.die();
-                        this.musicManager.enemyKilledSound();
-                    }
-                } else if (enemy instanceof Endboss) {
-                    enemy.takeDamage(1); 
-                    this.musicManager.playEndBossHurtSound();
-                }
-            } else if (isRegularColliding && !this.character.isHurt()) {
-                this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
+        [...this.level.enemies].forEach(enemy => {
+            if (this.shouldKillEnemy(enemy)) {
+                this.killEnemy(enemy);
+            } else if (this.shouldTakeDamage(enemy)) {
+                this.handleCharacterHit();
             }
         });
+    }
+    shouldKillEnemy(enemy) {
+        const jumpKill = this.character.speedY > 0 &&
+            this.character.x + this.character.width > enemy.x &&
+            this.character.x < enemy.x + enemy.width;
+        const topHit = this.character.isCollidingFromTop(enemy);
+        return topHit || jumpKill;
+    }
+    killEnemy(enemy) {
+        enemy.level ??= this.level;
+        this.character.speedY = -12;
+    
+        if ((enemy instanceof Chicken || enemy instanceof SmallChicken) && !enemy.isDead) {
+            enemy.die();
+            this.musicManager.enemyKilledSound();
+        } else if (enemy instanceof Endboss) {
+            enemy.takeDamage(1);
+            this.musicManager.playEndBossHurtSound();
+        }
+    }
+    shouldTakeDamage(enemy) {
+        return this.character.isColliding(enemy) && !this.character.isHurt();
+    }
+    handleCharacterHit() {
+        this.character.hit();
+        this.statusBar.setPercentage(this.character.energy);
     }
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {
@@ -229,10 +231,7 @@ class World {
         this._gameOverShown = false;
     }
     initializeLevel() {
-        if (!this.character) {
-            console.error('[World] Cannot initialize level: character is undefined');
-            return;
-        }
+        if (!this.character) { return;}
         this.level = new Level(
             [
                 new Chicken(), new Chicken(), new Chicken(),
@@ -302,15 +301,18 @@ class World {
         endboss.health = 15;
         endboss.state = "walking";
         endboss.isDead = false;
+        this.loadEndbossIMAGES();
+        endboss.x = 2500;
+        endboss.statusBar = new StatusbarEndboss();
+        endboss.setCharacter(this.character);
+        return endboss;
+    }
+    loadEndbossIMAGES() {
         endboss.preloadImages(endboss.IMAGES_WALKING);
         endboss.preloadImages(endboss.IMAGES_ALERT);
         endboss.preloadImages(endboss.IMAGES_ATTACK);
         endboss.preloadImages(endboss.IMAGES_HURT);
         endboss.preloadImages(endboss.IMAGES_DEAD);
-        endboss.x = 2500;
-        endboss.statusBar = new StatusbarEndboss();
-        endboss.setCharacter(this.character);
-        return endboss;
     }
     draw() {
         if (!this.gameStarted) {

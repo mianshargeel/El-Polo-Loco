@@ -80,7 +80,6 @@ class WinPopup {
      * Calls `goToMainMenu()` from the `World` class.
      */
     goToMainMenu() {
-        console.log("🏠 Returning to main menu via popup...");
         this.hide();
 
         if (this.world && typeof this.world.goToMainMenu === "function") {
