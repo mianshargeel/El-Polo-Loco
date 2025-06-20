@@ -45,16 +45,12 @@ class EndbossStatusBar extends DrawableObject{
         if (this.currentHealth < target) {
             this.currentHealth = target;
         }
-    } else {
-        this.currentHealth = target;
+    } else { this.currentHealth = target;
     }
     const percentage = this.currentHealth / this.maxHealth;
-    if (percentage > 0.66) {
-        this.img = this.images[0];
-    } else if (percentage > 0.33) {
-        this.img = this.images[1]; 
-    } else {
-        this.img = this.images[2]; 
+    if (percentage > 0.66) { this.img = this.images[0];
+    } else if (percentage > 0.33) { this.img = this.images[1]; 
+    } else { this.img = this.images[2]; 
     }
  }
   /**

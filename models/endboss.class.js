@@ -287,8 +287,7 @@ class Endboss extends MoveableObject {
                 this.state = 'alert';
             }
         }, 500);
-        if (this.health <= 0) {
-            this.die();
+        if (this.health <= 0) { this.die();
             if (this.statusBar) {
                 this.statusBar.update(0);
                 setTimeout(() => this.statusBar.hide(), 1000);
@@ -300,13 +299,10 @@ class Endboss extends MoveableObject {
         this.attackInProgress = true;
         this.originalX = this.x;
         this.state = 'attack';
-    
         const direction = this.x > this.character.x ? -1 : 1;
         const targetX = this.character.x + (direction * 50);
-    
         const attackInterval = setInterval(() => {
             this.x += direction * this.attackSpeed;
-    
             if ((direction === -1 && this.x <= targetX) || (direction === 1 && this.x >= targetX)) {
                 clearInterval(attackInterval);
                 this.returnToStart();
@@ -355,8 +351,7 @@ class Endboss extends MoveableObject {
         this.state = 'dead';
         if (this.musicManager && !this.musicManager.isMuted) {
             this.musicManager.playEndBossDeadSound();
-        }
-        if (this.chickenThrowInterval) {
+        } if (this.chickenThrowInterval) {
             clearInterval(this.chickenThrowInterval);
             this.chickenThrowInterval = null;
         }        
@@ -364,9 +359,7 @@ class Endboss extends MoveableObject {
             if (!this.world) return;
             this.shouldRemove = true;
             this.world.enemies = this.world.enemies.filter(enemy => enemy !== this);
-            if (!this.world.winPopup.isVisible) {
-                this.world.uiManager.playerWins();
-            }
+            if (!this.world.winPopup.isVisible) { this.world.uiManager.playerWins(); }
         }, 2000);
     }
 }

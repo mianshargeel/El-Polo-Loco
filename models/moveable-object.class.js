@@ -125,11 +125,6 @@ class MoveableObject extends DrawableObject { // Parent class
         return horizontal && vertical && airborne;
     }
     
-    
-    
-    
-    
-    
     /**
      * Reduces the object's energy when hit and prevents multiple hits in a short time.
      */

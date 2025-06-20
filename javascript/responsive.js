@@ -54,7 +54,13 @@ function checkOrientation() {
       mobileControls.style.display = (!showWarning && gameState.isMobile && !gameState.isPaused) ? 'flex' : 'none';
   }
 }
-
+/**
+ * Detects whether the current device is a mobile device.
+ * Updates the `gameState.isMobile` flag based on user agent, screen width,
+ * and special handling for iPads running desktop-class Safari.
+ * If the device has newly switched to mobile mode, it initializes mobile controls.
+ * Also updates the visibility of mobile control buttons.
+ */
 function detectDeviceType() {
   const wasMobile = gameState.isMobile;
 
@@ -96,7 +102,12 @@ function setupCanvas() {
   gameState.canvas.height = GAME_CONFIG.LOGICAL_HEIGHT;
   resizeCanvas();
 }
-
+/**
+ * Resizes and styles the game canvas based on the current window size.
+ * Uses the calculated dimensions from `calculateCanvasSize()` to apply styles
+ * and updates the viewport if the `world` has a `updateViewport()` method.
+ * Also refreshes mobile control visibility.
+ */
 function resizeCanvas() {
   const canvas = gameState.canvas;
   if (!canvas) return;
@@ -108,7 +119,11 @@ function resizeCanvas() {
   }
   updateMobileControlsVisibility();
 }
-
+/**
+ * Calculates the optimal canvas size and position based on the current window size.
+ * Ensures scaling stays within limits and adjusts for small screens.
+ * @returns {{w: number, h: number, scale: number, cw: number, ch: number, topPercent: string}} Canvas size and UI positioning
+ */
 function calculateCanvasSize() {
   const w = window.innerWidth;
   const h = window.innerHeight;
@@ -116,22 +131,35 @@ function calculateCanvasSize() {
   const scale = Math.max(Math.min(w / LOGICAL_WIDTH, h / LOGICAL_HEIGHT, MAX_SCALE), 0.8);
   let cw = LOGICAL_WIDTH * scale;
   let ch = LOGICAL_HEIGHT * scale;
-  let topPercent = '50%';
-  const isSmallPortrait = w <= 400 && h <= 750;
-  const isSmallLandscape = w <= 900 && h <= 400;
 
-  if (isSmallPortrait || isSmallLandscape) {
-    return { w, h, scale, cw: 537, ch: 350, topPercent: '38%' };
-  } else if  (w <= 850 && h <= 450) {
-    return { w, h, scale, cw: Math.min(cw, 600), ch: Math.min(ch, 380), topPercent: '42%' };
-  } else if (w <= 1025) {
-    return { w, h, scale, cw: Math.min(cw, 720), ch: Math.min(ch, 420), topPercent: '42%' };
-  } else if (w <= 1370) {
-    return { w, h, scale, cw: Math.min(cw, 1000), ch: Math.min(ch, 512), topPercent: '36%' };
-  }
-  return { w, h, scale, cw, ch, topPercent };
+  return getCanvasDimensions(w, h, scale, cw, ch);
+}
+/**
+ * Determines the adjusted canvas dimensions and vertical alignment based on screen size.
+ * @param {number} w - Current window width
+ * @param {number} h - Current window height
+ * @param {number} scale - Calculated scale factor
+ * @param {number} cw - Calculated canvas width
+ * @param {number} ch - Calculated canvas height
+ * @returns {{w: number, h: number, scale: number, cw: number, ch: number, topPercent: string}} Final dimensions and top offset
+ */
+function getCanvasDimensions(w, h, scale, cw, ch) {
+  if (isSmallScreen(w, h)) return { w, h, scale, cw: 537, ch: 350, topPercent: '38%' };
+  if (w <= 850 && h <= 450) return { w, h, scale, cw: Math.min(cw, 600), ch: Math.min(ch, 380), topPercent: '42%' };
+  if (w <= 1025) return { w, h, scale, cw: Math.min(cw, 720), ch: Math.min(ch, 420), topPercent: '42%' };
+  if (w <= 1370) return { w, h, scale, cw: Math.min(cw, 1000), ch: Math.min(ch, 512), topPercent: '36%' };
+  return { w, h, scale, cw, ch, topPercent: '50%' };
 }
 
+function isSmallScreen(w, h) {
+  return (w <= 400 && h <= 750) || (w <= 900 && h <= 400);
+}
+/**
+ * Checks whether the screen is considered small (portrait or landscape).
+ * @param {number} w - Window width
+ * @param {number} h - Window height
+ * @returns {boolean} True if small portrait or small landscape screen
+ */
 function applyCanvasStyles(canvas, cw, ch, topPercent) {
   canvas.style.width = `${cw}px`;
   canvas.style.height = `${ch}px`;
@@ -153,7 +181,11 @@ function setupEventListeners() {
       gameState.isFullscreen = !!document.fullscreenElement;
   });
 }
-
+/**
+ * Sets up event listeners for mobile on-screen control buttons.
+ * Prevents duplicate initialization using a flag. Maps each button to a corresponding key input,
+ * and handles both touch and mouse events to simulate key presses.
+ */
 function setupMobileControls() {
   if (mobileControlsInitialized) return;
   mobileControlsInitialized = true;

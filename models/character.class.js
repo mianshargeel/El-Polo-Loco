@@ -184,21 +184,17 @@ class Character extends MoveableObject {
     processMovement() {
         if (this.isDead()) return;
         const moved = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
-
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
-        }
-        if (this.world.keyboard.LEFT && this.x > 0) {
+        } if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this.otherDirection = true;
-        }
-        if (moved) {
+        } if (moved) {
             this.lastMoveTime = Date.now();
             this.isSleeping = false;
         }
     }
-
     /**
      * Handles jump action when the SPACE key is pressed.
      */
