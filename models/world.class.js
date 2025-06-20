@@ -232,16 +232,7 @@ class World {
     }
     initializeLevel() {
         if (!this.character) { return;}
-        this.level = new Level(
-            [
-                new Chicken(), new Chicken(), new Chicken(),
-                new SmallChicken(), new SmallChicken(),
-                new Endboss(), new Chicken()
-            ],
-            [...level1.clouds],
-            [...level1.backgroundObjects],
-            this.createBottles()
-        );
+        this.level = new Level( [new Chicken(), new Chicken(), new Chicken(), new SmallChicken(), new SmallChicken(),new Endboss(), new Chicken()], [...level1.clouds], [...level1.backgroundObjects], this.createBottles() );
         this.enemies = this.level.enemies;
         this.enemies.forEach(enemy => {
             enemy.world = this;
@@ -249,9 +240,7 @@ class World {
                 if (this.character) {
                     enemy.setCharacter(this.character); 
                     enemy.statusBar.show();
-                } else {
-                    console.warn('Skipping setCharacter for Endboss: character not available');
-                }
+                } else { console.warn('Skipping setCharacter for Endboss: character not available'); }
             }
         });
     }

@@ -134,7 +134,7 @@ class Character extends MoveableObject {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
-            } else if (idleDuration > 3000) {
+            } else if (idleDuration > 4000) {
                 this.playAnimation(this.IMAGES_SLEEP);
                 this.isSleeping = true;
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
@@ -151,17 +151,14 @@ class Character extends MoveableObject {
     cleanup() {
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
-
         if (this._deathTimeout) {
             clearTimeout(this._deathTimeout);
             this._deathTimeout = null;
         }
-
         if (this._moveInterval) {
             clearInterval(this._moveInterval);
             this._moveInterval = null;
         }
-
         if (this._animationInterval) {
             clearInterval(this._animationInterval);
             this._animationInterval = null;
@@ -235,10 +232,8 @@ class Character extends MoveableObject {
         if (this._deathHandled || this.energy > 0) {
             return;
         }
-    
         this._deathHandled = true;
         this.musicManager.playCharacterDeadSound();
-    
         if (this._deathTimeout) clearTimeout(this._deathTimeout);
     
         this._deathTimeout = setTimeout(() => {

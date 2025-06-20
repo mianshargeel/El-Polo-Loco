@@ -33,11 +33,11 @@ class Statusbar extends DrawableObject {
     constructor() {
         super();
         this.preloadImages(this.IMAGES);
-        this.x = 30; // X position on the screen
-        this.y = 0; // Y position on the screen
-        this.height = 45; // Height of the status bar
-        this.width = 200; // Width of the status bar
-        this.setPercentage(100); // Start with full health
+        this.x = 30; 
+        this.y = 0; 
+        this.height = 45;
+        this.width = 200; 
+        this.setPercentage(100); 
     }
 
     /**
@@ -45,29 +45,22 @@ class Statusbar extends DrawableObject {
      * @param {number} percentage - The new health percentage (0-100).
      */
     setPercentage(percentage) {
-        this.percentage = percentage;
+        this.percentage = Math.max(0, percentage); 
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = new Image();
-        this.img.src = path; // Force image update
+        this.img.src = path;
     }
-
+    
     /**
      * Determines the correct image index based on the percentage of health remaining.
      * @returns {number} - The index of the image to be displayed.
      */
     resolveImageIndex() {
-        if (this.percentage === 100) {
-            return 5;
-        } else if (this.percentage > 80) {
-            return 4;
-        } else if (this.percentage > 60) {
-            return 3;
-        } else if (this.percentage > 40) {
-            return 2;
-        } else if (this.percentage > 20) {
-            return 1;
-        } else {
-            return 0;
-        }
+        if (this.percentage > 80) return 5;
+        else if (this.percentage > 61) return 4;
+        else if (this.percentage > 41) return 3;
+        else if (this.percentage > 21) return 2;
+        else if (this.percentage > 0) return 1;
+        else return 0;
     }
 }
