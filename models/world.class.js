@@ -153,7 +153,7 @@ class World {
         enemy.level ??= this.level;
         this.character.speedY = -12;
     
-        if ((enemy instanceof Chicken || enemy instanceof SmallChicken) && !enemy.isDead) {
+        if ((enemy instanceof Chicken || enemy instanceof SmallChicken) || enemy instanceof BossChicken && !enemy.isDead) {
             enemy.die();
             this.musicManager.enemyKilledSound();
         } else if (enemy instanceof Endboss) {
