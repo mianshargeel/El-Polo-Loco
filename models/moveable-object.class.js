@@ -76,18 +76,14 @@ class MoveableObject extends DrawableObject { // Parent class
     }
 
     getHitbox() {
-        const offsetX = 20;
-        const offsetY = 30;
-        const hitboxWidth = this.width - 2 * offsetX;
-        const hitboxHeight = this.height - offsetY;
-    
         return {
-            left: this.x + offsetX,
-            right: this.x + offsetX + hitboxWidth,
-            top: this.y + offsetY,
-            bottom: this.y + offsetY + hitboxHeight
+            left: this.x,
+            right: this.x + this.width,
+            top: this.y,
+            bottom: this.y + this.height
         };
     }
+    
     /**
      * Checks if this object is colliding with another moveable object.
      * Ensures that the two objects are overlapping.
@@ -119,17 +115,21 @@ class MoveableObject extends DrawableObject { // Parent class
      * @returns {boolean} - `true` if collision is from above, `false` otherwise.
      */
     isCollidingFromTop(mo) {
-        const pepeFootY = this.y + this.height;
-        const chickenTopY = mo.y;
+        const a = this.getHitbox();
+        const b = mo.getHitbox();
     
-        const threshold = 15; 
+        const horizontal = a.right > b.left && a.left < b.right;
+        const vertical = a.bottom <= b.top + 15 && this.speedY < 0;
+        const airborne = this.isAboveGround();
     
-        return (
-            this.isColliding(mo) &&
-            pepeFootY >= chickenTopY &&
-            pepeFootY <= chickenTopY + threshold
-        );
+        return horizontal && vertical && airborne;
     }
+    
+    
+    
+    
+    
+    
     /**
      * Reduces the object's energy when hit and prevents multiple hits in a short time.
      */

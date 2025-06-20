@@ -52,7 +52,6 @@ class Endboss extends MoveableObject {
     attackSpeed = 8;
     originalX = 2500;
     
-
     IMAGES_WALKING = [
         'img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/4_enemie_boss_chicken/1_walk/G2.png',
@@ -143,10 +142,7 @@ class Endboss extends MoveableObject {
      * @param {Character} character - The player character (Pepe).
      */
     setCharacter(character) {
-        if (!character) {
-            console.error("No character provided to Endboss");
-            return;
-        }
+        if (!character) return; 
         this.character = character;
         if (character.world) {
             this.musicManager = character.world.musicManager;
@@ -184,8 +180,6 @@ class Endboss extends MoveableObject {
             this.moveTowardPepe();
         }
     }
-    
-
     /**
      * Moves the Endboss left or reverses direction when reaching limits.
      */
@@ -223,8 +217,6 @@ class Endboss extends MoveableObject {
             this.state = 'walking';
         }
     }
-    
-
     /**
      * Returns the correct animation array based on the Endboss's state.
      * @returns {string[]} - Array of image paths for the current animation.
@@ -281,8 +273,6 @@ class Endboss extends MoveableObject {
             Math.abs(this.x - this.character.x) < 400
         );
     }
-    
-    
     /**
      * Reduces the Endboss's health when hit and updates its state.
      * @param {number} damage - Amount of damage taken.
@@ -323,24 +313,20 @@ class Endboss extends MoveableObject {
             }
         }, 50);
     }
-    
+
     returnToStart() {
         const direction = this.x > this.originalX ? -1 : 1;
-    
         const returnInterval = setInterval(() => {
             this.x += direction * this.attackSpeed;
-    
             if ((direction === -1 && this.x <= this.originalX) ||
                 (direction === 1 && this.x >= this.originalX)) {
                 clearInterval(returnInterval);
                 this.x = this.originalX;
                 this.attackInProgress = false;
                 this.attackCooldown = true;
-    
                 setTimeout(() => {
                     this.attackCooldown = false;
                 }, this.attackDelay);
-    
                 this.state = 'alert';
             }
         }, 50);
@@ -348,26 +334,20 @@ class Endboss extends MoveableObject {
 
     spitChicken() {
         if (this.chickenThrowInterval || this.attackInProgress || this.isDead) return;
-    
         this.chickenCount = 0;
-    
         this.chickenThrowInterval = setInterval(() => {
             if (!this.character || this.isDead || this.attackInProgress) return;
-    
             let chicken = new BossChicken(this.x, this.y + 200);
             chicken.world = this.world; 
             this.world.level.enemies.push(chicken);
             this.chickenCount++;
-    
             if (this.chickenCount >= this.chickensPerCycle) {
                 clearInterval(this.chickenThrowInterval);
                 this.chickenThrowInterval = null;
                 this.runAttack(); 
             }
-        }, 3500); // 3.5 seconds between chickens
+        }, 3500); 
     }
-      
-
     /**
      * Handles the Endboss's death, removing it from the world and triggering win conditions.
      */

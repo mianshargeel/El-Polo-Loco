@@ -143,19 +143,18 @@ class World {
         });
     }
     shouldKillEnemy(enemy) {
-        const jumpKill = this.character.speedY > 0 &&
-            this.character.x + this.character.width > enemy.x &&
-            this.character.x < enemy.x + enemy.width;
-        const topHit = this.character.isCollidingFromTop(enemy);
-        return topHit || jumpKill;
+        const result = this.character.isCollidingFromTop(enemy);
+        if (this.character.isCollidingFromTop(enemy)) return result;
     }
     killEnemy(enemy) {
         enemy.level ??= this.level;
         this.character.speedY = -12;
-    
+
         if ((enemy instanceof Chicken || enemy instanceof SmallChicken) || enemy instanceof BossChicken && !enemy.isDead) {
-            enemy.die();
-            this.musicManager.enemyKilledSound();
+            setTimeout(() => {
+                enemy.die();
+                this.musicManager.enemyKilledSound();
+            }, 100);
         } else if (enemy instanceof Endboss) {
             enemy.takeDamage(1);
             this.musicManager.playEndBossHurtSound();
