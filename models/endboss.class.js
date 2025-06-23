@@ -2,7 +2,7 @@ class Endboss extends MoveableObject {
     height = 400;
     width = 250;
     y = 55;
-    health = 15;
+    health = 10;
     state = 'walking';
     isDead = false;
     attackCooldown = false;
@@ -62,7 +62,7 @@ class Endboss extends MoveableObject {
         this.state = 'walking';
         this.isDead = false;
         this.animate();
-        this.maxHealth = 15; 
+        this.maxHealth = 10; 
         this.health = this.maxHealth;
         this.initStatusBar();
         this.totalChickensSpawned = 0;  

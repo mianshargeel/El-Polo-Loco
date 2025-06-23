@@ -131,7 +131,7 @@ class MoveableObject extends DrawableObject { // Parent class
     hit() {
         if (this.isHurt()) return;  
         this.lastHit = new Date().getTime();
-        this.energy = Math.max(0, this.energy - 10);
+        this.energy = Math.max(0, this.energy - 20);
         if (this.energy < 0) {
             this.energy = 0;
         }
