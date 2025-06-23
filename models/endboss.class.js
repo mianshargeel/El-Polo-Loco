@@ -326,6 +326,22 @@ class Endboss extends MoveableObject {
         clearInterval(this.chickenThrowInterval);
         this.chickenThrowInterval = null;
     }
+
+    /** Returns the hitbox boundaries of the object with applied offsets. */
+    getHitbox() {
+        const offsetX = 50;  
+        const offsetY = 80;  
+        const width = this.width - 2 * offsetX;
+        const height = this.height - offsetY;
+    
+        return {
+            left: this.x + offsetX,
+            right: this.x + offsetX + width,
+            top: this.y + offsetY,
+            bottom: this.y + offsetY + height
+        };
+    }
+    
     
     /** Triggers Endboss death logic, sound, removal, and win condition. */
     die() {

@@ -168,8 +168,9 @@ class World {
     /** Kills an enemy or deals damage depending on its type. */
     killEnemy(enemy) {
         enemy.level ??= this.level;
-        this.character.speedY = -12;
-        if ((enemy instanceof Chicken || enemy instanceof SmallChicken) || enemy instanceof BossChicken && !enemy.isDead) {
+    
+        if ((enemy instanceof Chicken || enemy instanceof SmallChicken || enemy instanceof BossChicken) && !enemy.isDead) {
+            this.character.speedY = -12; // bounce up
             setTimeout(() => {
                 enemy.die();
                 this.musicManager.enemyKilledSound();
@@ -179,10 +180,13 @@ class World {
             this.musicManager.playEndBossHurtSound();
         }
     }
+    
 
     /** Checks if the character should take damage from an enemy. */
     shouldTakeDamage(enemy) {
-        return this.character.isColliding(enemy) && !this.character.isHurt();
+        const isColliding = this.character.isColliding(enemy);
+        const isFromTop = this.character.isCollidingFromTop(enemy);
+        return isColliding && !isFromTop && !enemy.isDead && !this.character.isHurt();
     }
 
     /** Handles what happens when the character takes damage. */
