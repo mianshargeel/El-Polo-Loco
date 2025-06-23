@@ -6,14 +6,12 @@
     margin: 0;
     padding: 0;
 }
-
 @font-face {
     font-family: 'zabras';
-    src: url('fonts/zabars.ttf') format('truetype'); /* Adjust path */
+    src: url('fonts/zabars.ttf') format('truetype'); 
     font-weight: normal;
     font-style: normal;
 }
-
 html, body {
     margin: 0;
     overflow: hidden;
@@ -25,7 +23,6 @@ html, body {
     background: url('img/bg/bg2.webp') center/cover no-repeat;
     padding-bottom: var(--sat);
 }
-
 .main-container {
     display: flex;
     justify-content: center;
@@ -35,7 +32,6 @@ html, body {
     overflow: hidden;
     position: relative;
 }
-
 .canvas-wrapper {
     position: relative;
     width: 720px;
@@ -43,7 +39,6 @@ html, body {
     margin: auto;
     text-align: center;
 }
-
 canvas {
     display: block;
     background-image: url('img/polo-loco.png');
@@ -52,7 +47,6 @@ canvas {
     image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
-
 .control-buttons {
     position: absolute;
     top: -15px;
@@ -62,26 +56,23 @@ canvas {
     gap: 10px;
     z-index: 100;
 }
-
 .control-buttons button {
-    width: 80px; /* Wider like a plank */
-    height: 40px; /* More rectangular */
-    background: url('img/bg/wood-texture.jpg') center/cover no-repeat; /* Add a wood texture image */
+    width: 80px; 
+    height: 40px; 
+    background: url('img/bg/wood-texture.jpg') center/cover no-repeat;
     border: 3px solid #8b5a2b; /* Brown border (wood color) */
     border-radius: 8px; /* Slight rounded corners — looks carved */
     color: #fffbe6; /* Off-white text to match wood */
-    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif; /* Fun playful font */
+    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif;
     font-size: 16px;
     cursor: pointer;
-    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5); /* Depth */
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5); 
     transition: all 0.2s ease;
 }
-
 .control-buttons button:hover {
     transform: scale(1.05);
     box-shadow: 3px 6px 8px rgba(0, 0, 0, 0.6);
 }
-
 .menu-buttons {
     position: fixed;
     top: 50%;           
@@ -93,37 +84,30 @@ canvas {
     z-index: 90;
     text-align: center;
 }
-
 .menu-buttons button {
-    padding: 16px 40px; /* Bigger padding → looks like big wooden plank */
-    background: url('img/bg/wood-texture.jpg') center/cover no-repeat; /* Wood texture background */
+    padding: 16px 40px; 
+    background: url('img/bg/wood-texture.jpg') center/cover no-repeat; 
     color: #fffbe6; /* Slightly off-white text */
     border: 3px solid #8b5a2b; /* Dark brown border */
     border-radius: 12px; /* Slight rounded edges */
     font-size: 28px;
     font-weight: bold;
-    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif; /* Playful font */
+    font-family: 'Comic Sans MS', 'Patrick Hand', 'Baloo', sans-serif; 
     cursor: pointer;
     min-width: 220px;
-    box-shadow: 3px 6px 12px rgba(0, 0, 0, 0.5); /* Deeper shadow for wooden effect */
+    box-shadow: 3px 6px 12px rgba(0, 0, 0, 0.5); 
     transition: all 0.3s ease;
 }
-
 .menu-buttons button:hover {
     transform: scale(1.05);
     box-shadow: 4px 8px 14px rgba(0, 0, 0, 0.6);
 }
-
-
 #start-btn, #info-btn {
     display: block; 
     font-family: 'zabras', Arial, sans-serif;
 }
-
-
-/* General Popup Styling */
 .popup {
-    display: none; /* Initially hidden */
+    display: none; 
     position: fixed;
     top: 50%;
     left: 50%;
@@ -137,36 +121,29 @@ canvas {
     width: 80%; /* Responsive width */
     max-width: 400px; /* Ensures a max size */
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-    overflow: hidden; /* Prevent overflow */
+    overflow: hidden;
 }
-/* Disable game canvas interaction when paused */
 canvas.paused {
     pointer-events: none;
 }
-
-/* Popup Content */
 .popup-content {
     font-family: 'zabras', Arial, sans-serif;
     font-size: 44px;
     padding: 20px;
     border-radius: 10px;
     color: white;
-    overflow: hidden; /* Prevent overflow */
+    overflow: hidden; 
 }
-
 .popup-content h2 {
     font-size: 36px;
     letter-spacing: 2px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 20px;
 }
-
 .popup-content p {
     font-size: 24px;
     margin-bottom: 20px;
 }
-
-/* Buttons inside Popups */
 .popup-content button {
     border: none;
     padding: 12px 25px;
@@ -178,29 +155,23 @@ canvas.paused {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s ease, background 0.3s ease;
 }
-/* Restart Button (Green) */
 #restartWinButton {
-    background: #4CAF50; /* Green */
+    background: #4CAF50; 
     color: white;
 }
-
 #restartWinButton:hover {
-    background: #45a049; /* Darker Green */
+    background: #45a049; 
     transform: scale(1.05);
 }
-
 /* Main Menu Button (Red) */
 #mainMenuButton {
-    background: #f44336; /* Red */
+    background: #f44336; 
     color: white;
 }
-
 #mainMenuButton:hover {
-    background: #d32f2f; /* Darker Red */
+    background: #d32f2f; 
     transform: scale(1.05);
 }
-
-/* === PAUSE POPUP STYLES === */
 #pausePopup {
     display: none; 
     position: fixed;
@@ -218,53 +189,41 @@ canvas.paused {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     overflow: hidden; 
 }
-
-
 #pausePopup h2 {
     font-size: 34px;
     letter-spacing: 2px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     margin-bottom: 15px;
 }
-
 #pausePopup p {
     font-size: 22px;
     margin-bottom: 20px;
 } 
-
-/* Buttons inside the Pause Popup */
 #continueGame {
-    background: #28a745; /* Green */
+    background: #28a745; 
     color: white;
 }
-
 #continueGame:hover {
     background: #218838;
     transform: scale(1.05);
 }
-
 #exitToHome {
     background: #dc3545; /* Red */
     color: white;
 }
-
 #exitToHome:hover {
     background: #c82333;
     transform: scale(1.05);
 }
-
 footer{
     margin-bottom: 16px;
 }
-
 footer a{
     font-size: 24px;
     font-family: 'zabras', Arial, sans-serif;
     color: #fff;
 }
-
-/* === MOBILE CONTROLS === */
-#mobile-controls {
+#mobile-controls {/* === MOBILE CONTROLS === */
     display: none !important;
     position: fixed;
     width: 100%;
@@ -275,7 +234,6 @@ footer a{
     padding: 1vh 2vw;
     box-sizing: border-box;
 }
-
 #left-controls,
 #right-controls {
     display: flex;
@@ -283,19 +241,16 @@ footer a{
     gap: 2vh;
     pointer-events: auto;
 }
-
 #left-controls {
     left: 2vw;
     bottom: -44vh;
     position: absolute;
 }
-
 #right-controls {
     right: 2vw;
     bottom: -44vh;
     position: absolute;
 }
-
 .control-btn {
     min-width: 60px;
     min-height: 60px;
@@ -313,7 +268,6 @@ footer a{
     user-select: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-
 .control-btn:active {
     transform: scale(0.95);
     opacity: 1;
@@ -321,8 +275,6 @@ footer a{
 .mobile-botle-throw{
     width: 60px;
 }
-
-/* === LANDSCAPE WARNING === */
 .landscape-warning {
     display: none;
     position: fixed;
@@ -341,12 +293,10 @@ footer a{
     padding: 20px;
     line-height: 1.5;
 }
-
 body.landscape-warning-active .main-container,
 body.landscape-warning-active #mobile-controls {
     display: none !important;
 }
-
 /* === MEDIA QUERIES === */
 @media (max-width: 1371px) and (orientation: landscape){
     #mobile-controls {
@@ -365,12 +315,10 @@ body.landscape-warning-active #mobile-controls {
     #mobile-controls {
         display: flex !important;
     }
-
     .control-btn {
         min-width: 80px;
         min-height: 80px;
     }
-
     .control-buttons {
         position: absolute;
         top: 46px !important;
@@ -399,27 +347,22 @@ body.landscape-warning-active #mobile-controls {
         min-width: 140px;
         font-size: 24px;
     }
-
 }
 @media (max-width: 721px) and (orientation: landscape) {
     .popup {
         width: 90%;
         max-width: 350px;
     }
-
     .popup-content h2 {
         font-size: 28px;
     }
-
     .popup-content p {
         font-size: 20px;
     }
-
     .popup-content button {
         font-size: 18px;
         padding: 10px 20px;
     }
-
     #left-controls,
     #right-controls {
         bottom: -44vh;
@@ -445,7 +388,6 @@ body.landscape-warning-active #mobile-controls {
         font-size: 14px;
     }
 }
-
 @media (max-width: 480px) {
     html,
     body {
@@ -456,31 +398,25 @@ body.landscape-warning-active #mobile-controls {
     .popup {
         width: 100%;
     }
-
     .popup-content h2 {
         font-size: 24px;
     }
-
     .popup-content p {
         font-size: 18px;
     }
-
     .popup-content button {
         font-size: 16px;
         padding: 8px 15px;
     }
-
     #mobile-controls button {
         padding: 10px 20px;
         font-size: 16px;
     }
 }
-
 @media (orientation: portrait) and (max-width: 1025px) {
     .landscape-warning {
         display: flex;
     }
-
     #mobile-controls {
         display: none !important;
     }

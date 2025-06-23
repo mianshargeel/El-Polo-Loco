@@ -38,14 +38,14 @@ class World {
         this.uiManager.setupFullscreenControls();
         this.bottleStatusbar = new BottleStatusbar();
         this.bottleStatusbar.setPercentage(0); 
-        this.level = new Level(
-            [...level1.enemies],        
-            [...level1.clouds],
-            [...level1.backgroundObjects],
-            this.createBottles()        
-        );
+        this.level = new Level([...level1.enemies],[...level1.clouds],[...level1.backgroundObjects],this.createBottles() );
         this._gameOverPopupActive = false;
+
+        this.renderer = new WorldRenderer(this);
+
     }
+
+    /** Handles collection of bottles when Pepe collides with them.*/
     checkPepeBottleCollection() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle) && !bottle.collected) {
@@ -57,6 +57,8 @@ class World {
             }
         });
     }
+
+    /** Generates and displays 5 coins at random positions within a defined range.*/
     showCoins() {
         this.coins = [];
         for (let i = 0; i < 5; i++) {
@@ -65,6 +67,8 @@ class World {
             this.coins.push(new CoinsHandle(x, y));
         }
     }
+
+    /** Initializes level enemies and assigns the world and character to the Endboss. */
     creatingInstanceOfEndbossInWorld() {
         this.level = level1;
         this.enemies = this.level.enemies;
@@ -75,6 +79,8 @@ class World {
             }
         });
     }
+    
+    /** Starts the game, initializes all systems, and begins rendering and logic loops. */
     startGame() {
         if (this.gameStarted) { return; }
         this.gameStarted = true;
@@ -86,9 +92,11 @@ class World {
         document.querySelector('.control-buttons').style.display = 'block';
         document.getElementById("mobile-controls").style.display = (window.innerWidth <= 1020) ? "flex" : "none";
         this.musicManager.playBackGroundMusic();
-        this.draw();
+        this.renderer.draw();
         this.run();
     }
+
+    /** Runs the main game logic interval that checks collisions and actions. */
     run() { 
         if (this.runInterval) { clearInterval(this.runInterval); }
         this.runInterval = setInterval(() => {
@@ -100,6 +108,8 @@ class World {
             }
         }, 200);
     }
+    
+    /** Pauses the game, stops logic and animation, and shows the pause popup. */
     pauseGame() {
         if (this.isPaused) return;
         this.isPaused = true;
@@ -108,16 +118,20 @@ class World {
         this.musicManager.pauseBackgroundMusic();
         if (this.pausePopup) { this.pausePopup.show(); }
     }
+
+    /** Resumes the game from pause state and restarts the game loop and animation. */
     resumeGame() {
         if (!this.isPaused) return;
         this.isPaused = false;
         this.runGameLoop();
-        this.animationFrame = requestAnimationFrame(() => this.draw());
+        this.animationFrame = requestAnimationFrame(() =>  this.renderer.draw());
         this.musicManager.playBackGroundMusic();
         const popup = document.getElementById('pausePopup');
         if (popup) popup.style.display = 'none';
         if (window.updateMobileControlsVisibility) { window.updateMobileControlsVisibility(); }
     }
+
+    /** Starts the interval for checking collisions and gameplay logic. */
     runGameLoop() { 
         if (this.gameLoopInterval) { clearInterval(this.gameLoopInterval); }
         this.gameLoopInterval = setInterval(() => {
@@ -129,27 +143,32 @@ class World {
             }
         }, 200);
     }
+
+    /** Checks all relevant collisions in the game. */
     checkCollisions() {
         this.checkCollisionWithChicken();
         this.checkCollisionWithCoin();
     }
+
+    /** Checks for collisions between character and chickens, and handles hit or kill. */
     checkCollisionWithChicken() {
         [...this.level.enemies].forEach(enemy => {
             if (this.shouldKillEnemy(enemy)) {
                 this.killEnemy(enemy);
-            } else if (this.shouldTakeDamage(enemy)) {
-                this.handleCharacterHit();
-            }
+            } else if (this.shouldTakeDamage(enemy)) { this.handleCharacterHit(); }
         });
     }
+
+    /** Determines if an enemy should be killed based on collision from above. */
     shouldKillEnemy(enemy) {
         const result = this.character.isCollidingFromTop(enemy);
         if (this.character.isCollidingFromTop(enemy)) return result;
     }
+
+    /** Kills an enemy or deals damage depending on its type. */
     killEnemy(enemy) {
         enemy.level ??= this.level;
         this.character.speedY = -12;
-
         if ((enemy instanceof Chicken || enemy instanceof SmallChicken) || enemy instanceof BossChicken && !enemy.isDead) {
             setTimeout(() => {
                 enemy.die();
@@ -160,13 +179,19 @@ class World {
             this.musicManager.playEndBossHurtSound();
         }
     }
+
+    /** Checks if the character should take damage from an enemy. */
     shouldTakeDamage(enemy) {
         return this.character.isColliding(enemy) && !this.character.isHurt();
     }
+
+    /** Handles what happens when the character takes damage. */
     handleCharacterHit() {
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
     }
+
+    /** Checks if the character collides with a coin and collects it. */
     checkCollisionWithCoin() {
         this.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
@@ -176,6 +201,8 @@ class World {
             }
         });
     }
+
+    /** Throws a bottle if the D key is pressed and bottles are available. */
     checkThrowObject() {
         if (this.keyboard.D && this.bottleStatusbar.bottleCount > 0) {
             const throwDirection = this.character.otherDirection ? -1 : 1;
@@ -190,6 +217,8 @@ class World {
             this.bottleStatusbar.decrease();
         }
     }
+
+    /** Checks for bottle collisions with enemies and handles damage or breakage. */
     checkBottleCollisions() {
         if (!this.throwableObject || !Array.isArray(this.throwableObject)) return;
         this.throwableObject.forEach((bottle) => {
@@ -205,6 +234,8 @@ class World {
             });
         });
     }
+
+    /** Restarts the game by resetting and reinitializing all core systems. */
     restartGame() {
         this.resetGameState();          
         this.initializeCharacter();     
@@ -213,6 +244,8 @@ class World {
         this._gameOverShown = false;
         this.startGameLoop();
     }
+
+    /** Fully resets the game state, objects, and UI for a fresh start. */
     resetGameState() {
         clearInterval(this.gameLoopInterval);
         clearInterval(this.runInterval);
@@ -229,6 +262,8 @@ class World {
         this._gameOverPopupActive = false;
         this._gameOverShown = false;
     }
+
+    /** Initializes the level with default enemies, objects, and environment. */
     initializeLevel() {
         if (!this.character) { return;}
         this.level = new Level( [new Chicken(), new Chicken(), new Chicken(), new SmallChicken(), new SmallChicken(),new Endboss(), new Chicken()], [...level1.clouds], [...level1.backgroundObjects], this.createBottles() );
@@ -243,6 +278,8 @@ class World {
             }
         });
     }
+
+    /** Creates bottles and places them at fixed positions in the level. */
     createBottles() {
         const bottles = [];
         const positions = [ 
@@ -260,6 +297,8 @@ class World {
         positions.forEach(pos => { bottles.push(new BottleOnGround(pos.x, pos.y)); });
         return bottles;
     }
+
+    /** Initializes the main character and sets its properties and world reference. */
     initializeCharacter() {
         if (this.character) { this.character.cleanup(); }
         const newCharacter = new Character(this.musicManager);
@@ -269,20 +308,26 @@ class World {
         newCharacter.isDeadAnimationPlayed = false;
         this.character = newCharacter;
     }
+
+    /** Initializes all status bars and triggers coin generation. */
     initializeStatusBars() {
         this.statusBar = new Statusbar();
         this.coinStatusbar = new CoinStatusbar();
         this.bottleStatusbar = new BottleStatusbar();
         this.showCoins();
     }
+
+    /** Starts the game loop and background music after winning or restarting. */
     startGameLoop() {
         this.createBottles();
         this.musicManager.playBackGroundMusic();
         if (this.winPopup) { this.winPopup.hide(); }
         this.gameStarted = true;
         this.runGameLoop();
-        this.animationFrame = requestAnimationFrame(() => this.draw());
+        this.animationFrame = requestAnimationFrame(() => this.renderer.draw());
     }
+
+    /** Creates and returns a new Endboss instance with default values. */
     createEndboss() {
         let endboss = new Endboss();
         endboss.world = this;
@@ -295,6 +340,8 @@ class World {
         endboss.setCharacter(this.character);
         return endboss;
     }
+
+    /** Loads all image assets required for Endboss animations. */
     loadEndbossIMAGES() {
         endboss.preloadImages(endboss.IMAGES_WALKING);
         endboss.preloadImages(endboss.IMAGES_ALERT);
@@ -302,84 +349,5 @@ class World {
         endboss.preloadImages(endboss.IMAGES_HURT);
         endboss.preloadImages(endboss.IMAGES_DEAD);
     }
-    draw() {
-        if (!this.gameStarted) {
-            this.uiManager.showStartScreen();
-            return;
-        }
-        if (this.isPaused) {
-            this.animationFrame = requestAnimationFrame(() => this.draw());
-            return;
-        }
-        this.clearCanvas();
-        this.updateCamera();
-        this.renderBackground();
-        this.renderGameObjects();
-        this.ctx.save(); 
-        this.ctx.resetTransform(); 
-        if (this.level?.enemies) {
-            const endboss = this.level.enemies.find(e => e instanceof Endboss);
-             if (endboss?.statusBar && endboss.health > 0) { endboss.statusBar.draw(this.ctx); } }
-        this.ctx.restore(); 
-        this.renderUI();
-        this.restoreCamera();
-        this.animationFrame = requestAnimationFrame(() => this.draw());
-    }
-    clearCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-    updateCamera() {
-        let cameraMarginLeft = 200;
-        let cameraMarginRight = window.innerWidth / 2; 
-        let targetCameraX;
-        if (this.character.x + this.camera_x < cameraMarginLeft) {
-            targetCameraX = -this.character.x + cameraMarginLeft;
-        } else if (this.character.x + this.camera_x > cameraMarginRight) {
-            targetCameraX = -this.character.x + cameraMarginRight;
-        } else {
-            targetCameraX = this.camera_x;
-        }
-        this.camera_x = -this.character.x + 100;
-        this.camera_x = Math.floor(this.camera_x);
-        this.ctx.translate(this.camera_x, 0);
-    }
-    renderBackground() {
-        if (this.level?.backgroundObjects) { this.addArrayObjectToMap(this.level.backgroundObjects); }
-        if (this.level?.clouds) { this.addArrayObjectToMap(this.level.clouds); }
-    }
-    renderUI() {
-        this.ctx.translate(-this.camera_x, 0); 
-        this.addToMap(this.statusBar);
-        this.addToMap(this.coinStatusbar);
-        this.addToMap(this.bottleStatusbar);
-        this.ctx.translate(this.camera_x, 0);
-    }
-    renderGameObjects() {
-        if (this.character) this.addToMap(this.character);
-        if (this.level?.enemies) this.level.enemies.forEach(enemy => this.addToMap(enemy));
-        if (this.throwableObject) this.addArrayObjectToMap(this.throwableObject);
-        if (this.coins) this.addArrayObjectToMap(this.coins);
-        if (this.level?.bottles) this.addArrayObjectToMap(this.level.bottles); 
-    }
-    restoreCamera() {
-        this.ctx.translate(-this.camera_x, 0);
-    }
-    addArrayObjectToMap(arrays) {
-        arrays.forEach(arr => this.addToMap(arr));
-    }
-    addToMap(mObj) {
-        if (mObj.otherDirection) { this.flipImage(mObj); }
-        if (mObj.img) { mObj.drawImg(this.ctx); }
-        if (mObj.otherDirection) { this.flipImageBack(mObj); }
-    }
-    flipImage(mObj) {
-        this.ctx.save();
-        this.ctx.translate(mObj.width, 0);
-        this.ctx.scale(-1, 1);
-        mObj.x = mObj.x * -1;
-    }
-    flipImageBack(mObj) {
-        mObj.x = mObj.x * -1;
-        this.ctx.restore();
-    }
+   
 }

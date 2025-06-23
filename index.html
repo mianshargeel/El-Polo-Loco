@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="shortcut icon" href="img/favicon/fav1.png" type="image/x-icon">
   <link rel="stylesheet" href="impressum/impressum.css">
-  <title>El Pollo Loco</title>
+  <title>El Pollo Loco | Game</title>
 
   <style>
    
@@ -14,8 +14,6 @@
   
 </head>
 <body>
-  <!-- <h1>El Pollo Loco</h1> -->
-
  <div class="main-container">
         <div class="canvas-wrapper">
             <canvas id="canvas" width="720" height="480"></canvas>
@@ -29,8 +27,6 @@
                 <button id="info-btn">Game Info</button>
             </div>
         </div>
-
-
     <!-- game info popup -->
     <div id="gameInfoPopup" class="popup" style="display: none;">
         <div class="popup-content">
@@ -41,7 +37,6 @@
         <p>- Collect coins for points</p>
         </div>
     </div>
-
     <!-- Mobile Controls Container -->
     <div id="mobile-controls">
         <div id="left-controls">
@@ -53,7 +48,6 @@
             <button class="control-btn" id="throw-btn"><img class="mobile-botle-throw" src="img/6_salsa_bottle/salsa_bottle.png" alt=""></button>
         </div>
     </div>
-
     <!-- Popup Container -->
     <div id="gameOverPopup" class="popup">
         <div class="popup-content">
@@ -64,7 +58,6 @@
 
         </div>
     </div>
-
     <!-- Win Popup Modal -->
     <div id="winPopup" class="popup">
         <div class="popup-content">
@@ -74,7 +67,6 @@
             <button id="goToMainMenu" class="go-to-main-menu">Main Menu</button>
         </div>
     </div>
-
     <!-- Pause Popup Modal -->
     <div id="pausePopup" class="popup">
         <div class="popup-content">
@@ -86,7 +78,6 @@
     </div>
 </div>
 <!-- impressum dialog -->
-
 <div class="dialog-overlay" id="impressumDialog">
     <div class="dialog-content">
         <button class="close-button" id="closeImpressum">&times;</button>
@@ -122,10 +113,10 @@
         <script src="levels/level1.js"></script>
         <script src="models/ui-manager.class.js"></script>
         <script src="javascript/responsive.js"></script>
+        <script src="models/world-renderer.class.js"></script>
         <script src="models/world.class.js"></script>
         <script src="./javascript/game.js"></script>
         <script src="impressum/impressum.js"></script>
-
 
     </body>
 </html>
