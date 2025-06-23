@@ -1,52 +1,11 @@
-/**
- * Represents the Endboss in the game.
- * The Endboss has multiple states: walking, alert, attacking, hurt, and dead.
- * It interacts with Pepe and reacts to bottle hits.
- */
 class Endboss extends MoveableObject {
-    /**
-     * Height of the Endboss.
-     * @type {number}
-     * @default 400
-     */
     height = 400;
-    /**
-     * Width of the Endboss.
-     * @type {number}
-     * @default 250
-     */
     width = 250;
-    /**
-     * Vertical position of the Endboss.
-     * @type {number}
-     * @default 55
-     */
     y = 55;
-    /**
-     * Health points of the Endboss.
-     * @type {number}
-     * @default 15
-     */
     health = 15;
-    /**
-     * Current state of the Endboss.
-     * Can be: 'walking', 'alert', 'attack', 'hurt', or 'dead'.
-     * @type {string}
-     * @default 'walking'
-     */
     state = 'walking';
-    /**
-     * Indicates whether the Endboss is dead.
-     * @type {boolean}
-     * @default false
-     */
     isDead = false;
-    /**
-     * Image paths for different animations.
-     * @type {string[]}
-     */
-
-    ttackCooldown = false;
+    attackCooldown = false;
     attackInProgress = false;
     attackDelay = 3000;
     attackSpeed = 8;
@@ -94,9 +53,7 @@ class Endboss extends MoveableObject {
         'img/7_statusbars/2_statusbar_endboss/green.png',
         'img/7_statusbars/2_statusbar_endboss/orange.png'
     ]
-    /**
-     * Creates the Endboss with initial attributes.
-     */
+    
     constructor() {
         super();
         this.loadImage(this.IMAGES_WALKING[0]); 
@@ -114,33 +71,26 @@ class Endboss extends MoveableObject {
         this.maxHealth = 15; 
         this.health = this.maxHealth;
         this.initStatusBar();
+        this.totalChickensSpawned = 0;  
+        this.maxChickens = 4
     }
 
+    /** Initializes the Endboss status bar with default configuration. */
     initStatusBar() {
-        this.statusBar = new EndbossStatusBar(
-            this.maxHealth,
-            500,    
-            15,  
-            200,   
-            45,    
-            this.STATUSBAR_IMAGES
-        );
+        this.statusBar = new EndbossStatusBar( this.maxHealth,500,15,200,45,this.STATUSBAR_IMAGES);
     }
 
+    /** Updates the Endboss status bar visibility and health based on distance and state. */
     updateStatusBar() {
         if (!this.statusBar || !this.character) return;
         const distance = Math.abs(this.x - this.character.x);
-        if (distance < 600 && !this.isDead) {
-            this.statusBar.show();
-        } else {
-            this.statusBar.hide();
+        if (distance < 600 && !this.isDead) { this.statusBar.show();
+        } else { this.statusBar.hide();
         }
         this.statusBar.update(this.health);
     }
-    /**
-     * Sets the character reference for tracking Pepe's position.
-     * @param {Character} character - The player character (Pepe).
-     */
+
+    /** Sets the character (Pepe) reference and updates status bar visibility. */
     setCharacter(character) {
         if (!character) return; 
         this.character = character;
@@ -159,9 +109,8 @@ class Endboss extends MoveableObject {
             }, 100);
         }
     }
-    /**
-     * Handles animation, movement, and state updates.
-     */
+
+    /** Handles animation, movement, and state updates.*/
     animate() {
         setInterval(() => {
             this.updateState();
@@ -170,9 +119,8 @@ class Endboss extends MoveableObject {
             this.updateStatusBar();
         }, 100);
     }
-    /**
-     * Moves the Endboss based on its current state.
-     */
+
+    /** Moves the Endboss based on its current state. */
     move() {
         if (this.state === 'walking') {
             this.moveLeft();
@@ -180,18 +128,16 @@ class Endboss extends MoveableObject {
             this.moveTowardPepe();
         }
     }
-    /**
-     * Moves the Endboss left or reverses direction when reaching limits.
-     */
+
+    /** Moves the Endboss left or reverses direction when reaching limits. */
     moveLeft() {
         this.x -= this.speed;
         if (this.x < 2000 || this.x > 2500) {
             this.speed = -this.speed;
         }
     }
-    /**
-     * Moves the Endboss toward Pepe when alert or attacking.
-     */
+
+    /** Moves the Endboss toward Pepe when alert or attacking. */
     moveTowardPepe() {
         if (this.x > this.character.x) {
             this.x -= this.speed;
@@ -199,9 +145,8 @@ class Endboss extends MoveableObject {
             this.x += this.speed;
         }
     }
-    /**
-     * Updates the Endboss's state based on health, attacks, and distance from Pepe.
-     */
+
+    /**  Updates the Endboss's state based on health, attacks, and distance from Pepe. */
     updateState() {
         if (this.health <= 0) {
             this.state = 'dead';
@@ -217,10 +162,8 @@ class Endboss extends MoveableObject {
             this.state = 'walking';
         }
     }
-    /**
-     * Returns the correct animation array based on the Endboss's state.
-     * @returns {string[]} - Array of image paths for the current animation.
-     */
+
+    /** Gets the correct animation image array based on the current state. */
     getAnimation() {
         switch (this.state) {
             case 'walking': return this.IMAGES_WALKING;
@@ -231,30 +174,25 @@ class Endboss extends MoveableObject {
             default: return this.IMAGES_WALKING;
         }
     }
-    /**
-     * Checks if the Endboss is currently hurt.
-     * @returns {boolean} - `true` if the Endboss is hurt, `false` otherwise.
-     */
+
+    /** Returns true if the Endboss is in a hurt state. */
     isHurt() {
         return this.state === 'hurt' && this.lastHurtTime + 500 > Date.now();
     }
-    /**
-     * Determines if the Endboss is in attacking range of Pepe.
-     * @returns {boolean} - `true` if in attack range, `false` otherwise.
-     */
+
+    /** Returns true if the Endboss is within attack range of the player. */
     isAttacking() {
         if (!this.character) return false;
         return Math.abs(this.x - this.character.x) < 200;
     }
-    /**
-     * Determines if the Endboss should be in an alert state.
-     * @returns {boolean} - `true` if Pepe is nearby, `false` otherwise.
-     */
+
+   /** Returns true if the Endboss is alert due to player's proximity. */
     isAlert() {
         if (!this.character) return false;
         return Math.abs(this.x - this.character.x) < 400;
     }
 
+    /** Returns true if the Endboss can start a dash attack. */
     canStartAttack() {
         return (
             !this.attackCooldown &&
@@ -264,6 +202,7 @@ class Endboss extends MoveableObject {
         );
     }
 
+    /** Returns true if the Endboss can begin spitting chickens. */
     canStartSpitting() {
         return (
             !this.attackCooldown &&
@@ -273,10 +212,8 @@ class Endboss extends MoveableObject {
             Math.abs(this.x - this.character.x) < 400
         );
     }
-    /**
-     * Reduces the Endboss's health when hit and updates its state.
-     * @param {number} damage - Amount of damage taken.
-     */
+
+    /** Reduces Endboss health and triggers hurt or death logic. */
     takeDamage(damage) {
         this.health = Math.max(0, this.health - damage);
         this.updateStatusBar();
@@ -295,6 +232,7 @@ class Endboss extends MoveableObject {
         }
     }
 
+    /** Executes the Endboss's dash attack toward the player. */
     runAttack() {
         this.attackInProgress = true;
         this.originalX = this.x;
@@ -310,6 +248,7 @@ class Endboss extends MoveableObject {
         }, 50);
     }
 
+    /** Returns the Endboss to its original position after attack ends. */
     returnToStart() {
         const direction = this.x > this.originalX ? -1 : 1;
         const returnInterval = setInterval(() => {
@@ -328,25 +267,73 @@ class Endboss extends MoveableObject {
         }, 50);
     }
 
+    /** Starts the cycle to spit chickens with limits and triggers attack afterward. */
     spitChicken() {
-        if (this.chickenThrowInterval || this.attackInProgress || this.isDead) return;
+        if (this.shouldAbortSpit()) return;
+        this.chickensPerCycle = this.getRandomCycleCount();
         this.chickenCount = 0;
         this.chickenThrowInterval = setInterval(() => {
-            if (!this.character || this.isDead || this.attackInProgress) return;
-            let chicken = new BossChicken(this.x, this.y + 200);
-            chicken.world = this.world; 
-            this.world.level.enemies.push(chicken);
-            this.chickenCount++;
-            if (this.chickenCount >= this.chickensPerCycle) {
-                clearInterval(this.chickenThrowInterval);
-                this.chickenThrowInterval = null;
-                this.runAttack(); 
+            if (this.shouldAbortDuringInterval()) {
+                this.endSpitInterval();
+                return;
             }
-        }, 3500); 
+            this.spawnSingleChicken();
+            if (this.shouldEndCycle()) {
+                this.endSpitInterval();
+                this.runAttack();
+            }
+        }, 3500);
     }
-    /**
-     * Handles the Endboss's death, removing it from the world and triggering win conditions.
-     */
+    
+    /** Checks if chicken spit should not start at all */
+    shouldAbortSpit() {
+        return (
+            this.chickenThrowInterval ||
+            this.attackInProgress ||
+            this.isDead ||
+            this.totalChickensSpawned >= this.maxChickens
+        );
+    }
+    
+    /** Checks if chicken spit interval should be stopped mid-cycle */
+    shouldAbortDuringInterval() {
+        return (
+            !this.character ||
+            this.isDead ||
+            this.attackInProgress ||
+            this.totalChickensSpawned >= this.maxChickens
+        );
+    }
+    
+    /** Randomizes chicken spawn count per cycle between 3 and 4 */
+    getRandomCycleCount() {
+        return Math.floor(Math.random() * 2) + 3;
+    }
+    
+    /** Spawns a single BossChicken and increments counters */
+    spawnSingleChicken() {
+        let chicken = new BossChicken(this.x, this.y + 200);
+        chicken.world = this.world;
+        this.world.level.enemies.push(chicken);
+        this.chickenCount++;
+        this.totalChickensSpawned++;
+    }
+    
+    /** Checks if the current spit cycle should end */
+    shouldEndCycle() {
+        return (
+            this.chickenCount >= this.chickensPerCycle ||
+            this.totalChickensSpawned >= this.maxChickens
+        );
+    }
+    
+    /** Clears the chicken throw interval and resets reference */
+    endSpitInterval() {
+        clearInterval(this.chickenThrowInterval);
+        this.chickenThrowInterval = null;
+    }
+    
+    /** Triggers Endboss death logic, sound, removal, and win condition. */
     die() {
         this.state = 'dead';
         if (this.musicManager && !this.musicManager.isMuted) {
@@ -359,7 +346,10 @@ class Endboss extends MoveableObject {
             if (!this.world) return;
             this.shouldRemove = true;
             this.world.enemies = this.world.enemies.filter(enemy => enemy !== this);
-            if (!this.world.winPopup.isVisible) { this.world.uiManager.playerWins(); }
+            if (!this.world.winPopup.isVisible) {
+                this.world.uiManager.playerWins();
+                this.world.stopGameCompletely();
+            }
         }, 2000);
     }
 }

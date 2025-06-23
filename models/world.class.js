@@ -349,5 +349,16 @@ class World {
         endboss.preloadImages(endboss.IMAGES_HURT);
         endboss.preloadImages(endboss.IMAGES_DEAD);
     }
+
+    /**
+     * Stops all active intervals and animations after game is won.
+     */
+    stopGameCompletely() {
+        clearInterval(this.gameLoopInterval);
+        clearInterval(this.runInterval);
+        cancelAnimationFrame(this.animationFrame);
+        this.gameStarted = false;
+    }
+
    
 }
