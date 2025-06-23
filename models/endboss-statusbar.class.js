@@ -7,7 +7,17 @@ class EndbossStatusBar extends DrawableObject{
    * @param {number} width - Width of the bar
    * @param {number} height - Height of the bar
    * @param {string[]} imagePaths - Array of three image paths [high, medium, low]
+   * 
    */
+  static IMAGE_PATHS = [
+    'img/endBossStatusbar/endBossStatusBar0.png',
+    'img/endBossStatusbar/endBossStatusBar20.png',
+    'img/endBossStatusbar/endBossStatusBar40.png',
+    'img/endBossStatusbar/endBossStatusBar60.png',
+    'img/endBossStatusbar/endBossStatusBar80.png',
+    'img/endBossStatusbar/endBossStatusBar100.png'
+    ];
+    
   constructor(maxHealth, x, y, width, height, imagePaths) {
       super();
       this.maxHealth = maxHealth;
@@ -39,36 +49,29 @@ class EndbossStatusBar extends DrawableObject{
    * @param {number} currentHealth - Current health value
    */
   update(currentHealth) {
-    const target = Math.max(0, currentHealth); 
-    if (target < this.currentHealth) {
-        this.currentHealth -= 0.5; 
-        if (this.currentHealth < target) {
-            this.currentHealth = target;
-        }
-    } else { this.currentHealth = target;
-    }
-    const percentage = this.currentHealth / this.maxHealth;
-    if (percentage > 0.66) { this.img = this.images[0];
-    } else if (percentage > 0.33) { this.img = this.images[1]; 
-    } else { this.img = this.images[2]; 
-    }
- }
+    const percentage = currentHealth / this.maxHealth;
+    let index = 0;
+
+    if (percentage > 0.8) index = 5;       
+    else if (percentage > 0.6) index = 4; 
+    else if (percentage > 0.4) index = 3;  
+    else if (percentage > 0.2) index = 2; 
+    else if (percentage > 0)   index = 1; 
+    else                       index = 0;  
+
+    this.img = this.images[index];
+}
+
   /**
    * Draws the status bar on the canvas if visible.
    * @param {CanvasRenderingContext2D} ctx - Canvas context
    */
   draw(ctx) {
-    if (this.isVisible && this.img) {
-        const percentage = this.currentHealth / this.maxHealth;
-        const fillWidth = this.width * percentage;
-        ctx.globalAlpha = 0.25;
-        ctx.drawImage(this.images[0], this.x, this.y, this.width, this.height);
-        ctx.globalAlpha = 1.0;
-        if (fillWidth > 0) {
-            ctx.drawImage(this.img, this.x, this.y, fillWidth, this.height);
+        if (this.isVisible && this.img) {
+            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
-}
+
   /**
    * Shows the status bar.
    */

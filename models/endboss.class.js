@@ -47,12 +47,6 @@ class Endboss extends MoveableObject {
         'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png',
     ];
-
-    STATUSBAR_IMAGES = [
-        'img/7_statusbars/2_statusbar_endboss/blue.png',
-        'img/7_statusbars/2_statusbar_endboss/green.png',
-        'img/7_statusbars/2_statusbar_endboss/orange.png'
-    ]
     
     constructor() {
         super();
@@ -62,7 +56,7 @@ class Endboss extends MoveableObject {
         this.preloadImages(this.IMAGES_ATTACK);
         this.preloadImages(this.IMAGES_HURT);
         this.preloadImages(this.IMAGES_DEAD);
-        this.preloadImages(this.STATUSBAR_IMAGES);
+        this.preloadImages(EndbossStatusBar.IMAGE_PATHS);
         this.x = 2500;
         this.speed = 2;
         this.state = 'walking';
@@ -77,7 +71,7 @@ class Endboss extends MoveableObject {
 
     /** Initializes the Endboss status bar with default configuration. */
     initStatusBar() {
-        this.statusBar = new EndbossStatusBar( this.maxHealth,500,15,200,45,this.STATUSBAR_IMAGES);
+        this.statusBar = new EndbossStatusBar( this.maxHealth,500,15,200,45, EndbossStatusBar.IMAGE_PATHS);
     }
 
     /** Updates the Endboss status bar visibility and health based on distance and state. */
