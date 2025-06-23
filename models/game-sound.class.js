@@ -12,6 +12,8 @@ class GameSounds {
        this.soundButton = document.getElementById('mute-btn'); // Uses existing button
         this.soundButton.addEventListener("click", () => this.toggleGameSounds());
     }
+
+    /** Initializes the sound toggle button and sets up its click handler. */
     initSoundButton() {
         if (!this.soundButton) {
             console.error("Mute button not found in HTML!");
@@ -21,6 +23,7 @@ class GameSounds {
         this.soundButton.addEventListener("click", () => this.toggleGameSounds());
     }
 
+    /** Toggles game sound on/off and updates the button icon. */
     toggleGameSounds() {
         this.musicManager.toggleMute();
         this.isSoundOn = !this.isSoundOn;

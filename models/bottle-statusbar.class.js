@@ -27,6 +27,7 @@ class BottleStatusbar extends DrawableObject {
         this.setPercentage(0); // Start empty
     }
 
+    /** Increases the bottle count and updates the percentage display. */
     increase() {
         if (this.bottleCount >= this.maxBottles) return;
         
@@ -35,6 +36,7 @@ class BottleStatusbar extends DrawableObject {
         this.setPercentage(this.percentage); // Using existing method
     }
 
+    /** Decreases the bottle count and updates the percentage display. */
     decrease() {
         if (this.bottleCount <= 0) return;
         
@@ -43,24 +45,20 @@ class BottleStatusbar extends DrawableObject {
         this.setPercentage(this.percentage); // Using existing method
     }
 
-    /**
-     * Sets the percentage of bottles available and updates the displayed image.
-     * @param {number} percentage - The new percentage of bottles (0-100).
-     */
+    /** Sets the percentage of bottles and updates the corresponding image. */
     setPercentage(percentage) {
         this.percentage = percentage;
         let path = this.IMAGES[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
-
-    /**
-     * Improved version that updates more precisely
-     */
+    
+    /** Resolves the image index based on the current percentage. */
     resolveImageIndex() {
         const step = 100 / (this.IMAGES.length - 1);
         return Math.min(Math.floor(this.percentage / step), this.IMAGES.length - 1);
     }
 
+    /** Uses one bottle if available and updates the UI accordingly. */
     useBottle() {
         if (this.bottleCount > 0) {
             this.bottleCount--;

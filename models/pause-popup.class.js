@@ -24,10 +24,12 @@ class PausePopup {
         });
     }
 
+    /** Displays the popup by setting its display style to "flex". */
     show() {
         this.popup.style.display = "flex";
     }
 
+    /** Hides the popup by setting its display style to "none". */
     hide() {
         this.popup.style.display = "none";
     }

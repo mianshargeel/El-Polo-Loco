@@ -36,6 +36,8 @@ class CoinsHandle extends DrawableObject {
         this.img = new Image();
         this.img.src = path;
     }
+
+    /** Returns the hitbox boundaries of the object with applied offsets. */
     getHitbox() {
         const padding = 30;
         return {

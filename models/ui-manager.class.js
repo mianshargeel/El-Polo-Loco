@@ -9,29 +9,60 @@ class UIManager {
         this.pausePopup = new PausePopup(this.world);
     }
 
+    /** Clears the canvas to show the start screen without rendering additional content. */
     showStartScreen() {
-        // Only clear canvas, don't draw title
         const ctx = this.canvas.getContext('2d');
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
-    setupGameControls() { //calling in game.js
-        document.getElementById('start-btn')?.addEventListener('click', () => {
+    /** Sets up event listeners for all game control buttons (start, pause, info, etc). */
+    setupGameControls() {
+        this.setupStartButton();
+        this.setupPauseButton();
+        this.setupContinueButton();
+        this.setupMainMenuButtons();
+        this.setupInfoButton();
+        this.setupInfoPopupCloseButton();
+    }
+    
+    /** Sets up the start button to begin the game. */
+    setupStartButton() {
+        const startBtn = document.getElementById('start-btn');
+        startBtn?.addEventListener('click', () => {
             this.world.startGame();
             document.getElementById('gameInfoPopup').style.display = 'none';
         });
-        document.getElementById('pause-btn')?.addEventListener('click', () => {
+    }
+    
+    /** Sets up the pause button to toggle pause/resume. */
+    setupPauseButton() {
+        const pauseBtn = document.getElementById('pause-btn');
+        pauseBtn?.addEventListener('click', () => {
             this.togglePause();
         });
-        document.getElementById('continueGame')?.addEventListener('click', () => {
+    }
+    
+    /** Sets up the continue button to resume the game. */
+    setupContinueButton() {
+        const continueBtn = document.getElementById('continueGame');
+        continueBtn?.addEventListener('click', () => {
             this.world.resumeGame();
         });
+    }
+    
+    /** Adds event listeners to all "go to main menu" buttons. */
+    setupMainMenuButtons() {
         document.querySelectorAll('.go-to-main-menu').forEach(button => {
             button.addEventListener('click', () => {
-                this.goToMainMenu(); 
+                this.goToMainMenu();
             });
         });
-        document.getElementById('info-btn')?.addEventListener('click', () => {
+    }
+    
+    /** Sets up the info button to show the popup and pause the game if needed. */
+    setupInfoButton() {
+        const infoBtn = document.getElementById('info-btn');
+        infoBtn?.addEventListener('click', () => {
             const popup = document.getElementById('gameInfoPopup');
             popup.style.display = 'block';
     
@@ -39,7 +70,12 @@ class UIManager {
                 this.world.pauseGame();
             }
         });
-        document.querySelector('#gameInfoPopup .close-btn')?.addEventListener('click', () => {
+    }
+    
+    /** Sets up the close button for the info popup to hide it and resume if paused. */
+    setupInfoPopupCloseButton() {
+        const closeBtn = document.querySelector('#gameInfoPopup .close-btn');
+        closeBtn?.addEventListener('click', () => {
             const popup = document.getElementById('gameInfoPopup');
             popup.style.display = 'none';
     
@@ -48,7 +84,9 @@ class UIManager {
             }
         });
     }
+    
 
+    /** Toggles between paused and resumed game states. */
     togglePause() {
         if (!this.world.gameStarted) return;
         if (this.world.isPaused) {
@@ -58,6 +96,7 @@ class UIManager {
         }
     }
 
+    /** Redirects the player to the main menu (index.html) after a short delay. */
     goToMainMenu() {
         setTimeout(() => {
             window.location.href = "index.html";
@@ -71,6 +110,7 @@ class UIManager {
         this.world.winPopup.show(); 
     }
 
+    /** Initializes and handles fullscreen toggle functionality for the game. */
     setupFullscreenControls() {
         const fullscreenBtn = document.getElementById('fullscreen-btn');
         if (!fullscreenBtn) return;
@@ -91,12 +131,14 @@ class UIManager {
         });
     }
     
+    /** Adjusts UI behavior based on whether the game is in fullscreen mode. */
     adjustForFullscreen() {
         if (this.isFullscreen) {
         } else {
         }
     }
 
+    /** Hides the main menu buttons (start and info) from the UI. */
     hideMenuButtons() {
         const startBtn = document.getElementById('start-btn');
         const infoBtn = document.getElementById('info-btn');
@@ -105,6 +147,7 @@ class UIManager {
         if (infoBtn) infoBtn.style.display = 'none';
     }
 
+    /** Displays the game over popup and resets the game when "Restart" is clicked. */
     showGameOverPopup() {
         if (this.world._gameOverPopupActive) return;
         this.world._gameOverPopupActive = true;

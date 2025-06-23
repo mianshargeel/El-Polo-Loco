@@ -167,6 +167,7 @@ class MusicManager {
         }
     }
 
+    /** Plays the bottle collection sound if sound is not muted. */
     playCollectBotleSound() {
         if (!this.isMuted) {
             this.collectBotle.play();
@@ -185,11 +186,9 @@ class MusicManager {
         if (this.isMuted) {
             this.pauseBackgroundMusic();
             if (muteBtn) muteBtn.textContent = '🔇';
-            // console.log('sound muted');
         } else {
             this.playBackGroundMusic();
             if (muteBtn) muteBtn.textContent = '🔊';
-            // console.log('sound unmuted');
         }
     }
     

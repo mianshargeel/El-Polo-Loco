@@ -25,6 +25,7 @@ const gameState = {
   isPaused: false
 };
 
+/** Initializes the game system by setting up canvas, controls, and UI. */
 function initializeGameSystem() {
   detectDeviceType();
   setupCanvas();
@@ -33,6 +34,7 @@ function initializeGameSystem() {
   startGame();
 }
 
+/** Creates a warning banner for landscape orientation on small screens. */
 function createLandscapeWarning() {
   const warningDiv = document.createElement('div');
   warningDiv.className = 'landscape-warning';
@@ -43,6 +45,7 @@ function createLandscapeWarning() {
   window.addEventListener('resize', checkOrientation);
 }
 
+/** Checks screen orientation and toggles landscape warning display. */
 function checkOrientation() {
   const warning = document.querySelector('.landscape-warning');
   if (!warning) return;
@@ -54,35 +57,28 @@ function checkOrientation() {
       mobileControls.style.display = (!showWarning && gameState.isMobile && !gameState.isPaused) ? 'flex' : 'none';
   }
 }
-/**
- * Detects whether the current device is a mobile device.
- * Updates the `gameState.isMobile` flag based on user agent, screen width,
- * and special handling for iPads running desktop-class Safari.
- * If the device has newly switched to mobile mode, it initializes mobile controls.
- * Also updates the visibility of mobile control buttons.
- */
+
+/** Detects whether the device is mobile and updates UI state. */
 function detectDeviceType() {
   const wasMobile = gameState.isMobile;
-
-  gameState.isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-      window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
-  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
-      gameState.isMobile = true;
-  }
-  if (!wasMobile && gameState.isMobile) {
-      setupMobileControls();  // make sure this runs again
-  }
+  gameState.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= GAME_CONFIG.MOBILE_BREAKPOINT;
+  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) { gameState.isMobile = true; }
+  if (!wasMobile && gameState.isMobile) { setupMobileControls();  }
   updateMobileControlsVisibility();
 }
 
-window.addEventListener('resize', debounce(() => {
-  detectDeviceType(); 
-  resizeCanvas();
-  checkOrientation();
-}, 100));
+/**
+ * Adds a debounced window resize listener to update layout and UI.
+ */
+function setupResizeHandler() {
+  window.addEventListener('resize', debounce(() => {
+    detectDeviceType(); 
+    resizeCanvas();
+    checkOrientation();
+  }, 100));
+}
 
-
+/** Updates the visibility of mobile on-screen controls. */
 function updateMobileControlsVisibility() {
   const mobileControls = document.getElementById('mobile-controls');
   if (!mobileControls) return;
@@ -94,6 +90,7 @@ function updateMobileControlsVisibility() {
   }
 }
 
+/** Initializes and resizes the canvas element for the game. */
 function setupCanvas() {
   gameState.canvas = document.getElementById('canvas');
   if (!gameState.canvas) return;
@@ -102,12 +99,8 @@ function setupCanvas() {
   gameState.canvas.height = GAME_CONFIG.LOGICAL_HEIGHT;
   resizeCanvas();
 }
-/**
- * Resizes and styles the game canvas based on the current window size.
- * Uses the calculated dimensions from `calculateCanvasSize()` to apply styles
- * and updates the viewport if the `world` has a `updateViewport()` method.
- * Also refreshes mobile control visibility.
- */
+
+/** Resizes the canvas based on screen size and updates viewport. */
 function resizeCanvas() {
   const canvas = gameState.canvas;
   if (!canvas) return;
@@ -119,6 +112,7 @@ function resizeCanvas() {
   }
   updateMobileControlsVisibility();
 }
+
 /**
  * Calculates the optimal canvas size and position based on the current window size.
  * Ensures scaling stays within limits and adjusts for small screens.
@@ -134,6 +128,7 @@ function calculateCanvasSize() {
 
   return getCanvasDimensions(w, h, scale, cw, ch);
 }
+
 /**
  * Determines the adjusted canvas dimensions and vertical alignment based on screen size.
  * @param {number} w - Current window width
@@ -154,6 +149,7 @@ function getCanvasDimensions(w, h, scale, cw, ch) {
 function isSmallScreen(w, h) {
   return (w <= 400 && h <= 750) || (w <= 900 && h <= 400);
 }
+
 /**
  * Checks whether the screen is considered small (portrait or landscape).
  * @param {number} w - Window width
@@ -168,6 +164,8 @@ function applyCanvasStyles(canvas, cw, ch, topPercent) {
   canvas.style.top = topPercent;
   canvas.style.transform = 'translate(-50%, -50%)';
 }
+
+/** Sets up window and fullscreen event listeners. */
 function setupEventListeners() {
   if (gameState.isMobile) {
       setupMobileControls();
@@ -181,11 +179,8 @@ function setupEventListeners() {
       gameState.isFullscreen = !!document.fullscreenElement;
   });
 }
-/**
- * Sets up event listeners for mobile on-screen control buttons.
- * Prevents duplicate initialization using a flag. Maps each button to a corresponding key input,
- * and handles both touch and mouse events to simulate key presses.
- */
+
+/** Initializes mobile control buttons if not already initialized. */
 function setupMobileControls() {
   if (mobileControlsInitialized) return;
   mobileControlsInitialized = true;
@@ -200,6 +195,7 @@ function setupMobileControls() {
   controls.forEach(registerMobileButton);
 }
 
+/** Registers a single mobile control button for input handling. */
 function registerMobileButton({ id, key }) {
   const btn = document.getElementById(id);
   if (!btn) return;
@@ -211,24 +207,27 @@ function registerMobileButton({ id, key }) {
   bindMouseEvents(btn, press, release);
 }
 
+/** Simulates keyboard key press or release. */
 function handleKeyPress(key, isPressed) {
   window.keyboard[key] = isPressed;
   if (key === 'UP') window.keyboard.SPACE = isPressed;
 }
 
+/** Binds touch events for a mobile button element. */
 function bindTouchEvents(btn, press, release) {
   btn.addEventListener('touchstart', e => { e.preventDefault(); press(); });
   btn.addEventListener('touchend', e => { e.preventDefault(); release(); });
   btn.addEventListener('touchcancel', e => { e.preventDefault(); release(); });
 }
 
+/** Binds mouse events for a mobile button element. */
 function bindMouseEvents(btn, press, release) {
   btn.addEventListener('mousedown', press);
   btn.addEventListener('mouseup', release);
   btn.addEventListener('mouseleave', release);
 }
 
-
+/** Debounces a function to limit how often it's triggered. */
 function debounce(func, delay) {
   let timeout;
   return function () {
@@ -237,6 +236,7 @@ function debounce(func, delay) {
   };
 }
 
+/** Starts the game by calling the global init() function. */
 function startGame() {
   if (typeof window.init === 'function') {
       window.init();
@@ -245,4 +245,17 @@ function startGame() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', initializeGameSystem);
+/**
+ * Initializes the entire game system and sets up event listeners.
+ */
+function setupGame() {
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeGameSystem();
+    setupResizeHandler();
+  });
+}
+
+/**
+ * Initializing game
+*/
+setupGame();

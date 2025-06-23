@@ -30,20 +30,22 @@ class SmallChicken extends MoveableObject {
       this.animate();
   } 
 
+  /** Starts the movement and walking animation intervals if the game is running and the object is alive. */
   animate() {
-    this.walkingInterval = setInterval(() => {
-        if (this.world?.gameStarted && !this.isDead) {
-            this.moveLeft();
-        }
-    }, 1000 / 60); 
+        this.walkingInterval = setInterval(() => {
+            if (this.world?.gameStarted && !this.isDead) {
+                this.moveLeft();
+            }
+        }, 1000 / 60); 
 
-    this.animationInterval = setInterval(() => {
-        if (this.world?.gameStarted && !this.isDead) {
-            this.playAnimation(this.IMAGES_WALKING);
-        }
-    }, 200);
+        this.animationInterval = setInterval(() => {
+            if (this.world?.gameStarted && !this.isDead) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
+        }, 200);
     }
     
+    /** Returns the object's hitbox with defined offsets for collision detection. */
     getHitbox() {
         const offsetX = 20; 
         const offsetY = 20; 
@@ -58,10 +60,12 @@ class SmallChicken extends MoveableObject {
         };
     }
     
+    /** Moves the object left on each update cycle. */
     update() {
         this.moveLeft();
     }
     
+    /** Marks the object as dead, stops its intervals, and removes it from the level after a short delay. */
     die() {
         if (this.isDead) return;
         this.isDead = true;

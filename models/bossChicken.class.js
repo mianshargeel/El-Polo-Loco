@@ -26,37 +26,35 @@ class BossChicken extends MoveableObject {
       this.preloadImages(this.IMAGES_WALKING);
       this.preloadImages(this.IMAGES_DEAD);
       this.animate();
-  }
-
-  animate() {
-    this.walkingInterval = setInterval(() => {
-        if (!this.world?.gameStarted || this.isDead) return;
-
-        if (this.falling) {
-            this.speedY += this.accelerationY;
-            this.y += this.speedY;
-
-            if (this.y >= this.groundY - this.height) {
-                this.y = this.groundY - this.height;
-                this.falling = false;
-                this.speedY = 0;
+    }
+    
+    /** Animates the character with falling and walking behavior at regular intervals. */
+    animate() {
+        this.walkingInterval = setInterval(() => {
+            if (!this.world?.gameStarted || this.isDead) return;
+            if (this.falling) {
+                this.speedY += this.accelerationY;
+                this.y += this.speedY;
+                if (this.y >= this.groundY - this.height) {
+                    this.y = this.groundY - this.height;
+                    this.falling = false;
+                    this.speedY = 0;
+                }
+            } else { this.moveLeft(); 
             }
-        } else {
-            this.moveLeft(); 
-        }
-    }, 1000 / 60);
+        }, 1000 / 60);
+        this.animationInterval = setInterval(() => {
+            if (!this.world?.gameStarted || this.isDead) return;
+            this.playAnimation(this.IMAGES_WALKING);
+        }, 200);
+    }
 
-    this.animationInterval = setInterval(() => {
-        if (!this.world?.gameStarted || this.isDead) return;
-        this.playAnimation(this.IMAGES_WALKING);
-    }, 200);
-}
-
-
+/** Moves the character left by its current speed value. */
   moveLeft() {
       this.x -= this.speed;
   }
 
+    /** Handles character death, stops animation, and removes it from the level after delay. */
   die() {
       if (this.isDead) return;
       this.isDead = true;

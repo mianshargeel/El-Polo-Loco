@@ -16,6 +16,7 @@ class BottleOnGround extends DrawableObject {
       this.setCollisionBox();
   }
 
+/** Animates the object by cycling through its image frames at a set interval. */
   animate() {
     this.animationInterval = setInterval(() => {
         this.currentImage = (this.currentImage + 1) % this.IMAGES.length;
@@ -23,6 +24,7 @@ class BottleOnGround extends DrawableObject {
     }, 500); 
   }
 
+  /** Sets the object's collision box with padding inside its bounds. */
   setCollisionBox() {
       this.collisionBox = {
           x: this.x + 5,
@@ -32,6 +34,7 @@ class BottleOnGround extends DrawableObject {
       };
   }
 
+  /** Marks the object as collected and stops its animation. */
   collect() {
       if (!this.collected) {
           this.collected = true;
@@ -42,6 +45,7 @@ class BottleOnGround extends DrawableObject {
       return false;
   }
 
+  /** Returns the object's hitbox with padding applied on all sides. */
   getHitbox() {
     const padding = 30;
     return {
@@ -50,12 +54,13 @@ class BottleOnGround extends DrawableObject {
         top: this.y + padding,
         bottom: this.y + this.height - padding
     };
-}
-  remove() {
-      this.width = 0;
-      this.height = 0;
-      this.collisionBox.width = 0;
-      this.collisionBox.height = 0;
-  }
+    }
+    /** Removes the object visually and disables its collision box. */
+    remove() {
+        this.width = 0;
+        this.height = 0;
+        this.collisionBox.width = 0;
+        this.collisionBox.height = 0;
+    }
   
 }

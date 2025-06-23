@@ -82,6 +82,7 @@ class Chicken extends MoveableObject {
         this.moveLeft();
     }
 
+    /** Returns the hitbox boundaries of the object with applied offsets. */
     getHitbox() {
         const offsetX = 10; 
         const offsetY = 20;
@@ -96,6 +97,7 @@ class Chicken extends MoveableObject {
         };
     }
     
+    /** Marks the object as dead, stops movement/animation, and removes it from the level. */
     die() {
         if (this.isDead) return;
         this.isDead = true;

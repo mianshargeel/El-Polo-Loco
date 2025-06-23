@@ -113,6 +113,7 @@ class Character extends MoveableObject {
         this.animate(); 
     }
     
+    /** Starts the movement loop that handles player movement and camera tracking. */
     handleMovement() {
         this._moveInterval = setInterval(() => {
             if (!this.world) return;
@@ -122,65 +123,59 @@ class Character extends MoveableObject {
         }, 1000 / 60);
     }
     
+    /** Starts the animation loop based on character state and activity. */
     handleAnimation() {
         this._animationInterval = setInterval(() => {
             if (!this.world) return;
             this.handleDeath();
             const now = Date.now();
             const idleDuration = now - this.lastMoveTime;
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else if (idleDuration > 4000) {
-                this.playAnimation(this.IMAGES_SLEEP);
+            if (this.isDead()) { this.playAnimation(this.IMAGES_DEAD);
+            } else if (this.isHurt()) { this.playAnimation(this.IMAGES_HURT);
+            } else if (this.isAboveGround()) { this.playAnimation(this.IMAGES_JUMPING);
+            } else if (idleDuration > 4000) { this.playAnimation(this.IMAGES_SLEEP);
                 this.isSleeping = true;
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                 this.playAnimation(this.IMAGES_WALKING);
                 this.isSleeping = false;
                 this.lastMoveTime = now;
-            } else {
-                this.playAnimation(this.IMAGES_IDLE);
+            } else { this.playAnimation(this.IMAGES_IDLE);
                 this.isSleeping = false;
             }
         }, 100);
     }
     
+    /** Cleans up all active intervals and resets death state flags. */
     cleanup() {
         this._deadHandled = false;
         this.isDeadAnimationPlayed = false;
         if (this._deathTimeout) {
             clearTimeout(this._deathTimeout);
             this._deathTimeout = null;
-        }
-        if (this._moveInterval) {
+        } if (this._moveInterval) {
             clearInterval(this._moveInterval);
             this._moveInterval = null;
-        }
-        if (this._animationInterval) {
+        } if (this._animationInterval) {
             clearInterval(this._animationInterval);
             this._animationInterval = null;
         }
     }
-    /**
-     * Starts character animation, including movement and sprite updates.
-     */
+
+    /** Initializes both movement and animation intervals if not already running. */
     animate() {
         if (this._moveInterval || this._animationInterval) return; 
         this.handleMovement();
         this.handleAnimation();
     }
 
+    /** Cycles through animation frames using the given image set. */
     playAnimation(images) {
         const index = this.currentImage % images.length;
         this.img = this.imageCache[images[index]];
         this.currentImage++;
     }
-    /**
-     * Moves the character left or right based on keyboard input.
-     */
+
+    /** Handles character movement left or right based on keyboard input. */
     processMovement() {
         if (this.isDead()) return;
         const moved = this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
@@ -195,9 +190,8 @@ class Character extends MoveableObject {
             this.isSleeping = false;
         }
     }
-    /**
-     * Handles jump action when the SPACE key is pressed.
-     */
+    
+    /** Handles jump action when spacebar is pressed and character is grounded. */
     processJump() {
         if (this.isDead()) return;
 
@@ -208,22 +202,19 @@ class Character extends MoveableObject {
         }
     }
 
-    /**
-     * Plays the jump sound effect.
-     */
+   /** Plays the jump sound effect via the music manager. */
     playJumpSound() {
         if (this.musicManager) {
             this.musicManager.playCharacterJumpSound();
         }
     }
 
-    /**
-     * Updates the camera position to follow the character.
-     */
+    /** Updates the camera to follow the character horizontally. */
     updateCamera() {
         this.world.camera_x = -this.x + 100;
     }    
 
+    /** Handles character death, plays sound, and triggers game over popup. */
     handleDeath() {
         if (this._deathHandled || this.energy > 0) {
             return;
@@ -239,6 +230,7 @@ class Character extends MoveableObject {
         }, 1000);
     }
     
+    /** Returns true if the character's energy has dropped to 0 or below. */
     isDead() {
         return this.energy <= 0;
     }
