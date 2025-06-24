@@ -289,8 +289,11 @@ class World {
         const positions = [ 
             {x: 500, y: World.GROUND_Y - 60},
             {x: 800, y: World.GROUND_Y - 60},
+            {x: 850, y: World.GROUND_Y - 60},
             {x: 1000, y: World.GROUND_Y - 60},
             {x: 1200, y: World.GROUND_Y - 60},
+            {x: 1300, y: World.GROUND_Y - 60},
+            {x: 1500, y: World.GROUND_Y - 60},
             {x: 1500, y: World.GROUND_Y - 60},
             {x: 1700, y: World.GROUND_Y - 60},
             {x: 1850, y: World.GROUND_Y - 60},
